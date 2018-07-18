@@ -135,97 +135,97 @@
                 <!-- /.box (chat box) -->
 
 
-                <!-- Custom tabs (Bar Graph)-->
-                <div class="nav-tabs-custom">
-                    <!-- Off take per region -->
-                    <div class="box box-info">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Off Take Per Region</h3>
+                {{--<!-- Custom tabs (Bar Graph)-->--}}
+                {{--<div class="nav-tabs-custom">--}}
+                    {{--<!-- Off take per region -->--}}
+                    {{--<div class="box box-info">--}}
+                        {{--<div class="box-header with-border">--}}
+                            {{--<h3 class="box-title">Off Take Per Region</h3>--}}
 
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div class="box-body">
-                            <div class="chart">
-                                <div id="offTakePerRegion" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-                                <script>
-                                    Highcharts.chart('offTakePerRegion', {
-                                        chart: {
-                                            type: 'column'
-                                        },
-                                        title: {
-                                            text: 'Off Take Per Region'
-                                        },
-                                        subtitle: {
-                                            text: 'Date: June 11, 2018 <br> Total: 4500'
-                                        },
-                                        tooltip: { enabled: false },
-                                        xAxis: {
-                                            categories: [
-                                                'ILOCOS',
-                                                'CAGAYAN VALLEY',
-                                                'CENTRAL LUZON',
-                                                'CALABARZON',
-                                                'MIMAROPA',
-                                                'BICOL',
-                                                'WESTERN VISAYAS',
-                                                'CENTRAL VISAYAS',
-                                                'EASTERN VISAYAS',
-                                                'WESTERN MINDANAO',
-                                                'NORTHERN MINDANAO',
-                                                'CENTRAL MINDANAO',
-                                                'SOCCSKSARGEN',
-                                                'CARAGA',
-                                                'ARMM',
-                                                'CORDILLERA ADM REGION',
-                                                'NATIONAL CAPITAL REGION',
-                                            ],
-                                            crosshair: true
-                                        },
+                            {{--<div class="box-tools pull-right">--}}
+                                {{--<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>--}}
+                                {{--</button>--}}
+                                {{--<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="box-body">--}}
+                            {{--<div class="chart">--}}
+                                {{--<div id="offTakePerRegion" style="min-width: 310px; height: 400px; margin: 0 auto"></div>--}}
+                                {{--<script>--}}
+                                    {{--Highcharts.chart('offTakePerRegion', {--}}
+                                        {{--chart: {--}}
+                                            {{--type: 'column'--}}
+                                        {{--},--}}
+                                        {{--title: {--}}
+                                            {{--text: 'Off Take Per Region'--}}
+                                        {{--},--}}
+                                        {{--subtitle: {--}}
+                                            {{--text: 'Date: June 11, 2018 <br> Total: 4500'--}}
+                                        {{--},--}}
+                                        {{--tooltip: { enabled: false },--}}
+                                        {{--xAxis: {--}}
+                                            {{--categories: [--}}
+                                                {{--'ILOCOS',--}}
+                                                {{--'CAGAYAN VALLEY',--}}
+                                                {{--'CENTRAL LUZON',--}}
+                                                {{--'CALABARZON',--}}
+                                                {{--'MIMAROPA',--}}
+                                                {{--'BICOL',--}}
+                                                {{--'WESTERN VISAYAS',--}}
+                                                {{--'CENTRAL VISAYAS',--}}
+                                                {{--'EASTERN VISAYAS',--}}
+                                                {{--'WESTERN MINDANAO',--}}
+                                                {{--'NORTHERN MINDANAO',--}}
+                                                {{--'CENTRAL MINDANAO',--}}
+                                                {{--'SOCCSKSARGEN',--}}
+                                                {{--'CARAGA',--}}
+                                                {{--'ARMM',--}}
+                                                {{--'CORDILLERA ADM REGION',--}}
+                                                {{--'NATIONAL CAPITAL REGION',--}}
+                                            {{--],--}}
+                                            {{--crosshair: true--}}
+                                        {{--},--}}
 
-                                        plotOptions: {
-                                            column: {
-                                                pointPadding: 0.2,
-                                                borderWidth: 0,
-                                                dataLabels: {
-                                                    enabled: true
-                                                }
-                                            }
-                                        },
-                                        series: [{
-                                            name: 'Off Take',
-                                            data: [
-                                                150,
-                                                250,
-                                                100,
-                                                50,
-                                                150,
-                                                200,
-                                                175,
-                                                245,
-                                                95,
-                                                100,
-                                                250,
-                                                100,
-                                                200,
-                                                450,
-                                                135,
-                                                100,
-                                                1750
-                                            ]
-                                        }]
-                                    });
-                                </script>
-                            </div>
-                        </div>
-                        <!-- /.box-body -->
-                    </div>
-                    <!-- /.box -->
-                </div>
-                <!-- /.nav-tabs-custom -->
+                                        {{--plotOptions: {--}}
+                                            {{--column: {--}}
+                                                {{--pointPadding: 0.2,--}}
+                                                {{--borderWidth: 0,--}}
+                                                {{--dataLabels: {--}}
+                                                    {{--enabled: true--}}
+                                                {{--}--}}
+                                            {{--}--}}
+                                        {{--},--}}
+                                        {{--series: [{--}}
+                                            {{--name: 'Off Take',--}}
+                                            {{--data: [--}}
+                                                {{--150,--}}
+                                                {{--250,--}}
+                                                {{--100,--}}
+                                                {{--50,--}}
+                                                {{--150,--}}
+                                                {{--200,--}}
+                                                {{--175,--}}
+                                                {{--245,--}}
+                                                {{--95,--}}
+                                                {{--100,--}}
+                                                {{--250,--}}
+                                                {{--100,--}}
+                                                {{--200,--}}
+                                                {{--450,--}}
+                                                {{--135,--}}
+                                                {{--100,--}}
+                                                {{--1750--}}
+                                            {{--]--}}
+                                        {{--}]--}}
+                                    {{--});--}}
+                                {{--</script>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<!-- /.box-body -->--}}
+                    {{--</div>--}}
+                    {{--<!-- /.box -->--}}
+                {{--</div>--}}
+                {{--<!-- /.nav-tabs-custom -->--}}
 
 
 
@@ -285,86 +285,86 @@
                 <!-- /.box -->
                 @endif
 
-                <!-- Off Take Per Catagory -->
-                <div class="box box-info">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Off Take Per Category</h3>
+                {{--<!-- Off Take Per Catagory -->--}}
+                {{--<div class="box box-info">--}}
+                    {{--<div class="box-header with-border">--}}
+                        {{--<h3 class="box-title">Off Take Per Category</h3>--}}
 
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="chart">
+                        {{--<div class="box-tools pull-right">--}}
+                            {{--<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>--}}
+                            {{--</button>--}}
+                            {{--<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                    {{--<div class="box-body">--}}
+                        {{--<div class="chart">--}}
 
-                            <div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
-                            <script>
-                                Highcharts.chart('container', {
-                                    chart: {
-                                        plotBackgroundColor: null,
-                                        plotBorderWidth: null,
-                                        plotShadow: false,
-                                        type: 'pie'
-                                    },
-                                    title: {
-                                        text: 'Off Take Per Category'
-                                    },
-                                    subtitle: {
-                                        text: 'Date: June 11, 2018 <br> Total: 4500'
-                                    },
-                                    tooltip: { enabled: false },
-                                    plotOptions: {
-                                        pie: {
-                                            allowPointSelect: true,
-                                            cursor: 'pointer',
-                                            dataLabels: {
-                                                enabled: true,
-                                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                                                style: {
-                                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                                                }
-                                            }
-                                        }
-                                    },
-                                    series: [{
-                                        name: 'Items',
-                                        colorByPoint: true,
-                                        data: [{
-                                            name: 'Amigo Segurado Pasta',
-                                            y: 1500
-                                        }, {
-                                            name: 'Amigo Segurado Spaghetti Sauce',
-                                            y: 700
-                                        }, {
-                                            name: 'Frying mix',
-                                            y: 200
-                                        }, {
-                                            name: 'La Filipina Canned Meats (Classic)',
-                                            y: 500
+                            {{--<div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>--}}
+                            {{--<script>--}}
+                                {{--Highcharts.chart('container', {--}}
+                                    {{--chart: {--}}
+                                        {{--plotBackgroundColor: null,--}}
+                                        {{--plotBorderWidth: null,--}}
+                                        {{--plotShadow: false,--}}
+                                        {{--type: 'pie'--}}
+                                    {{--},--}}
+                                    {{--title: {--}}
+                                        {{--text: 'Off Take Per Category'--}}
+                                    {{--},--}}
+                                    {{--subtitle: {--}}
+                                        {{--text: 'Date: June 11, 2018 <br> Total: 4500'--}}
+                                    {{--},--}}
+                                    {{--tooltip: { enabled: false },--}}
+                                    {{--plotOptions: {--}}
+                                        {{--pie: {--}}
+                                            {{--allowPointSelect: true,--}}
+                                            {{--cursor: 'pointer',--}}
+                                            {{--dataLabels: {--}}
+                                                {{--enabled: true,--}}
+                                                {{--format: '<b>{point.name}</b>: {point.percentage:.1f} %',--}}
+                                                {{--style: {--}}
+                                                    {{--color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'--}}
+                                                {{--}--}}
+                                            {{--}--}}
+                                        {{--}--}}
+                                    {{--},--}}
+                                    {{--series: [{--}}
+                                        {{--name: 'Items',--}}
+                                        {{--colorByPoint: true,--}}
+                                        {{--data: [{--}}
+                                            {{--name: 'Amigo Segurado Pasta',--}}
+                                            {{--y: 1500--}}
+                                        {{--}, {--}}
+                                            {{--name: 'Amigo Segurado Spaghetti Sauce',--}}
+                                            {{--y: 700--}}
+                                        {{--}, {--}}
+                                            {{--name: 'Frying mix',--}}
+                                            {{--y: 200--}}
+                                        {{--}, {--}}
+                                            {{--name: 'La Filipina Canned Meats (Classic)',--}}
+                                            {{--y: 500--}}
 
-                                        }, {
-                                            name: 'La Filipina Canned Meats (Flavored)',
-                                            y: 800
-                                        }, {
-                                            name: 'La Filipina Pasta',
-                                            y: 1000
-                                        }, {
-                                            name: 'Rice Corn',
-                                            y: 150
-                                        }, {
-                                            name: 'PROMO PACK',
-                                            y: 100
-                                        }]
-                                    }]
-                                });
-                            </script>
-                        </div>
-                    </div>
-                    <!-- /.box-body -->
-                </div>
-                <!-- /.box -->
+                                        {{--}, {--}}
+                                            {{--name: 'La Filipina Canned Meats (Flavored)',--}}
+                                            {{--y: 800--}}
+                                        {{--}, {--}}
+                                            {{--name: 'La Filipina Pasta',--}}
+                                            {{--y: 1000--}}
+                                        {{--}, {--}}
+                                            {{--name: 'Rice Corn',--}}
+                                            {{--y: 150--}}
+                                        {{--}, {--}}
+                                            {{--name: 'PROMO PACK',--}}
+                                            {{--y: 100--}}
+                                        {{--}]--}}
+                                    {{--}]--}}
+                                {{--});--}}
+                            {{--</script>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                    {{--<!-- /.box-body -->--}}
+                {{--</div>--}}
+                {{--<!-- /.box -->--}}
 
             </section>
             <!-- right col -->

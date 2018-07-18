@@ -76,7 +76,6 @@ class TransactionOfftakeController extends Controller
                     elseif($inventoryType == '5'){ #return
                         $rtv = $material->base_qty;
                     }
-
                 }
 
                 $physical_count = $this->computePhysicalCount($warehouse_area, $bo_area, $shelves_area);
