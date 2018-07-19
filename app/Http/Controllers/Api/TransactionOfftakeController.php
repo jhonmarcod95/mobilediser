@@ -41,16 +41,17 @@ class TransactionOfftakeController extends Controller
                 ->get()
                 ->groupBy('material_code');
 
-            $beginningBalances = $this->getLatestEndingBalance($customerCode);
+            /*$beginningBalances = $this->getLatestEndingBalance($customerCode);*/
 
             #loop all inventory types from materials to set beg.bal&whse etc...
             foreach ($transactionItems as $materials){
 
-                $beginning_balance = $beginningBalances
+                /*$beginning_balance = $beginningBalances
                     ->where('material_code', $materials->first()->material_code)
                     ->pluck('ending_balance')
-                    ->first();
+                    ->first();*/
 
+                $beginning_balance = 0;
                 $delivery = 0;
                 $rtv = 0;
                 $warehouse_area = 0;
@@ -75,6 +76,9 @@ class TransactionOfftakeController extends Controller
                     }
                     elseif($inventoryType == '5'){ #return
                         $rtv = $material->base_qty;
+                    }
+                    elseif($inventoryType == '6'){ #beginning_balance
+                        $beginning_balance = $material->base_qty;
                     }
                 }
 

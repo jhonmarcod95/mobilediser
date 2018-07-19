@@ -27,7 +27,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-
         $dateToday = Carbon::now()->format('Y-m-d');
 
         $msgHeaders = DB::table('vw_merchandiser_message_header')
@@ -66,4 +65,9 @@ class HomeController extends Controller
             'Carbon'
         ));
     }
+
+
+
+
+
 }
