@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Announcement;
 use App\InventoryTransactionHeader;
 use App\MerchandiserSchedule;
+use App\TransactionOfftake;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -54,6 +55,7 @@ class HomeController extends Controller
             ->get()
             ->count();
 
+        $chainOfftakes = $this->getChainOfftakeToday();
 
         return view('home', compact(
             'msgHeaders',
@@ -62,10 +64,38 @@ class HomeController extends Controller
             'announcementCount',
             'scheduleCount',
             'announcements',
-            'Carbon'
+            'chainOfftakes'
         ));
     }
 
+
+    private function getChainOfftakeToday(){
+        $date = Carbon::now()->format('Y-m-d');
+//        $date = '2018-07-18';
+
+        $result = TransactionOfftake::whereDate('transaction_offtake.created_at', $date)
+            ->join('customer_master_data', 'customer_master_data.customer_code', 'transaction_offtake.customer_code')
+            ->join('chain', 'chain.chain_code', 'customer_master_data.chain_code')
+            ->join('material_master_data', 'material_master_data.material_code', 'transaction_offtake.material_code')
+            ->groupBy(
+                'chain_code',
+                'material_code'
+            )
+            ->select(
+                DB::raw('SUM(transaction_offtake.offtake) AS offtake'),
+                DB::raw('SUM(transaction_offtake.ending_balance) AS ending_balance'),
+                DB::raw('MAX(customer_master_data.name) AS name'),
+                'chain.chain_code',
+                DB::raw('MAX(chain.description) AS description'),
+                'material_master_data.material_code',
+                DB::raw('MAX(material_master_data.material_description) AS material_description'),
+                DB::raw('MAX(transaction_offtake.created_at) AS created_at')
+            )
+            ->get()
+        ;
+
+        return $result;
+    }
 
 
 

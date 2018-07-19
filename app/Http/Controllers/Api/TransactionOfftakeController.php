@@ -124,7 +124,6 @@ class TransactionOfftakeController extends Controller
     }
 
     private function getLatestEndingBalance($customer_code){
-
         $beginningBalance = TransactionOfftake::where('customer_code', $customer_code)
             ->join('material_master_data', 'transaction_offtake.material_code', 'material_master_data.material_code')
             ->orderByDesc('created_at')

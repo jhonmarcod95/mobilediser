@@ -36,9 +36,9 @@ Route::group(['middleware' => 'auth'], function () {
     #schedule
     Route::get('/schedules', 'ScheduleController@show');
     Route::get('/schedules/records', 'ScheduleController@records');
+
     Route::post('/schedules/save', 'ScheduleController@save');
     Route::post('/schedules/delete', 'ScheduleController@delete');
-
 
     #users
     Route::get('/users', 'UserController@show');
@@ -72,7 +72,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/customers/types/save', 'CustomerTypeController@save');
     Route::post('/customers/types/update', 'CustomerTypeController@update');
 
-
     #customer category
     Route::get('/customers/categories', 'CustomerCategoryController@show');
     Route::get('/customers/categories/add', 'CustomerCategoryController@info');
@@ -97,40 +96,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/materials/save', 'MaterialController@save');
     Route::post('/materials/update', 'MaterialController@update');
 
-
-
     #locations
-    //Route::get('/locations', 'LocationController@show');
     Route::get('/locations/geofences', 'LocationController@geofences');
 
     Route::post('/locations/geofences/save', 'LocationController@save');
 
-    #errors
-    Route::get('/errors', function(){
-        return view('layouts.errors');
-    });
 
-    Route::get('/map', function(){
-        $config = array();
-        $config['center'] = 'auto';
-        $config['onboundschanged'] = 'if (!centreGot) {
-            var mapCentre = map.getCenter();
-            marker_0.setOptions({
-                position: new google.maps.LatLng(37.429, -122.1419)
-            });
-        }
-        centreGot = true;';
+    #reports
+    Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
 
-        app('map')->initialize($config);
 
-        // set up the marker ready for positioning
-        // once we know the users location
-        $marker = array();
-        app('map')->add_marker($marker);
-
-        $map = app('map')->create_map();
-        echo "<html><head><script type=\"text/javascript\">var centreGot = false;</script>".$map['js']."</head><body>".$map['html']."</body></html>";
-});
 
 
 });

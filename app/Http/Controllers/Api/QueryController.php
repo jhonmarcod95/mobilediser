@@ -42,10 +42,11 @@ class QueryController extends Controller
 
     public function inserttransaction(Request $request)
     {
-         $transaction_number = $request->transaction_number;
+        $transaction_number = $request->transaction_number;
         $header = $request->header;
         $item = $request->item;
         $expiration = $request->expiration;
+        $beginning = $request->beginning;
 
         $delete_header="delete from inventory_transaction_header where transaction_number = '$transaction_number'";
         $delete_item="delete from inventory_transaction_items where transaction_number = '$transaction_number'";
@@ -62,6 +63,7 @@ class QueryController extends Controller
             DB::select($header);
             DB::select($item);
             DB::select($expiration);
+            DB::select($beginning);
 
             $result = "success";
         }

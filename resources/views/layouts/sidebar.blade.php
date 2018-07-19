@@ -65,11 +65,18 @@
                     <i class="fa fa-map-marker"></i> <span>Locations</span>
                 </a>
             </li>
-            <li>
-                <a href="{{ url('/reports') }}">
+            <li class="treeview">
+                <a href="#">
                     <i class="fa fa-bar-chart"></i> <span>Reports</span>
+                    <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                    </span>
                 </a>
+                <ul class="treeview-menu">
+                    <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle-o"></i> Offtake Per Customer</a></li>
+                </ul>
             </li>
+
         </ul>
     </section>
     <!-- /.sidebar -->
