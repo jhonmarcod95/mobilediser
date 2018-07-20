@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +50,16 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+
+        $userLevelCheck = $exception instanceof \jeremykenedy\LaravelRoles\Exceptions\RoleDeniedException ||
+            $exception instanceof \jeremykenedy\LaravelRoles\Exceptions\RoleDeniedException ||
+            $exception instanceof \jeremykenedy\LaravelRoles\Exceptions\PermissionDeniedException ||
+            $exception instanceof \jeremykenedy\LaravelRoles\Exceptions\LevelDeniedException;
+
+        if ($userLevelCheck) {
+            Auth::logout();
+        }
+
         return parent::render($request, $exception);
     }
 }

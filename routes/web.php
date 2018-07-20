@@ -17,8 +17,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
 
     #dashboard
     Route::get('/', 'HomeController@index')->name('home');
@@ -104,6 +103,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     #reports
     Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
+    Route::get('/reports/merchandiserLog', 'ReportsController@merchandiserLog');
 
 
 

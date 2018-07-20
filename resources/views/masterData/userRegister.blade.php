@@ -139,7 +139,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="text-muted">Password</label>
-                                    {!! @Form::password('password', ['class' => 'form-control', 'maxlength' => '30', 'required']) !!}
+                                    {!! @Form::password('password', ['class' => 'form-control', 'maxlength' => '30']) !!}
                                 </div>
                             </div>
 

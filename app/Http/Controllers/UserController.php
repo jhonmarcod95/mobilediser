@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use jeremykenedy\LaravelRoles\Models\Role;
 
 class UserController extends Controller
 {
@@ -90,14 +91,12 @@ class UserController extends Controller
         $user->contact_number = $request->contact_number;
         $user->account_type = $request->accountType;
         $user->account_status = 'ACTIVE';
-        $user->save();
 
         #image
         $userImage = new UserImage();
         $userImage->image_path = $path;
         $userImage->user()->associate($user);
         $userImage->save();
-
 
         alert()->success('New user has been registered.','');
         return redirect('/users');
@@ -142,6 +141,11 @@ class UserController extends Controller
         if(!empty($request->file('img'))){ #will not update image path if no upload
             $userImage = UserImage::find($id);
             $path = $request->file('img')->store('avatars','public');
+
+//            $path = $request->file('img')->storeAs(
+//                'avatars', 'kanor','public'
+//            );
+
             $userImage->image_path = $path;
             $userImage->save();
         }

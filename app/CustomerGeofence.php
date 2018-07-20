@@ -3,11 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class CustomerGeofence extends Model
+class CustomerGeofence extends Model implements Auditable
 {
     protected $table = 'customer_geofences';
     protected $primaryKey = 'customer_code';
+
+    use \OwenIt\Auditing\Auditable;
 
     public static function haversineGreatCircleDistance(
         $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)

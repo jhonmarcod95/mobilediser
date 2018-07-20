@@ -7,6 +7,7 @@ use App\InventoryTransactionHeader;
 use App\MerchandiserSchedule;
 use App\TransactionOfftake;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -28,6 +29,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+
+
+
         $dateToday = Carbon::now()->format('Y-m-d');
 
         $msgHeaders = DB::table('vw_merchandiser_message_header')

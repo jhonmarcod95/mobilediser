@@ -4,12 +4,14 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use jeremykenedy\LaravelRoles\Traits\HasRoleAndPermission;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
 class User extends Authenticatable implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
+    use HasRoleAndPermission;
 
     protected $primaryKey = 'merchandiser_id';
 

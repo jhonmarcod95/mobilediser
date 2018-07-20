@@ -74,6 +74,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle-o"></i> Offtake Per Customer</a></li>
+                    <li><a href="{{ url('/reports/merchandiserLog') }}"><i class="fa fa-circle-o"></i> Merchandiser Logs</a></li>
                 </ul>
             </li>
 
