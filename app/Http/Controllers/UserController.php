@@ -63,6 +63,7 @@ class UserController extends Controller
             'birthday' => 'required',
             'address' => 'required',
             'accountType' => 'required',
+            'accountStatus' => 'required',
             'username' => 'required|unique:users',
             //'email' => 'required|unique:users|email',
         ]);
@@ -90,7 +91,7 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->contact_number = $request->contact_number;
         $user->account_type = $request->accountType;
-        $user->account_status = 'ACTIVE';
+        $user->account_status = $request->accountStatus;
 
         #image
         $userImage = new UserImage();
@@ -115,6 +116,7 @@ class UserController extends Controller
             'birthday' => 'required',
             'address' => 'required',
             'accountType' => 'required',
+            'accountStatus' => 'required',
             'username' => 'required|unique:users,username,' . $id . ',merchandiser_id',
             'email' => 'required|unique:users,email,' . $id . ',merchandiser_id',
         ]);
@@ -134,7 +136,7 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->contact_number = $request->contact_number;
         $user->account_type = $request->accountType;
-        $user->account_status = 'ACTIVE';
+        $user->account_status = $request->accountStatus;
         $user->save();
 
         #image

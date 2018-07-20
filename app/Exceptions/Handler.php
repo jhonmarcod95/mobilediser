@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class Handler extends ExceptionHandler
 {
@@ -58,6 +59,9 @@ class Handler extends ExceptionHandler
 
         if ($userLevelCheck) {
             Auth::logout();
+
+            session(['message' => 'You are not allowed to login.']);
+            return redirect('/');
         }
 
         return parent::render($request, $exception);

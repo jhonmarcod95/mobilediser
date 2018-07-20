@@ -4,6 +4,8 @@
     </head>
 
     <body class="hold-transition login-page">
+
+
     <div class="login-box">
         <div class="login-logo">
             <b>PLILI</b> <br> MobileDiser Portal
@@ -58,16 +60,21 @@
                 </div>
             </form>
 
-
             <!-- /.social-auth-links -->
             <a href="{{ route('password.request') }}">
                 I forgot my password
             </a>
-
-
         </div>
-        <!-- /.login-box-body -->
+        @if(Session::has('message'))
+            <div class="alert alert-danger" role="alert">
+                {{ Session::get('message') }}
+            </div>
+            {{ session()->flush() }}
+        @endif
     </div>
+
+
+
 
     @include('layouts.script')
     </body>

@@ -139,9 +139,18 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="text-muted">Password</label>
-                                    {!! @Form::password('password', ['class' => 'form-control', 'maxlength' => '30']) !!}
+                                    {!! @Form::password('password', ['class' => 'form-control', 'maxlength' => '30', 'required']) !!}
                                 </div>
                             </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="text-muted">Account Status</label>
+                                    {!! @Form::select('accountStatus', ['ACTIVE' => 'ACTIVE', 'INACTIVE' => 'INACTIVE'], $user->account_status, ['class' => 'form-control', 'placeholder' => '', 'required']) !!}
+                                </div>
+                            </div>
+
+
 
                         </div>
                         <div class="row">
