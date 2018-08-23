@@ -22,6 +22,11 @@
                 </a>
             </li>
 
+            <li>
+                <a href="{{ url('/announcements') }}">
+                    <i class="ion ion-speakerphone"></i> <span>Announcements</span>
+                </a>
+            </li>
 
             <li>
                 <a href="{{ url('/message') }}">
@@ -33,6 +38,10 @@
                     </span>
                 </a>
             </li>
+
+
+
+
             <li>
                 <a href="{{ url('/schedules') }}">
                     <i class="fa fa-calendar"></i> <span>Schedules</span>
@@ -43,6 +52,7 @@
                     </span>
                 </a>
             </li>
+
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-folder"></i> <span>Master Data</span>
@@ -75,6 +85,7 @@
                 <ul class="treeview-menu">
                     <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle-o"></i> Offtake Per Customer</a></li>
                     <li><a href="{{ url('/reports/merchandiserLog') }}"><i class="fa fa-circle-o"></i> Merchandiser Logs</a></li>
+                    <li><a href="{{ url('/reports/merchandiserAttendance') }}"><i class="fa fa-circle-o"></i> Merchandiser Attendance</a></li>
                 </ul>
             </li>
 

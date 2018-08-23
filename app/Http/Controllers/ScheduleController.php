@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ScheduleController extends Controller
 {
@@ -82,71 +83,30 @@ class ScheduleController extends Controller
 
     public function save(Request $request)
     {
-        return $request;
+        $validation = $request->validate([
+            'remarks' => 'required',
+            'weekdays' => 'required',
+            'merchandiser' => ['required', new ConflictScheduleRule],
+        ]);
+
+
         if($request->exists('delete')){
             $this->delete($request);
         }
 
+        $customers = $request->customers;
+        $weekdays = $request->weekdays;
+        $remarks = $request->remarks;
 
-        $validation = $request->validate([
-            'merchandiser1' => ['required', new ConflictScheduleRule],
-        ]);
 
-//        $entries = explode(',', $request->entries);
-//
-//        foreach ($entries as $entry) {
-//            $merchandiser_id = $request["merchandiser$entry"];
-//            $customer_codes = $request["customers$entry"];
-//            $dtRange = explode('-', $request["dtRange$entry"]);
-//            $remarks = $request["remarks$entry"];
-//
-//            foreach ($customer_codes as $customer_code) {
-//                $begin = Carbon::parse($dtRange[0]);
-//                $end = Carbon::parse($dtRange[1])->modify('+1 day'); //+2 to loop until end
-//                for ($date = $begin; $date < $end; $date->modify('+1 day')) {
-//
-//                    $merchandiser = new MerchandiserSchedule();
-//                    $merchandiser->merchandiser_id = $merchandiser_id;
-//                    $merchandiser->customer_code = $customer_code;
-//                    $merchandiser->date = $date;
-//                    $merchandiser->status = '002';
-//                    $merchandiser->remarks = $remarks;
-//                    $merchandiser->created_by = Auth::user()->merchandiser_id;
-//                    $merchandiser->save();
-//                }
-//            }
-//
-//        }
-//
-//        $merchandisers = $request->merchandisers;
-//
-//        foreach ($merchandisers as $merchandiser_id){
-//            $customer_codes = $request->$merchandiser_id;
-//            $dtRange = explode('-',$request["dtRange$merchandiser_id"]);
-//            $remarks = $request["remarks$merchandiser_id"];
-//
-//            foreach ($customer_codes as $customer_code){
-//                $begin = Carbon::parse( $dtRange[0]);
-//                $end  = Carbon::parse( $dtRange[1])->modify('+1 day'); //+2 to loop until end
-//                for($date = $begin; $date < $end; $date->modify('+1 day')){
-//
-//                    $merchandiser = new MerchandiserSchedule();
-//                    $merchandiser->merchandiser_id = $merchandiser_id;
-//                    $merchandiser->customer_code = $customer_code;
-//                    $merchandiser->date = $date;
-//                    $merchandiser->status = '002';
-//                    $merchandiser->remarks = $remarks;
-//                    $merchandiser->created_by = Auth::user()->merchandiser_id;
-//                    $merchandiser->save();
-//                }
-//            }
-//        }
-//
-////        $url = url('/schedules');
-////        echo "
-////            <script>window.top.location.href = \"$url\" </script>
-////        ";
-//
+        foreach ($customers as $key => $value){
+            foreach ($weekdays[$key] as $weekday){
+                #$remarks = $remarks[$key];
+
+                return $weekday;
+            }
+        }
+
         return redirect('/schedules');
 
     }
@@ -162,7 +122,7 @@ class ScheduleController extends Controller
         return redirect('/schedules');
     }
 
-    function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
+    public static function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
     {
 
         $dates = array();
@@ -176,5 +136,59 @@ class ScheduleController extends Controller
         }
 
         return $dates;
+    }
+
+    public function upload(Request $request){
+
+        if($request->hasFile('import_file')){
+            Excel::load($request->file('import_file')->getRealPath(), function ($reader) {
+                dd($reader);
+
+                foreach ($reader->toArray() as $key => $row) {
+
+                    $result[] = (object) [
+                        'id' => $row['id'],
+                        'name' => $row['name'],
+                        'code' => $row['code'],
+                        'branch' => $row['branch'],
+                    ];
+
+
+//                    $data['title'] = $row['title'];
+//                    $data['description'] = $row['description'];
+//
+//                    if(!empty($data)) {
+//                        DB::table('post')->insert($data);
+//                    }
+                }
+
+            });
+
+
+        }
+
+        $day = date('N', strtotime('Thurs'));
+
+        $days = $this->getDays('2018','08', $day);
+        return $days;
+    }
+
+    public function getDays($y, $m, $d){
+        /*---- to format 1 = sunday, 7 = saturday ----*/
+        $d = $d + 1;
+        if($d > 7) $d = 1;
+        /*--------------------------------------------*/
+
+        $date = "$y-$m-01";
+        $first_day = date('N',strtotime($date));
+        $first_day = $d -  $d - $first_day + $d;
+        $last_day =  date('t',strtotime($date));
+        $days = array();
+        for($i=$first_day; $i<=$last_day; $i=$i+7 ){
+            if($i > 0){ //avoid negative values
+                $days[] = $i;
+            }
+        }
+        return  $days;
     }
 }

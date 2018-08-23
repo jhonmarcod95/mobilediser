@@ -23,7 +23,14 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/home', 'HomeController@index')->name('home');
 
+    #announcement
+    Route::get('/announcements', 'AnnouncementController@show');
+    Route::get('/announcements/edit/{id}', 'AnnouncementController@edit');
+
+    Route::post('/announcement/post', 'AnnouncementController@post');
     Route::post('/announcement/add', 'AnnouncementController@add');
+    Route::post('/announcements/update/{id}', 'AnnouncementController@update');
+
 
     #message
     Route::get('/message', 'MessageController@show');
@@ -38,6 +45,7 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
 
     Route::post('/schedules/save', 'ScheduleController@save');
     Route::post('/schedules/delete', 'ScheduleController@delete');
+    Route::post('/schedules/upload', 'ScheduleController@upload');
 
     #users
     Route::get('/users', 'UserController@show');
@@ -104,12 +112,19 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     #reports
     Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
     Route::get('/reports/merchandiserLog', 'ReportsController@merchandiserLog');
+    Route::get('/reports/merchandiserAttendance', 'ReportsController@merchandiserAttendance');
+
 
 
 
 
 });
 
+
+
+Route::get('importExport', 'MaatwebsiteController@importExport');
+Route::get('downloadExcel/{type}', 'MaatwebsiteController@downloadExcel');
+Route::post('importExcel', 'MaatwebsiteController@importExport');
 
 
 

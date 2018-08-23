@@ -75,5 +75,6 @@
 </script>
 @yield('select2Script')
 
+
 {{-- External Source --}}
 

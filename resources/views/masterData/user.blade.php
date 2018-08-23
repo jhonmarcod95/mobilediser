@@ -62,12 +62,9 @@
                                 <td><small class="label @if($user->account_status == 'ACTIVE'){{ 'label-success' }} @else {{ 'label-danger' }} @endif">{{ $user->account_status }}</small></td>
                                 <td>{{ $user->username }}</td>
                                 <td>{{ $user->email }}</td>
-
                             </tr>
                             @endforeach
-
                             </tbody>
-
                         </table>
                         </div>
                     </div>
@@ -76,6 +73,5 @@
         </div>
         @include('masterData.userModal')
     </section>
-
 @endsection
 

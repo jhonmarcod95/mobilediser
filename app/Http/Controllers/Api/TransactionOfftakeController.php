@@ -16,12 +16,12 @@ class TransactionOfftakeController extends Controller
         return $this->getLatestEndingBalance($request->customer_code);
     }
 
-    public function addTransactionOfftake(Request $request){
-        $transaction_number = $request->transaction_number;
+    public function addTransactionOfftake($transaction_number){
 
         $result = 'false';
 
-        if (!TransactionOfftake::where('transaction_number', $transaction_number)->exists()) { #if transaction is not yet added
+        /*----------------------------- transaction is not yet added -------------------------------*/
+        if (!TransactionOfftake::where('transaction_number', $transaction_number)->exists()) {
             $customerCode = InventoryTransactionHeader::where('transaction_number', $transaction_number)
                 ->pluck('customer_code')
                 ->first();
@@ -41,16 +41,8 @@ class TransactionOfftakeController extends Controller
                 ->get()
                 ->groupBy('material_code');
 
-            /*$beginningBalances = $this->getLatestEndingBalance($customerCode);*/
-
-            #loop all inventory types from materials to set beg.bal&whse etc...
+            /*----------- loop all inventory types from materials to set beg.bal&whse etc... --------*/
             foreach ($transactionItems as $materials){
-
-                /*$beginning_balance = $beginningBalances
-                    ->where('material_code', $materials->first()->material_code)
-                    ->pluck('ending_balance')
-                    ->first();*/
-
                 $beginning_balance = 0;
                 $delivery = 0;
                 $rtv = 0;
@@ -81,6 +73,7 @@ class TransactionOfftakeController extends Controller
                         $beginning_balance = $material->base_qty;
                     }
                 }
+                /*-------------------------------------------------------------------------------------*/
 
                 $physical_count = $this->computePhysicalCount($warehouse_area, $bo_area, $shelves_area);
                 $offtake = $this->computeOfftake($beginning_balance,$physical_count,$rtv,$delivery);
@@ -240,11 +233,7 @@ class TransactionOfftakeController extends Controller
                         $transactionOfftake->save();
                     }
                 }
-
-
             }
-
-
         }
 
 

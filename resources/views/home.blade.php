@@ -33,6 +33,7 @@
                     <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
+
             <!-- ./col -->
             <div class="col-lg-3 col-xs-6">
                 <!-- small box -->
@@ -47,6 +48,7 @@
                     <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
+
             <!-- ./col -->
             <div class="col-lg-3 col-xs-6">
                 <!-- small box -->
@@ -94,7 +96,7 @@
 
                         <h3 class="box-title">Announcements</h3>
 
-                        {!! Form::open(['url' => '/announcement/add', 'method' => 'POST']) !!}
+                        {!! Form::open(['url' => '/announcement/post', 'method' => 'POST']) !!}
                         <div class="box-body">
                             <div class="input-group-btn">
                                 <textarea name="message" rows="4" class="form-control" placeholder="Type message..." required></textarea>

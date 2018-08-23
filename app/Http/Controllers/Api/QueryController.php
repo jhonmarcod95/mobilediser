@@ -65,6 +65,11 @@ class QueryController extends Controller
             DB::select($expiration);
             DB::select($beginning);
 
+            /*------- save transaction to offtake table ------------*/
+            $offtake = new TransactionOfftakeController();
+            $offtake->addTransactionOfftake($transaction_number);
+            /*------------------------------------------------------*/
+
             $result = "success";
         }
         catch (\Exception $e)

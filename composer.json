@@ -15,7 +15,8 @@
         "laravelcollective/html": "^5.4.0",
         "laravolt/avatar": "^2.0",
         "owen-it/laravel-auditing": "^6.1",
-        "realrashid/sweet-alert": "^1.1"
+        "realrashid/sweet-alert": "^1.1",
+        "maatwebsite/excel": "~2.1.0"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
