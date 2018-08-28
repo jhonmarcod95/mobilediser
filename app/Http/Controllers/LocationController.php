@@ -59,7 +59,7 @@ class LocationController extends Controller
             ->leftJoin('customer_master_data', 'customer_geofences.customer_code', '=', 'customer_master_data.customer_code')
             ->get();
 
-        $customers = Customer::select(DB::raw("CONCAT(name, ' - ', branch) AS name"), 'customer_code')
+        $customers = Customer::showCodeAndName(DB::raw("CONCAT(name, ' - ', branch) AS name"), 'customer_code')
             ->pluck(
                 'name',
                 'customer_code'

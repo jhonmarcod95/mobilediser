@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 use jeremykenedy\LaravelRoles\Traits\HasRoleAndPermission;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -39,6 +40,16 @@ class User extends Authenticatable implements Auditable
     {
         return $this->hasOne(UserImage::class);
     }
+
+    public static function getName($id){
+        $result = User::select(DB::raw("CONCAT(last_name, ' ', first_name) AS fullname"))
+            ->where('merchandiser_id', $id)
+            ->pluck('fullname')
+            ->first();
+
+        return $result;
+    }
+
 
 
 }

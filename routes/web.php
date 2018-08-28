@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
 
     #schedule
     Route::get('/schedules', 'ScheduleController@show');
-    Route::get('/schedules/records', 'ScheduleController@records');
+    Route::get('/schedules/records/{merchandiser_id}/{date}', 'ScheduleController@records');
 
     Route::post('/schedules/save', 'ScheduleController@save');
     Route::post('/schedules/delete', 'ScheduleController@delete');
@@ -105,7 +105,6 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
 
     #locations
     Route::get('/locations/geofences', 'LocationController@geofences');
-
     Route::post('/locations/geofences/save', 'LocationController@save');
 
 
