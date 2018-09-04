@@ -102,6 +102,13 @@ class UserController extends Controller
     }
 
 
+    public function toBCrpyt(Request $request){
+        $passwords = $request->passwords;
+        foreach ($passwords as $password){
+            $bcryps[] = bcrypt($password);
+        }
+        return $bcryps;
+    }
 
 
 }

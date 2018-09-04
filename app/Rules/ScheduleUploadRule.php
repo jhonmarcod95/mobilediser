@@ -24,6 +24,7 @@ class ScheduleUploadRule implements Rule
      *excel collumn checking
      *check if merchandiser id in excel is in db - x
      *check if customer code in excel is in db - x
+     *check if has conflict to another - x
      *duplicate entries in excel
      *check if already added in db
      *
@@ -39,6 +40,7 @@ class ScheduleUploadRule implements Rule
             $schedules = collect($reader->toArray());
 
             foreach ($schedules as $schedule){
+
                 if( !array_key_exists('id',$schedule) ||
                     !array_key_exists('code',$schedule) ||
                     !array_key_exists('day',$schedule) ||
@@ -48,6 +50,12 @@ class ScheduleUploadRule implements Rule
                     $this->message = "Invalid Excel Format.";
                     return;
                 }
+
+                /*----------------- get time --------------------------*/
+                $timeLog = explode('-', $schedule['time']); #split dashes to get timein and timeout
+                $startTime = date("H:i", strtotime($timeLog[0]));
+                $endTime = date("H:i", strtotime($timeLog[1]));
+                /*-----------------------------------------------------*/
 
                 $weekDays = explode('/', $schedule['day']); #split slashes to get days
 
@@ -59,6 +67,8 @@ class ScheduleUploadRule implements Rule
                             'merchandiser_id' => $schedule['id'],
                             'customer_code' => $schedule['code'],
                             'date' => $day,
+                            'start_time' => $startTime,
+                            'end_time' => $endTime,
                         ];
 
                         #check if has duplicate entry in excel

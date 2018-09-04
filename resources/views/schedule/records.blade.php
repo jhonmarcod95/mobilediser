@@ -2,11 +2,12 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Schedules
+            Schedule Record
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">Schedules</li>
+            <li><a href="{{ url('/schedules') }}"><i class="fa fa-calendar"></i> Schedules</a></li>
+            <li class="active">Record</li>
         </ol>
     </section>
 
@@ -65,15 +66,6 @@
                         </div>
 
 
-                        <div class="row">
-
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                @include('layouts.errors')
-                            </div>
-                        </div>
 
                         <div class="box-footer">
                             {!! Form::submit('Add Schedule', ['class' => 'btn btn-primary']) !!}
@@ -111,17 +103,29 @@
                                             <td>Date</td>
                                             <td>Start Time</td>
                                             <td>End Time</td>
+                                            <td>Status</td>
+                                            <td></td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($schedules as $schedule)
                                         <tr>
-                                            <td>{!! Form::checkbox('schedule_ids[]', $schedule->id); !!}</td>
+                                            <td>
+                                                @if($schedule->status == '002')
+                                                    {!! Form::checkbox('schedule_ids[]', $schedule->id); !!}
+                                                @endif
+                                            </td>
                                             <td>{{ $schedule->last_name . ' ' . $schedule->first_name }}</td>
                                             <td>{{ $schedule->customer_name }}</td>
                                             <td>{{ $schedule->date }}</td>
-                                            <td>{{ $schedule->time_in }}</td>
-                                            <td>{{ $schedule->time_out }}</td>
+                                            <td>{{ Carbon::parse($schedule->time_in)->format('h:i a') }}</td>
+                                            <td>{{ Carbon::parse($schedule->time_out)->format('h:i a') }}</td>
+                                            <td>{{ $schedule->status_description }}</td>
+                                            <td>
+                                                @if($schedule->status == '002')
+                                                    <a href="{{ url('/schedules/edit/' . $schedule->id )  }}" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -140,7 +144,14 @@
 
             </div>
         </div>
+        <div class="row">
+            <div class="col-xs-12">
+                @include('layouts.errors')
+            </div>
+        </div>
 
     </section>
+
+
     @endif
 @endsection

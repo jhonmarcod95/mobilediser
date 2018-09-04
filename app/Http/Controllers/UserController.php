@@ -92,6 +92,7 @@ class UserController extends Controller
         $user->contact_number = $request->contact_number;
         $user->account_type = $request->accountType;
         $user->account_status = $request->accountStatus;
+        $user->save();
 
         #image
         $userImage = new UserImage();

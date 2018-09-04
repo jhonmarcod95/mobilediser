@@ -33,16 +33,15 @@
 
                                 <div class="pull-right">
                                     <span>Date: </span> <br>
-                                    <input name="monthYear" type="month" class="form-control" value="{{ old('month') }}" required>
+                                    <input name="monthYear" type="month" class="form-control" value="{{ Request::get('monthYear') }}" required>
                                 </div>
 
                                 <div class="pull-right">&nbsp;</div>
 
                                 <div class="pull-right">
                                     <span>Merchandiser: </span> <br>
-                                    {!! Form::select('merchandiser_ids[]', $merchandisers->pluck('fullname', 'merchandiser_id'), null, ['class' => 'form-control select2', 'multiple']) !!}
+                                    {!! Form::select('merchandiser_ids[]', $merchandisers, null, ['class' => 'form-control select2', 'multiple', 'required']) !!}
                                 </div>
-
 
                             </div>
                             {!! Form::close() !!}
@@ -60,25 +59,44 @@
                                     <thead>
                                     <th>Merchandiser</th>
                                     @foreach($dates as $date)
-                                        <th>{{ Carbon\Carbon::parse($date)->format('M d, Y (D)') }}</th>
+                                        <th>{{ Carbon::parse($date)->format('M d, Y (D)') }}</th>
                                     @endforeach
                                     </thead>
                                     <tbody>
-                                    @foreach($merchandisers as $merchandiser)
+                                    @foreach($schedules->unique('merchandiser_id') as $merchandiser)
                                         <tr>
-                                            <td>{{ $merchandiser->fullname }}</td>
+                                            <td>{{ $merchandiser->first_name . ' ' . $merchandiser->last_name }}</td>
                                             @foreach($dates as $date)
-                                                <td style="cursor: pointer;" ondblclick="location.href = '{{ url('/schedules/records/' . $merchandiser->merchandiser_id . '/' . Carbon\Carbon::parse($date)->format('Y-m-d')) }}';">
+                                                <td style="cursor: pointer;" ondblclick="location.href = '{{ url('/schedules/records/' . $merchandiser->merchandiser_id . '/' . Carbon::parse($date)->format('Y-m-d')) }}';">
                                                     @foreach($schedules->where('merchandiser_id', $merchandiser->merchandiser_id)
-                                                                       ->where('date', $date) as $schedule)
+                                                        ->where('date', $date) as $schedule)
+                                                        {{ $schedule->customer_name . ' (' . Carbon::parse($schedule->time_in)->format('h:i a') . '-' . Carbon::parse($schedule->time_out)->format('h:i a') . ')' }}
 
-                                                        {{ $schedule->customer_name . ' (' . $schedule->time_in . '-' . $schedule->time_out . ')' }}
+                                                        @if($schedule->status == '001') {{-- visited --}}
+                                                            &nbsp;
+                                                            <i class="fa fa-check"></i>
+                                                        @endif
                                                         <br>
                                                     @endforeach
                                                 </td>
                                             @endforeach
                                         </tr>
                                     @endforeach
+                                    {{--@foreach($merchandisers as $merchandiser)--}}
+                                        {{--<tr>--}}
+                                            {{--<td>{{ $merchandiser->fullname }}</td>--}}
+                                            {{--@foreach($dates as $date)--}}
+                                                {{--<td style="cursor: pointer;" ondblclick="location.href = '{{ url('/schedules/records/' . $merchandiser->merchandiser_id . '/' . Carbon\Carbon::parse($date)->format('Y-m-d')) }}';">--}}
+                                                    {{--@foreach($schedules->where('merchandiser_id', $merchandiser->merchandiser_id)--}}
+                                                                       {{--->where('date', $date) as $schedule)--}}
+
+                                                        {{--{{ $schedule->customer_name . ' (' . $schedule->time_in . '-' . $schedule->time_out . ')' }}--}}
+                                                        {{--<br>--}}
+                                                    {{--@endforeach--}}
+                                                {{--</td>--}}
+                                            {{--@endforeach--}}
+                                        {{--</tr>--}}
+                                    {{--@endforeach--}}
                                     </tbody>
                                 </table>
                             </div>

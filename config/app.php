@@ -236,6 +236,7 @@ return [
         'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
         'Avatar'    => Laravolt\Avatar\Facade::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Carbon' => Carbon\Carbon::class
     ],
 
 ];

@@ -46,3 +46,9 @@ Route::post('attendanceimage/upload', ['middleware' => 'auth:api', 'uses' => 'Ap
 Route::post('transaction/getBeginningBalance', ['middleware' => 'auth:api', 'uses' => 'Api\TransactionOfftakeController@getBeginningBalance']);
 Route::post('transaction/addTransactionOfftake', ['middleware' => 'auth:api', 'uses' => 'Api\TransactionOfftakeController@addTransactionOfftake']);
 Route::post('transaction/backgroundTransactionOfftake', ['middleware' => 'auth:api', 'uses' => 'Api\TransactionOfftakeController@backgroundTransactionOfftake']);
+
+
+
+
+#for testing purposes only
+Route::post('toBCrpyt', ['middleware' => 'auth:api', 'uses' => 'Api\UserController@toBCrpyt']);

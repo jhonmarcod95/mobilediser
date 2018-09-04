@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 class AttendanceImageController extends Controller
 {
     public function upload(Request $request){
-        $path = $request->file('img')->store('avatars','public');
+        $path = $request->file('img')->store('attendance','public');
         $schedule_id = $request->schedule_id;
 
         #image

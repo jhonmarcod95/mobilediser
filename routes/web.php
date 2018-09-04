@@ -42,8 +42,10 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     #schedule
     Route::get('/schedules', 'ScheduleController@show');
     Route::get('/schedules/records/{merchandiser_id}/{date}', 'ScheduleController@records');
+    Route::get('/schedules/edit/{id}', 'ScheduleController@edit');
 
     Route::post('/schedules/save', 'ScheduleController@save');
+    Route::post('/schedules/update', 'ScheduleController@update');
     Route::post('/schedules/delete', 'ScheduleController@delete');
     Route::post('/schedules/upload', 'ScheduleController@upload');
 
