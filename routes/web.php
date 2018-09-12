@@ -31,7 +31,6 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::post('/announcement/add', 'AnnouncementController@add');
     Route::post('/announcements/update/{id}', 'AnnouncementController@update');
 
-
     #message
     Route::get('/message', 'MessageController@show');
     Route::get('/message/chat/{id}', 'MessageController@chat');

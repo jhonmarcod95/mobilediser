@@ -43,6 +43,7 @@ class LocationController extends Controller
         $customer_geofence = CustomerGeofence::where('customer_code', $customer_code)
             ->first();
 
+
         if(!empty($customer_geofence))
         {
             $customer_lat = $customer_geofence->geo_center_lat;
@@ -51,7 +52,13 @@ class LocationController extends Controller
 
             $distance = CustomerGeofence::haversineGreatCircleDistance($curr_lat, $curr_lng, $customer_lat, $customer_lng, 6371);
 
-
+            /*------- save location (for checking only) ---------*/
+            $location = new Location();
+            $location->lat = $customer_lat;
+            $location->lng = $customer_lng;
+            $location->customer_code = $customer_code;
+            $location->save();
+            /*---------------------------------------------------*/
 
             if($distance < $radius_distance){
                 $result = 'success';
