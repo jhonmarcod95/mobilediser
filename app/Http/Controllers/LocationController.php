@@ -42,9 +42,6 @@ class LocationController extends Controller
         app('map')->add_marker($marker);
 
         $map = app('map')->create_map();
-//return $map;
-
-
 
         return view('location.show', compact(
             'locations',
@@ -54,16 +51,11 @@ class LocationController extends Controller
 
     public function geofences()
     {
-        
         $customerGeofences = DB::table('customer_geofences')
             ->leftJoin('customer_master_data', 'customer_geofences.customer_code', '=', 'customer_master_data.customer_code')
             ->get();
 
-        $customers = Customer::showCodeAndName(DB::raw("CONCAT(name, ' - ', branch) AS name"), 'customer_code')
-            ->pluck(
-                'name',
-                'customer_code'
-            );
+        $customers = Customer::showCodeAndName();
 
         return view('location.geofence',compact(
             'customerGeofences',
