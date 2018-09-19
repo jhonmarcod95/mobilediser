@@ -12,8 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionOfftakeController extends Controller
 {
+
     public function getBeginningBalance(Request $request){
-        return $this->getLatestEndingBalance($request->customer_code);
+        $customer_code = $request->customer_code;
+        $beginningBalance = DB::select("CALL p_beginning_balance('$customer_code')");
+        $beginningBalance = collect($beginningBalance);
+        return [
+            'items' => $beginningBalance,
+            'count' => $beginningBalance->count()
+        ];
     }
 
     public function addTransactionOfftake($transaction_number){
@@ -116,127 +123,4 @@ class TransactionOfftakeController extends Controller
         return $result;
     }
 
-    private function getLatestEndingBalance($customer_code){
-        $beginningBalance = TransactionOfftake::where('customer_code', $customer_code)
-            ->join('material_master_data', 'transaction_offtake.material_code', 'material_master_data.material_code')
-            ->orderByDesc('created_at')
-            ->get([
-                'material_master_data.material_code',
-                'material_master_data.material_description',
-                'base_uom',
-                'ending_balance',
-                'transaction_offtake.created_at'
-            ])
-            ->unique('material_code')
-            ->values()
-            ->all();
-
-        $beginningBalance = collect($beginningBalance);
-        return [
-            'items' => $beginningBalance,
-            'count' => $beginningBalance->count()
-        ];
-    }
-
-    public function backgroundTransactionOfftake(){
-
-        $customers = Customer::all();
-        foreach ($customers as $customer) {
-
-            $customer_code = $customer->customer_code;
-
-            $lastInventory = InventoryTransactionHeader::where('customer_code', $customer_code)
-                ->latest()
-                ->first();
-
-
-            if(!empty($lastInventory)){
-
-                $transaction_number = $lastInventory->transaction_number;
-
-                if (!TransactionOfftake::where('transaction_number', $transaction_number)->exists()) { #if transaction is not yet added
-
-                    $transactionItems = InventoryTransactionItem::where('transaction_number', $transaction_number)
-                        ->groupBy(
-                            'material_code',
-                            'inventory_type',
-                            'base_uom'
-                        )
-                        ->select(
-                            'material_code',
-                            DB::raw('SUM(base_qty) AS base_qty'),
-                            'base_uom',
-                            'inventory_type'
-                        )
-                        ->get()
-                        ->groupBy('material_code');
-
-                    $beginningBalances = $this->getLatestEndingBalance($customer_code);
-
-                    #loop all inventory types from materials to set beg.bal&whse etc...
-                    foreach ($transactionItems as $materials){
-
-                        $beginning_balance = $beginningBalances
-                            ->where('material_code', $materials->first()->material_code)
-                            ->pluck('ending_balance')
-                            ->first();
-
-                        $delivery = 0;
-                        $rtv = 0;
-                        $warehouse_area = 0;
-                        $bo_area = 0;
-                        $shelves_area = 0;
-
-                        foreach ($materials as $material){
-
-                            $inventoryType = $material->inventory_type;
-
-                            if($inventoryType == '1'){ #warehouse
-                                $warehouse_area = $material->base_qty;
-                            }
-                            elseif($inventoryType == '2'){ #shelves
-                                $shelves_area = $material->base_qty;
-                            }
-                            elseif($inventoryType == '3'){ #bo
-                                $bo_area = $material->base_qty;
-                            }
-                            elseif($inventoryType == '4'){ #delivery
-                                $delivery = $material->base_qty;
-                            }
-                            elseif($inventoryType == '5'){ #return
-                                $rtv = $material->base_qty;
-                            }
-                        }
-
-
-
-                        $physical_count = $this->computePhysicalCount($warehouse_area, $bo_area, $shelves_area);
-                        $offtake = $this->computeOfftake($beginning_balance,$physical_count,$rtv,$delivery);
-                        $ending_balance = $this->computeEndingBalance($beginning_balance,$offtake,$delivery,$rtv);
-
-                        if($offtake < 0) $offtake = 0; #to handle negative values during first time inventory
-
-                        $transactionOfftake = new TransactionOfftake();
-                        $transactionOfftake->transaction_number = $transaction_number;
-                        $transactionOfftake->customer_code = $customer_code;
-                        $transactionOfftake->material_code = $material->material_code;
-                        $transactionOfftake->base_uom = $material->base_uom;
-                        $transactionOfftake->beginning_balance = $beginning_balance;
-                        $transactionOfftake->delivery = $delivery;
-                        $transactionOfftake->rtv = $rtv;
-                        $transactionOfftake->physical_count = $physical_count;
-                        $transactionOfftake->warehouse_area = $warehouse_area;
-                        $transactionOfftake->bo_area = $bo_area;
-                        $transactionOfftake->shelves_area = $shelves_area;
-                        $transactionOfftake->offtake = $offtake;
-                        $transactionOfftake->ending_balance = $ending_balance;
-                        $transactionOfftake->save();
-                    }
-                }
-            }
-        }
-
-
-
-    }
 }
