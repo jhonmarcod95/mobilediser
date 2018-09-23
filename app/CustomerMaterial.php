@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CustomerType extends Model
+class CustomerMaterial extends Model
 {
-    protected $table = 'chain';
+    //
 }

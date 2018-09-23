@@ -8,7 +8,7 @@
             Customer Master Data
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-user"></i>Customer Master Data</a></li>
+            <li><a href="#"><i class="fa fa-database"></i>Customer Master Data</a></li>
         </ol>
     </section>
 
@@ -22,7 +22,7 @@
                         <h3 class="box-title">Customer List</h3>
 
                         {{-- Register --}}
-                        <a class="btn btn-primary pull-right" href="{{ url('/customers/add') }}"><i class="fa fa-user-plus"></i></a>
+                        <a class="btn btn-primary pull-right" href="{{ url('/customers/add') }}"><i class="fa fa-plus"></i></a>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -35,8 +35,8 @@
                                     <th>Customer Code</th>
                                     <th>Name</th>
                                     <th>Address</th>
-                                    <th>Type Code</th>
-                                    <th>Type Description</th>
+                                    <th>Chain Code</th>
+                                    <th>Chain Description</th>
                                     <th>Municipality Code</th>
                                     <th>Municipality Description</th>
                                 </tr>
@@ -53,7 +53,7 @@
                                         <td>{{ $customer->customer_code }}</td>
                                         <td>{{ $customer->name }}</td>
                                         <td>{{ $customer->address }}</td>
-                                        <td>{{ $customer->type_code }}</td>
+                                        <td>{{ $customer->chain_code }}</td>
                                         <td>{{ $customer->type_description }}</td>
                                         <td>{{ $customer->municipality_code }}</td>
                                         <td>{{ $customer->municipality_description }}</td>

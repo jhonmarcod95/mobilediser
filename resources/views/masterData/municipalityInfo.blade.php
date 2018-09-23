@@ -15,7 +15,7 @@
             @endif
         </h1>
         <ol class="breadcrumb">
-            <li><a href="{{ url('/municipalities') }}"><i class="fa fa-user"></i>Municipality Master Data</a></li>
+            <li><a href="{{ url('/municipalities') }}"><i class="fa fa-database"></i>Municipality Master Data</a></li>
             <li class="active">
                 @if($isEdit)
                     Info
@@ -61,7 +61,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="text-muted">Province</label>
-                                    {!! @Form::select('provincial_code', $provinces, $municipality->provincial_code, ['class' => 'form-control', 'placeholder' => '', 'required']) !!}
+                                    {!! @Form::select('provincial_code', $provinces, $municipality->provincial_code, ['class' => 'form-control select2', 'placeholder' => '', 'required']) !!}
                                 </div>
                             </div>
                         </div>

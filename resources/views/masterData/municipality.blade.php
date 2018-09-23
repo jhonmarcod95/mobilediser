@@ -8,7 +8,7 @@
             Municipality Master Data
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-user"></i>Municipality Master Data</a></li>
+            <li><a href="#"><i class="fa fa-database"></i>Municipality Master Data</a></li>
         </ol>
     </section>
 
@@ -22,7 +22,7 @@
                         <h3 class="box-title">Municipality List</h3>
 
                         {{-- Register --}}
-                        <a class="btn btn-primary pull-right" href="{{ url('/municipalities/add') }}"><i class="fa fa-user-plus"></i></a>
+                        <a class="btn btn-primary pull-right" href="{{ url('/municipalities/add') }}"><i class="fa fa-plus"></i></a>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -31,7 +31,6 @@
                             <table id="dataTable" class="table table-hover table-striped" style="width: 100%; white-space: nowrap">
                                 <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Municipality Code</th>
                                     <th>Municipality Description</th>
                                     <th>Province Description</th>
@@ -47,8 +46,8 @@
                                             <div class="btn-group ">
                                                 <a href="{{ url('/municipalities/edit?id=' . $municipality->id) }}" ><li class="fa fa-pencil"></li></a>
                                             </div>
-                                        </td>
-                                        <td>{{ $municipality->municipality_code }}</td>
+                                            &nbsp;
+                                            {{ $municipality->municipality_code }}</td>
                                         <td>{{ $municipality->municipality_description }}</td>
                                         <td>{{ $municipality->province_description}}</td>
                                         <td>{{ $municipality->region_description }}</td>

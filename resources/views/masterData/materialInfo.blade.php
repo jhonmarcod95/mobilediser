@@ -15,7 +15,7 @@
             @endif
         </h1>
         <ol class="breadcrumb">
-            <li><a href="{{ url('/materials') }}"><i class="fa fa-user"></i>Material Master Data</a></li>
+            <li><a href="{{ url('/materials') }}"><i class="fa fa-database"></i>Material Master Data</a></li>
             <li class="active">
                 @if($isEdit)
                     Info

@@ -61,9 +61,9 @@
             </form>
 
             <!-- /.social-auth-links -->
-            <a href="{{ route('password.request') }}">
-                I forgot my password
-            </a>
+            {{--<a href="{{ route('password.request') }}">--}}
+                {{--I forgot my password--}}
+            {{--</a>--}}
         </div>
         @if(Session::has('message'))
             <div class="alert alert-danger" role="alert">

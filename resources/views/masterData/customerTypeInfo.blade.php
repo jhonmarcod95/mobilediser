@@ -9,13 +9,13 @@
     <section class="content-header">
         <h1>
             @if($isEdit)
-                Customer Type Info
+                Chain Info
             @else
-                Customer Type Registration
+                Chain Registration
             @endif
         </h1>
         <ol class="breadcrumb">
-            <li><a href="{{ url('/customers/types') }}"><i class="fa fa-user"></i>Customer Type Master Data</a></li>
+            <li><a href="{{ url('/customers/types') }}"><i class="fa fa-database"></i>Chain Master Data</a></li>
             <li class="active">
                 @if($isEdit)
                     Info
@@ -43,8 +43,8 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="text-muted">Type Code</label>
-                                    {!! @Form::text('type_code', $customerType->type_code, ['class' => 'form-control', 'maxlength' => '255', 'required']) !!}
+                                    <label class="text-muted">Chain Code</label>
+                                    {!! @Form::text('chain_code', $customerType->chain_code, ['class' => 'form-control', 'maxlength' => '255', 'required']) !!}
                                 </div>
                             </div>
                         </div>
@@ -62,7 +62,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="text-muted">Category Description</label>
-                                    {!! @Form::select('category_code', $customerCategories, $customerType->category_code, ['class' => 'form-control', 'placeholder' => '', 'required']) !!}
+                                    {!! @Form::select('category_code', $customerCategories, $customerType->category_code, ['class' => 'form-control select2', 'placeholder' => '', 'required']) !!}
                                 </div>
                             </div>
                         </div>

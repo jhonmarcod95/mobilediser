@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class CustomerTypeController extends Controller
 {
     public function show(){
-        $customerTypes = DB::select('CALL p_customerTypes');
+        $customerTypes = DB::select('CALL p_chain');
 
         return view('masterData.customerType',compact(
             'customerTypes'
@@ -47,14 +47,14 @@ class CustomerTypeController extends Controller
     public function save(Request $request){
 
         $validation = $request->validate([
-            'type_code' => 'required|unique:customer_type',
+            'chain_code' => 'required|unique:chain',
             'description' => 'required',
             'category_code' => 'required',
         ]);
 
         #save customer type
         $customerType = new CustomerType();
-        $customerType->type_code = $request->type_code;
+        $customerType->chain_code = $request->chain_code;
         $customerType->description = $request->description;
         $customerType->category_code = $request->category_code;
         $customerType->save();
@@ -67,7 +67,7 @@ class CustomerTypeController extends Controller
 
         $id = $request->id;
         $validation = $request->validate([
-            'type_code' => 'required|unique:customer_type,type_code,' . $id,
+            'chain_code' => 'required|unique:chain,chain_code,' . $id,
             'description' => 'required',
             'category_code' => 'required',
         ]);
@@ -75,7 +75,7 @@ class CustomerTypeController extends Controller
 
         #update customer type
         $customerType = CustomerType::find($id);
-        $customerType->type_code = $request->type_code;
+        $customerType->chain_code = $request->chain_code;
         $customerType->description = $request->description;
         $customerType->category_code = $request->category_code;
         $customerType->save();

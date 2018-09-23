@@ -15,7 +15,7 @@
             @endif
         </h1>
         <ol class="breadcrumb">
-            <li><a href="{{ url('/agencies') }}"><i class="fa fa-user"></i>Agency Master Data</a></li>
+            <li><a href="{{ url('/agencies') }}"><i class="fa fa-database"></i>Agency Master Data</a></li>
             <li class="active">
                 @if($isEdit)
                     Info
@@ -40,7 +40,6 @@
                         {!! @Form::hidden('agency_code', $agency->agency_code) !!}
 
                         <div class="row">
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="text-muted">Name</label>

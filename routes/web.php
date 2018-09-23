@@ -88,6 +88,9 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::post('/customers/categories/save', 'CustomerCategoryController@save');
     Route::post('/customers/categories/update', 'CustomerCategoryController@update');
 
+    #customer carried materials
+    Route::get('/customers/carried', 'CustomerMaterialController@show');
+
     #municipalities
     Route::get('/municipalities', 'MunicipalityController@show');
     Route::get('/municipalities/add', 'MunicipalityController@info');

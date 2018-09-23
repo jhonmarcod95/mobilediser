@@ -8,7 +8,7 @@
             Material Master Data
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-user"></i>Material Master Data</a></li>
+            <li><a href="#"><i class="fa fa-database"></i>Material Master Data</a></li>
         </ol>
     </section>
 
@@ -22,7 +22,7 @@
                         <h3 class="box-title">Material List</h3>
 
                         {{-- Register --}}
-                        <a class="btn btn-primary pull-right" href="{{ url('/materials/add') }}"><i class="fa fa-user-plus"></i></a>
+                        <a class="btn btn-primary pull-right" href="{{ url('/materials/add') }}"><i class="fa fa-plus"></i></a>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -31,7 +31,6 @@
                             <table id="dataTable" class="table table-hover table-striped" style="width: 100%; white-space: nowrap">
                                 <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Material Code</th>
                                     <th>Description</th>
                                     <th>Base unit</th>
@@ -46,8 +45,8 @@
                                             <div class="btn-group ">
                                                 <a href="{{ url('/materials/edit?id=' . $material->id) }}" ><li class="fa fa-pencil"></li></a>
                                             </div>
-                                        </td>
-                                        <td>{{ $material->material_code }}</td>
+                                            &nbsp;
+                                            {{ $material->material_code }}</td>
                                         <td>{{ $material->material_description }}</td>
                                         <td>{{ $material->base_unit }}</td>
                                         <td>{{ $material->created_at }}</td>

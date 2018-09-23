@@ -33,7 +33,7 @@ class CustomerController extends Controller
             }
         }
 
-        $customerTypes = CustomerType::get()->pluck('description', 'type_code');
+        $customerTypes = CustomerType::get()->pluck('description', 'chain_code');
         $customerMunicipalities = CustomerMunicipality::get()->pluck('description', 'municipality_code');
 
         return view('masterData.customerInfo',compact(
@@ -52,7 +52,6 @@ class CustomerController extends Controller
             'name' => 'required',
             'address' => 'required',
             'customer_type_code' => 'required',
-            'municipality_code' => 'required',
         ]);
 
         #save customers
@@ -60,7 +59,7 @@ class CustomerController extends Controller
         $customer->customer_code = $request->customer_code;
         $customer->name = $request->name;
         $customer->address = $request->address;
-        $customer->customer_type_code = $request->customer_type_code;
+        $customer->chain_code = $request->customer_type_code;
         $customer->municipality_code = $request->municipality_code;
         $customer->save();
 
@@ -72,11 +71,10 @@ class CustomerController extends Controller
 
         $customer_id = $request->customer_id;
         $validation = $request->validate([
-            'customer_code' => 'required|unique:customer_master_data,customer_code,' . $customer_id . ',customer_id|digits:10',
+            'customer_code' => 'required|unique:customer_master_data,customer_code,' . $customer_id . ',customer_id',
             'name' => 'required',
             'address' => 'required',
             'customer_type_code' => 'required',
-            'municipality_code' => 'required',
         ]);
 
 
@@ -85,9 +83,10 @@ class CustomerController extends Controller
         $customer->customer_code = $request->customer_code;
         $customer->name = $request->name;
         $customer->address = $request->address;
-        $customer->customer_type_code = $request->customer_type_code;
+        $customer->chain_code = $request->customer_type_code;
         $customer->municipality_code = $request->municipality_code;
         $customer->save();
+
         alert()->success('Customer info has been updated.','');
         return redirect('/customers');
     }

@@ -8,7 +8,7 @@
             Agency Master Data
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-user"></i>Agency Master Data</a></li>
+            <li><a href="#"><i class="fa fa-database"></i>Agency Master Data</a></li>
         </ol>
     </section>
 
@@ -22,7 +22,7 @@
                         <h3 class="box-title">Agency List</h3>
 
                         {{-- Register --}}
-                        <a class="btn btn-primary pull-right" href="{{ url('/agencies/add') }}"><i class="fa fa-user-plus"></i></a>
+                        <a class="btn btn-primary pull-right" href="{{ url('/agencies/add') }}"><i class="fa fa-plus"></i></a>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -31,8 +31,6 @@
                             <table id="dataTable" class="table table-hover table-striped" style="width: 100%; white-space: nowrap">
                                 <thead>
                                 <tr>
-                                    <th></th>
-                                    {{--<th>Agency Code</th>--}}
                                     <th>Agency</th>
                                     <th>Address</th>
                                     <th>Contact#</th>
@@ -43,14 +41,12 @@
 
                                 @foreach($agencies as $agency)
                                     <tr>
-
                                         <td>
                                             <div class="btn-group ">
                                                 <a href="{{ url('/agencies/edit?id=' . $agency->agency_code) }}" ><li class="fa fa-pencil"></li></a>
                                             </div>
-                                        </td>
-                                        {{--<td>{{ $agency->agency_code }}</td>--}}
-                                        <td>{{ $agency->name }}</td>
+                                            &nbsp;
+                                            {{ $agency->name }}</td>
                                         <td>{{ $agency->address }}</td>
                                         <td>{{ $agency->contact_number }}</td>
                                         <td>{{ $agency->contact_person }}</td>

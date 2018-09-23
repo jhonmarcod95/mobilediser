@@ -55,6 +55,7 @@ class ScheduleUploadRule implements Rule
                 $timeLog = explode('-', $schedule['time']); #split dashes to get timein and timeout
                 $startTime = date("H:i", strtotime($timeLog[0]));
                 $endTime = date("H:i", strtotime($timeLog[1]));
+
                 /*-----------------------------------------------------*/
 
                 $weekDays = explode('/', $schedule['day']); #split slashes to get days
@@ -72,27 +73,27 @@ class ScheduleUploadRule implements Rule
                         ];
 
                         #check if has duplicate entry in excel
-                        $merchandiserSchedule = collect($this->merchandiserSchedule);
-                        if($merchandiserSchedule->where('merchandiser_id',$schedule['id'])
-                            ->where('customer_code', $schedule['code'])
-                            ->where('date',$day)
-                            ->count() > 1){
-
-                            $this->result = false;
-                            $this->message = "Duplicate entry found in excel file.";
-                            return;
-                        }
-
-                        #check if existing in db
-                        else if(MerchandiserSchedule::where('merchandiser_id', $schedule['id'])
-                            ->where('customer_code', $schedule['code'])
-                            ->where('date', $day)
-                            ->exists()){
-
-                            $this->result = false;
-                            $this->message = "Schedule is already added.";
-                            return;
-                        }
+//                        $merchandiserSchedule = collect($this->merchandiserSchedule);
+//                        $merchandiserSchedule = $merchandiserSchedule->where('merchandiser_id',$schedule['id'])
+//                            ->where('customer_code', $schedule['code'])
+//                            ->where('date',$day);
+//
+//                        if($merchandiserSchedule->count() > 1){
+//                            $this->result = false;
+//                            $this->message = "Duplicate entry found in excel file." . $merchandiserSchedule;
+//                            return;
+//                        }
+//
+//                        #check if existing in db
+//                        else if(MerchandiserSchedule::where('merchandiser_id', $schedule['id'])
+//                            ->where('customer_code', $schedule['code'])
+//                            ->where('date', $day)
+//                            ->exists()){
+//
+//                            $this->result = false;
+//                            $this->message = "Schedule is already added.";
+//                            return;
+//                        }
                     }
                 }
             }

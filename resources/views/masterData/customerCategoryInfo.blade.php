@@ -15,7 +15,7 @@
             @endif
         </h1>
         <ol class="breadcrumb">
-            <li><a href="{{ url('/customers/categories') }}"><i class="fa fa-user"></i>Customer Category Master Data</a></li>
+            <li><a href="{{ url('/customers/categories') }}"><i class="fa fa-database"></i>Customer Category Master Data</a></li>
             <li class="active">
                 @if($isEdit)
                     Info

@@ -55,19 +55,21 @@
 
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-folder"></i> <span>Master Data</span>
+                    <i class="fa fa-database"></i> <span>Master Data</span>
                     <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="{{ url('/users') }}"><i class="fa fa-circle-o"></i> Users</a></li>
-                    <li><a href="{{ url('/agencies') }}"><i class="fa fa-circle-o"></i> Agency</a></li>
-                    <li><a href="{{ url('/customers') }}"><i class="fa fa-circle-o"></i> Customer</a></li>
-                    <li><a href="{{ url('/customers/types') }}"><i class="fa fa-circle-o"></i> Customer Type</a></li>
-                    <li><a href="{{ url('/customers/categories') }}"><i class="fa fa-circle-o"></i> Customer Category</a></li>
-                    <li><a href="{{ url('/municipalities') }}"><i class="fa fa-circle-o"></i> Municipalities</a></li>
-                    <li><a href="{{ url('/materials') }}"><i class="fa fa-circle-o"></i> Material</a></li>
+                    <li><a href="{{ url('/users') }}"><i class="fa fa-circle"></i> Users</a></li>
+                    <li><a href="{{ url('/agencies') }}"><i class="fa fa-circle"></i> Agency</a></li>
+                    <li><a href="{{ url('/customers') }}"><i class="fa fa-circle"></i> Customer</a></li>
+                    <li><a href="{{ url('/customers/types') }}"><i class="fa fa-circle"></i> Chain</a></li>
+                    <li><a href="{{ url('/customers/categories') }}"><i class="fa fa-circle"></i> Customer Category</a></li>
+                    <li><a href="{{ url('/customers/carried') }}"><i class="fa fa-circle"></i> Customer Carried Materials</a></li>
+                    <li><a href="{{ url('/municipalities') }}"><i class="fa fa-circle"></i> Municipalities</a></li>
+                    <li><a href="{{ url('/materials') }}"><i class="fa fa-circle"></i> Material</a></li>
+
                 </ul>
             </li>
             <li>

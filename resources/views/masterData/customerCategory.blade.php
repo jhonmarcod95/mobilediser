@@ -8,7 +8,7 @@
             Customer Category Master Data
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-user"></i>Customer Category Master Data</a></li>
+            <li><a href="#"><i class="fa fa-database"></i>Customer Category Master Data</a></li>
         </ol>
     </section>
 
@@ -22,7 +22,7 @@
                         <h3 class="box-title">Customer Category List</h3>
 
                         {{-- Register --}}
-                        <a class="btn btn-primary pull-right" href="{{ url('/customers/categories/add') }}"><i class="fa fa-user-plus"></i></a>
+                        <a class="btn btn-primary pull-right" href="{{ url('/customers/categories/add') }}"><i class="fa fa-plus"></i></a>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -31,7 +31,6 @@
                             <table id="dataTable" class="table table-hover table-striped" style="width: 100%; white-space: nowrap">
                                 <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Category Code</th>
                                     <th>Description</th>
                                 </tr>
@@ -44,8 +43,8 @@
                                             <div class="btn-group ">
                                                 <a href="{{ url('/customers/categories/edit?id=' . $customerCategory->id) }}" ><li class="fa fa-pencil"></li></a>
                                             </div>
-                                        </td>
-                                        <td>{{ $customerCategory->category_code }}</td>
+                                            &nbsp;
+                                            {{ $customerCategory->category_code }}</td>
                                         <td>{{ $customerCategory->description }}</td>
                                     </tr>
                                 @endforeach

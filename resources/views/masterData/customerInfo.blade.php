@@ -15,7 +15,7 @@
             @endif
         </h1>
         <ol class="breadcrumb">
-            <li><a href="{{ url('/customers') }}"><i class="fa fa-user"></i>Customer Master Data</a></li>
+            <li><a href="{{ url('/customers') }}"><i class="fa fa-database"></i>Customer Master Data</a></li>
             <li class="active">
                 @if($isEdit)
                     Info
@@ -70,15 +70,15 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="text-muted">Customer Type</label>
-                                    {!! @Form::select('customer_type_code', $customerTypes, $customer->customer_type_code, ['class' => 'form-control', 'placeholder' => '', 'required']) !!}
+                                    <label class="text-muted">Chain</label>
+                                    {!! @Form::select('customer_type_code', $customerTypes, $customer->chain_code, ['class' => 'form-control select2', 'placeholder' => '']) !!}
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="text-muted">Customer Municipality</label>
-                                    {!! @Form::select('municipality_code', $customerMunicipalities, $customer->municipality_code, ['class' => 'form-control', 'placeholder' => '', 'required']) !!}
+                                    {!! @Form::select('municipality_code', $customerMunicipalities, $customer->municipality_code, ['class' => 'form-control select2', 'placeholder' => '']) !!}
                                 </div>
                             </div>
                         </div>
