@@ -115,11 +115,11 @@
                     <div class="box-body chat" id="chat-box">
                         @foreach($announcements as $announcement)
                         <div class="item">
-                            <img src="{{ asset('adminLTE/dist/img/face-0.jpg') }}" alt="user image">
+                            <img src="{{ asset('storage/' . $announcement->image_path) }}" alt="user image">
 
                             <p class="message">
                                 <a href="#" class="name">
-                                    <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{ Carbon\Carbon::parse($announcement->created_at)->format('h:i a') }}</small>
+                                    <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{ Carbon::parse($announcement->created_at)->format('h:i a') }}</small>
                                     {{ $announcement->first_name . ' ' . $announcement->last_name }}
                                 </a>
                                <?php echo nl2br($announcement->message) ?>

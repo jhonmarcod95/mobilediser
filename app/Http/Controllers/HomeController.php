@@ -31,8 +31,6 @@ class HomeController extends Controller
     {
 
 
-
-
         $dateToday = Carbon::now()->format('Y-m-d');
 
         $msgHeaders = DB::table('vw_merchandiser_message_header')
