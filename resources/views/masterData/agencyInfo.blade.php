@@ -61,7 +61,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="text-muted">Contact#</label>
-                                    {!! @Form::text('contact_number', $agency->contact_number, ['class' => 'form-control', 'maxlength' => '11', 'required']) !!}
+                                    {!! @Form::text('contact_number', $agency->contact_number, ['class' => 'form-control', 'maxlength' => '20', 'required']) !!}
                                 </div>
                             </div>
 

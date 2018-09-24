@@ -45,7 +45,7 @@ class AgencyController extends Controller
         $validation = $request->validate([
             'name' => 'required',
             'address' => 'required',
-            'contact_number' => 'required|unique:agency_master_data|digits:11',
+            'contact_number' => 'required|unique:agency_master_data',
             'contact_person' => 'required',
         ]);
 
@@ -67,7 +67,7 @@ class AgencyController extends Controller
         $validation = $request->validate([
             'name' => 'required',
             'address' => 'required',
-            'contact_number' => 'required|unique:agency_master_data,contact_number,' . $agency_code . ',agency_code|digits:11',
+            'contact_number' => 'required|unique:agency_master_data,contact_number,' . $agency_code . ',agency_code',
             'contact_person' => 'required',
         ]);
 
