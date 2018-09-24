@@ -25,10 +25,10 @@ class PasswordRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if(preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,12}$/', $value)) {
-            return true;
+        if ( preg_match('/\s/',$value) ){
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -38,6 +38,6 @@ class PasswordRule implements Rule
      */
     public function message()
     {
-        return 'Password too weak.';
+        return 'Password Contains Whitespaces.';
     }
 }

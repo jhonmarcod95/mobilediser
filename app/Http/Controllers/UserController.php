@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AccountType;
 use App\Agency;
+use App\Rules\PasswordRule;
 use App\User;
 use App\UserImage;
 use Illuminate\Http\Request;
@@ -112,7 +113,7 @@ class UserController extends Controller
             'first_name' => 'required',
             'agency' => 'required',
             'contact_number' => 'required|unique:users,contact_number,' . $id . ',merchandiser_id|digits:11',
-            'password' => 'required',
+            'password' => [new PasswordRule()],
             'gender' => 'required',
             'birthday' => 'required',
             'address' => 'required',
@@ -122,14 +123,18 @@ class UserController extends Controller
             'email' => 'required|unique:users,email,' . $id . ',merchandiser_id',
         ]);
 
-
         #user
         $user = User::find($id);
         $user->last_name = $request->last_name;
         $user->first_name = $request->first_name;
         $user->agency_code = $request->agency;
         $user->username = $request->username;
-        $user->password = bcrypt($request->password);
+
+        #update password if password field is inputted
+        if(!empty($request->password)){
+            $user->password = bcrypt($request->password);
+        }
+
         $user->api_token = Hash::make(str_random(8));
         $user->gender = $request->gender;
         $user->birth_date = $request->birthday;
@@ -144,16 +149,11 @@ class UserController extends Controller
         if(!empty($request->file('img'))){ #will not update image path if no upload
             $userImage = UserImage::find($id);
             $path = $request->file('img')->store('avatars','public');
-
-//            $path = $request->file('img')->storeAs(
-//                'avatars', 'kanor','public'
-//            );
-
             $userImage->image_path = $path;
             $userImage->save();
         }
 
-        alert()->success('User has been updated.','');
+        alert()->success('User Account has been updated.','');
         return redirect('/users');
     }
 }

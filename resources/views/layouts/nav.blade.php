@@ -18,14 +18,12 @@
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
 
-
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle">
+                    <a href="{{ url('/users/register?id=' . Auth::user()->merchandiser_id) }}" class="dropdown-toggle">
                         <i class="fa fa-user"></i>
                         <span class="no-icon">{{ Auth::user()->first_name }}</span>
                     </a>
-
                 </li>
 
                 <li class="dropdown user user-menu">
