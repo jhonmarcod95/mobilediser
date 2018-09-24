@@ -33,37 +33,38 @@ class LocationController extends Controller
 
     public function check(Request $request)
     {
-        $result = 'failed';
-
-        #location of merchandiser
-        $curr_lat = $request->lat;
-        $curr_lng = $request->lng;
-        $customer_code = $request->customer_code;
-
-        $customer_geofence = CustomerGeofence::where('customer_code', $customer_code)
-            ->first();
-
-
-        if(!empty($customer_geofence))
-        {
-            $customer_lat = $customer_geofence->geo_center_lat;
-            $customer_lng = $customer_geofence->geo_center_lng;
-            $radius_distance = $customer_geofence->radius_distance;
-
-            $distance = CustomerGeofence::haversineGreatCircleDistance($curr_lat, $curr_lng, $customer_lat, $customer_lng, 6371);
-
-            /*------- save location (for checking only) ---------*/
-            $location = new Location();
-            $location->lat = $customer_lat;
-            $location->lng = $customer_lng;
-            $location->customer_code = $customer_code;
-            $location->save();
-            /*---------------------------------------------------*/
-
-            if($distance < $radius_distance){
-                $result = 'success';
-            }
-        }
+        $result = 'success';
+//        $result = 'failed';
+//
+//        #location of merchandiser
+//        $curr_lat = $request->lat;
+//        $curr_lng = $request->lng;
+//        $customer_code = $request->customer_code;
+//
+//        $customer_geofence = CustomerGeofence::where('customer_code', $customer_code)
+//            ->first();
+//
+//
+//        if(!empty($customer_geofence))
+//        {
+//            $customer_lat = $customer_geofence->geo_center_lat;
+//            $customer_lng = $customer_geofence->geo_center_lng;
+//            $radius_distance = $customer_geofence->radius_distance;
+//
+//            $distance = CustomerGeofence::haversineGreatCircleDistance($curr_lat, $curr_lng, $customer_lat, $customer_lng, 6371);
+//
+//            /*------- save location (for checking only) ---------*/
+//            $location = new Location();
+//            $location->lat = $customer_lat;
+//            $location->lng = $customer_lng;
+//            $location->customer_code = $customer_code;
+//            $location->save();
+//            /*---------------------------------------------------*/
+//
+//            if($distance < $radius_distance){
+//                $result = 'success';
+//            }
+//        }
 
         return $result;
 
