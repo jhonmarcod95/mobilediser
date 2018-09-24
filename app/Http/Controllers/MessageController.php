@@ -32,8 +32,16 @@ class MessageController extends Controller
         $messageHeader->save();
 
         $chats = DB::table('vw_merchandiser_message_items')
+            ->join('merchandiser_picture', 'vw_merchandiser_message_items.merchandiser_id', '=', 'merchandiser_picture.user_merchandiser_id')
             ->where('message_id', $message_id)
-            ->get()
+            ->get([
+                'merchandiser_id',
+                'first_name',
+                'last_name',
+                'message',
+                'image_path',
+                'vw_merchandiser_message_items.created_at'
+            ])
             ->sortBy('created_at');
 
 

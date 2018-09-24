@@ -12,7 +12,7 @@
         <div id="chat_message" class="direct-chat-messages">
 
             @foreach($chats as $chat)
-                <?php $dateTime = Carbon\Carbon::parse($chat->created_at)->format('m/d/Y h:i a') ?>
+                <?php $dateTime = Carbon::parse($chat->created_at)->format('m/d/Y h:i a') ?>
 
                 @if($chat->merchandiser_id == Auth::user()->merchandiser_id)
                     <!-- Message to the right -->
@@ -22,7 +22,7 @@
                             <span class="direct-chat-timestamp pull-right">{{ $dateTime }}</span>
                         </div>
                         <!-- /.direct-chat-info -->
-                        <img class="direct-chat-img" src="{{ asset('adminLTE/dist/img/face-0.jpg') }}" alt="message user image">
+                        <img class="direct-chat-img" src="{{ asset('storage/' . $chat->image_path) }}" alt="message user image">
                         <!-- /.direct-chat-img -->
                         <div class="direct-chat-text">
                             {{ $chat->message }}
@@ -38,7 +38,7 @@
                             <span class="direct-chat-timestamp pull-right">{{ $dateTime }}</span>
                         </div>
                         <!-- /.direct-chat-info -->
-                        <img class="direct-chat-img" src="{{ asset('adminLTE/dist/img/face-0.jpg') }}" alt="message user image">
+                        <img class="direct-chat-img" src="{{ asset('storage/' . $chat->image_path) }}" alt="message user image">
                         <!-- /.direct-chat-img -->
                         <div class="direct-chat-text">
                             {{ $chat->message }}
