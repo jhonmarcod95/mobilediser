@@ -7,8 +7,8 @@
             Merchandiser Logs
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">Dashboard</li>
+            <li><a href="#"><i class="fa fa-bar-chart"></i> Report</a></li>
+            <li class="active">Merchandiser Logs</li>
         </ol>
     </section>
 
@@ -27,13 +27,13 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="text-muted">Date From</label>
-                                    {!! Form::date('date_from', $merchandisers, ['class' => 'form-control']) !!}
+                                    {!! Form::date('date_from', null, ['class' => 'form-control']) !!}
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="text-muted">Date To</label>
-                                    {!! Form::date('date_to', $merchandisers, ['class' => 'form-control']) !!}
+                                    {!! Form::date('date_to', null, ['class' => 'form-control']) !!}
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -55,6 +55,7 @@
                                     <th>Date</th>
                                     <th>Time In</th>
                                     <th>Time Out</th>
+                                    <th>Inventory Status</th>
                                     </thead>
                                     <tbody>
                                     @foreach($merchandiser_logs as $merchandiser_log)
@@ -73,6 +74,11 @@
                                             <td>
                                                 @if($merchandiser_log->time_out != null)
                                                     {{ Carbon::parse($merchandiser_log->time_out)->format('h:i a') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($merchandiser_log->transaction_number != null)
+                                                    <small class="label label-success">Submitted</small>
                                                 @endif
                                             </td>
                                         </tr>
