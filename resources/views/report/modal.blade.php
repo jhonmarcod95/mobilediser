@@ -8,7 +8,9 @@
             </div>
             <div class="modal-body">
                 <div class="box-body">
-                    <img id="merchandiserImage" src="" height="350px" width="100%">
+                    <div align="center">
+                        <img id="merchandiserImage" src="">
+                    </div>
                 </div>
             </div>
 
