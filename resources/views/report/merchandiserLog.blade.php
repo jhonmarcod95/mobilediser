@@ -22,26 +22,32 @@
                     </div>
 
                     <div class="box-body">
-                        {!! Form::open(['url' => '/reports/merchandiserAttendance', 'method' => 'GET']) !!}
+                        {!! Form::open(['url' => '/reports/merchandiserLog', 'method' => 'GET']) !!}
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label class="text-muted">Merchandiser</label>
-                                    {!! Form::select('merchandiser', $merchandisers, null, ['class' => 'select2 form-control', 'multiple', 'data-placeholder' => 'Select a Merchandiser', 'style' => 'width: 300px']) !!}
+                                    <label class="text-muted">Date From</label>
+                                    {!! Form::date('date_from', $merchandisers, ['class' => 'form-control']) !!}
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
                             <div class="col-md-2">
-                                {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
+                                <div class="form-group">
+                                    <label class="text-muted">Date To</label>
+                                    {!! Form::date('date_to', $merchandisers, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="text-muted">&nbsp;</label><br>
+                                    {!! Form::Submit('Filter', ['class' => 'btn btn-primary']) !!}
+                                </div>
                             </div>
                         </div>
                         {!! Form::close() !!}
 
                         <div class="table-responsive mailbox-messages">
                             <div class="table table-responsive">
-                                <table class="table table-bordered table-striped" style="white-space: nowrap; width: 100%">
+                                <table id="dataTable" class="table table-bordered table-striped" style="white-space: nowrap; width: 100%">
                                     <thead>
                                     <th></th>
                                     <th>Merchandiser</th>
@@ -53,7 +59,13 @@
                                     <tbody>
                                     @foreach($merchandiser_logs as $merchandiser_log)
                                         <tr>
-                                            <td><a href="#" data-toggle="modal" onclick="document.getElementById('merchandiserImage').src = '{{ asset('storage/' . $merchandiser_log->image_path) }}'" data-target="#modal-default">Image</a></td>
+                                            <td>
+                                                <a href="#" data-toggle="modal" onclick="
+                                                        document.getElementById('merchandiserImage').src = '{{ asset('storage/' . $merchandiser_log->image_path) }}';
+                                                        document.getElementById('title').innerText = '{{ $merchandiser_log->first_name . ' ' . $merchandiser_log->last_name . ' - ' . $merchandiser_log->customer_name . ' - ' . $merchandiser_log->date . ' - ' .  Carbon::parse($merchandiser_log->time_in)->format('h:i a')}}';
+                                                        " data-target="#modal-default">Image
+                                                </a>
+                                            </td>
                                             <td>{{ $merchandiser_log->first_name . ' ' . $merchandiser_log->last_name }}</td>
                                             <td>{{ $merchandiser_log->customer_name }}</td>
                                             <td>{{ $merchandiser_log->date }}</td>
@@ -77,17 +89,4 @@
 
         @include('report.modal')
     </section>
-
-    <script>
-        $(document).ready(function() {
-            $('#tblGroup').DataTable({
-                'rowsGroup': [0],
-                'paging'      : false,
-                'lengthChange': false,
-                'searching'   : false,
-                'ordering'    : false
-
-            });
-        });
-    </script>
 @endsection

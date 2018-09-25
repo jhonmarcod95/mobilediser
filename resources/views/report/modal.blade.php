@@ -3,13 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="box-header">
-                    <h3 id="chat_title" class="box-title">Direct Chat</h3>
-
-                    <div class="box-tools pull-right">
-
-                        <button type="button" class="btn btn-box-tool" onclick="document.getElementById('msgFrame').contentWindow.location.reload();"><i class="fa fa-refresh"></i></button>
-                        <button type="button" class="btn btn-box-tool" data-widget="remove" data-dismiss="modal"><i class="fa fa-times"></i></button>
-                    </div>
+                    <h3 id="title" class="box-title">Direct Chat</h3>
                 </div>
             </div>
             <div class="modal-body">
