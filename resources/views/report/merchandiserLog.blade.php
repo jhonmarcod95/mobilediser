@@ -22,27 +22,60 @@
                     </div>
 
                     <div class="box-body">
+                        {!! Form::open(['url' => '/reports/merchandiserAttendance', 'method' => 'GET']) !!}
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="text-muted">Merchandiser</label>
+                                    {!! Form::select('merchandiser', $merchandisers, null, ['class' => 'select2 form-control', 'multiple', 'data-placeholder' => 'Select a Merchandiser', 'style' => 'width: 300px']) !!}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-2">
+                                {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
+                            </div>
+                        </div>
+                        {!! Form::close() !!}
+
                         <div class="table-responsive mailbox-messages">
                             <div class="table table-responsive">
-                                <table id="tblGroup" class="table table-bordered table-striped" style="white-space: nowrap; width: 100%">
+                                <table class="table table-bordered table-striped" style="white-space: nowrap; width: 100%">
                                     <thead>
-                                    <th>Material</th>
-                                    <th>Offtake</th>
-                                    <th>Ending Balance</th>
+                                    <th></th>
+                                    <th>Merchandiser</th>
                                     <th>Customer</th>
-                                    <th>Chain</th>
+                                    <th>Date</th>
+                                    <th>Time In</th>
+                                    <th>Time Out</th>
                                     </thead>
                                     <tbody>
-
+                                    @foreach($merchandiser_logs as $merchandiser_log)
+                                        <tr>
+                                            <td><a href="#" data-toggle="modal" onclick="document.getElementById('merchandiserImage').src = '{{ asset('storage/' . $merchandiser_log->image_path) }}'" data-target="#modal-default">Image</a></td>
+                                            <td>{{ $merchandiser_log->first_name . ' ' . $merchandiser_log->last_name }}</td>
+                                            <td>{{ $merchandiser_log->customer_name }}</td>
+                                            <td>{{ $merchandiser_log->date }}</td>
+                                            <td>{{ Carbon::parse($merchandiser_log->time_in)->format('h:i a') }}</td>
+                                            <td>
+                                                @if($merchandiser_log->time_out != null)
+                                                    {{ Carbon::parse($merchandiser_log->time_out)->format('h:i a') }}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
 
+        @include('report.modal')
     </section>
 
     <script>

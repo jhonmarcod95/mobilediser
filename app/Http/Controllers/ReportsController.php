@@ -10,6 +10,16 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
+    private $merchandisers;
+
+    public function __construct()
+    {
+        $this->merchandisers = User::select(
+            DB::raw("CONCAT(first_name, ' ', last_name) AS fullname"), 'merchandiser_id')
+            ->where('account_type', 3)
+            ->pluck('fullname', 'merchandiser_id');
+    }
+
     public function offtakePerCustomer(){
         $materialOfftakes = TransactionOfftake::getMaterialOfftake();
 
@@ -19,7 +29,14 @@ class ReportsController extends Controller
     }
 
     public function merchandiserLog(){
-        return view('report.merchandiserLog');
+
+        $merchandiser_logs = DB::select("CALL p_merchandiser_logs ('2018-09-25', '2018-09-25')");
+        $merchandisers = $this->merchandisers;
+
+        return view('report.merchandiserLog', compact(
+            'merchandiser_logs',
+            'merchandisers'
+        ));
     }
 
     public function merchandiserAttendance(Request $request){
