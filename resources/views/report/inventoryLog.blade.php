@@ -4,11 +4,11 @@
 
     <section class="content-header">
         <h1>
-            Merchandiser Logs
+            Inventory Logs
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-bar-chart"></i> Report</a></li>
-            <li class="active">Merchandiser Logs</li>
+            <li class="active">Inventory Logs</li>
         </ol>
     </section>
 
@@ -22,7 +22,7 @@
                     </div>
 
                     <div class="box-body">
-                        {!! Form::open(['url' => '/reports/merchandiserLog', 'method' => 'GET']) !!}
+                        {!! Form::open(['url' => '/reports/inventoryLog', 'method' => 'GET']) !!}
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group">
@@ -50,37 +50,27 @@
                                 <table id="dataTable" class="table table-bordered table-striped" style="white-space: nowrap; width: 100%">
                                     <thead>
                                     <th></th>
+                                    <th>Transaction#</th>
                                     <th>Merchandiser</th>
                                     <th>Customer</th>
-                                    <th>Date</th>
-                                    <th>Time In</th>
-                                    <th>Time Out</th>
-                                    <th>Inventory Status</th>
+                                    <th>Remarks</th>
+                                    <th>Date Submitted</th>
                                     </thead>
                                     <tbody>
-                                    @foreach($merchandiser_logs as $merchandiser_log)
+                                    @foreach($inventory_logs as $inventory_log)
                                         <tr>
                                             <td>
                                                 <a href="#" data-toggle="modal" onclick="
-                                                        document.getElementById('merchandiserImage').src = '{{ asset('storage/' . $merchandiser_log->image_path) }}';
-                                                        document.getElementById('title').innerText = '{{ $merchandiser_log->first_name . ' ' . $merchandiser_log->last_name . ' - ' . $merchandiser_log->customer_name . ' - ' . $merchandiser_log->date . ' - ' .  Carbon::parse($merchandiser_log->time_in)->format('h:i a')}}';
+                                                        document.getElementById('inventoryFrame').src = '{{ url('/reports/inventoryLogTransaction/' . $inventory_log->transaction_number) }}';
+                                                        document.getElementById('title').innerText = 'Transaction Number :  {{ $inventory_log->transaction_number }}';
                                                         " data-target="#modal-default">Image
                                                 </a>
                                             </td>
-                                            <td>{{ $merchandiser_log->first_name . ' ' . $merchandiser_log->last_name }}</td>
-                                            <td>{{ $merchandiser_log->customer_name }}</td>
-                                            <td>{{ $merchandiser_log->date }}</td>
-                                            <td>{{ Carbon::parse($merchandiser_log->time_in)->format('h:i a') }}</td>
-                                            <td>
-                                                @if($merchandiser_log->time_out != null)
-                                                    {{ Carbon::parse($merchandiser_log->time_out)->format('h:i a') }}
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($merchandiser_log->transaction_number != null)
-                                                    <small class="label label-success">Submitted</small>
-                                                @endif
-                                            </td>
+                                            <td>{{ $inventory_log->transaction_number }}</td>
+                                            <td>{{ $inventory_log->first_name . ' ' . $inventory_log->last_name }}</td>
+                                            <td>{{ $inventory_log->customer_name }}</td>
+                                            <td>{{ $inventory_log->remarks }}</td>
+                                            <td>{{ Carbon::parse($inventory_log->created_at)->format('Y-m-d h:i a') }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -88,11 +78,10 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
-        @include('report.merchandiserLogModal')
+        @include('report.inventoryLogModal')
     </section>
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\InventoryTransactionImage;
 use App\TransactionOfftake;
 use App\User;
 use Carbon\Carbon;
@@ -50,8 +51,24 @@ class ReportsController extends Controller
         ));
     }
 
+    public function inventoryLogTransaction($transactionNumber){
 
+        $transactionImage = InventoryTransactionImage::where('transaction_number', $transactionNumber)
+            ->pluck('image_path')
+            ->first();
 
+        $inventory_items = collect(DB::select("CALL p_inventory_item_logs ('" . $transactionNumber .  "')"));
+        $physicalCountItems = $inventory_items->whereIn('inventory_type', ['1','2','3']);
+        $deliveryCountItems = $inventory_items->whereIn('inventory_type', ['4']);
+        $returnCountItems = $inventory_items->whereIn('inventory_type', ['5']);
+
+        return view('report.inventoryLogModalContent', compact(
+            'transactionImage',
+            'physicalCountItems',
+            'deliveryCountItems',
+            'returnCountItems'
+        ));
+    }
 
     public function merchandiserAttendance(Request $request){
         $monthYear = $request->monthYear;

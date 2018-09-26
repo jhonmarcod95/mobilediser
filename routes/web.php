@@ -116,6 +116,7 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
     Route::get('/reports/merchandiserLog', 'ReportsController@merchandiserLog');
     Route::get('/reports/inventoryLog', 'ReportsController@inventoryLog');
+    Route::get('/reports/inventoryLogTransaction/{transactionNumber}', 'ReportsController@inventoryLogTransaction');
     Route::get('/reports/merchandiserAttendance', 'ReportsController@merchandiserAttendance');
 
 

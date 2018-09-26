@@ -68,6 +68,7 @@ class MessageController extends Controller
 
         #update message header
         $messageHeader = MessageHeader::find($message_id);
+        $messageHeader->status = '002';
         $messageHeader->seen_by_sender = 'no';
         $messageHeader->seen_by_receiver = 'yes';
         $messageHeader->save();
