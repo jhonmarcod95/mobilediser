@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class CustomerController extends Controller
 {
     public function show(){
-        $customers = DB::select('CALL p_customers');
+        $customers = DB::select('CALL p_customers (\'%%\')');
 
         return view('masterData.customer',compact(
             'customers'

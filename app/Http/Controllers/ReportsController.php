@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Customer;
 use App\InventoryTransactionImage;
 use App\TransactionOfftake;
 use App\User;
@@ -21,11 +22,21 @@ class ReportsController extends Controller
             ->pluck('fullname', 'merchandiser_id');
     }
 
-    public function offtakePerCustomer(){
+    public function offtakePerCustomer(Request $request){
+        $customer_code = $request->customer_code;
+        $date_from = $request->date_from;
+        $date_to = $request->date_to;
+
         $materialOfftakes = TransactionOfftake::getMaterialOfftake();
+        $customers = Customer::showCodeAndName();
+        $transactionOfftakes = collect(DB::select("CALL p_transaction_offtake ('" . $customer_code . "', '" . $date_from .  "', '" . $date_to . "')"));
+        $customer_detail = collect(DB::select('CALL p_customers(\'' . $customer_code . '\')'))->first();
 
         return view('report.offtakePerCustomer', compact(
-            'materialOfftakes'
+            'transactionOfftakes',
+            'materialOfftakes',
+            'customers',
+            'customer_detail'
         ));
     }
 
@@ -92,6 +103,9 @@ class ReportsController extends Controller
             'merchandisers'
         ));
     }
+
+
+
 
 
 
