@@ -34,6 +34,7 @@
                                     <th></th>
                                     <th>Customer Code</th>
                                     <th>Name</th>
+                                    <th>Branch</th>
                                     <th>Address</th>
                                     <th>Chain Code</th>
                                     <th>Chain Description</th>
@@ -52,6 +53,7 @@
                                         </td>
                                         <td>{{ $customer->customer_code }}</td>
                                         <td>{{ $customer->name }}</td>
+                                        <td>{{ $customer->branch }}</td>
                                         <td>{{ $customer->address }}</td>
                                         <td>{{ $customer->chain_code }}</td>
                                         <td>{{ $customer->type_description }}</td>
