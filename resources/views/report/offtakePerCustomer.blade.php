@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
+    @if($customer_detail != null)
     <script type="text/javascript">
         var tableToExcel = (function() {
             var uri = 'data:application/vnd.ms-excel;base64,'
@@ -8,6 +9,10 @@
                     '<head></head>' +
                     '<body>' +
                         '<table>' +
+                            '<tr>' +
+                                '<td>Customer Code : </td>' +
+                                '<td>{{ $customer_detail->customer_code }}`</td>' +
+                            '</tr>' +
                             '<tr>' +
                                 '<td>Customer Name and Branch : </td>' +
                                 '<td>{{ $customer_detail->name . ' - ' . $customer_detail->branch }}</td>' +
@@ -38,9 +43,11 @@
                 if (!table.nodeType) table = document.getElementById(table)
                 var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
                 window.location.href = uri + base64(format(template, ctx))
+
             }
         })()
     </script>
+    @endif
 
     <section class="content-header">
         <h1>
@@ -92,7 +99,7 @@
                             <div class="col-md-2">
                                 <div class="form-group pull-right">
                                     <label class="text-muted">&nbsp;</label><br>
-                                    {!! Form::button('Export to Excel', ['class' => 'btn btn-primary', 'onclick' => 'tableToExcel(\'tblOfftake\', \'Sheet\')']) !!}
+                                    {!! Form::button('Export to Excel', ['class' => 'btn btn-primary', 'onclick' => 'tableToExcel(\'tblOfftake\', \'Off Take Report\')']) !!}
                                 </div>
                             </div>
 
