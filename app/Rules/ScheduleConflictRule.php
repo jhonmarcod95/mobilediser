@@ -33,19 +33,15 @@ class ScheduleConflictRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        $schedules = DB::select("SELECT * FROM vw_schedules WHERE date = '$this->date' AND (merchandiser_id = '$this->merchandiser_id' OR customer_code = '$value')");
-//            ->where('date', $this->date)
-//            ->orWhere('merchandiser_id', $this->merchandiser_id)
-//            ->orWhere('customer_code', $value)
-//            ->get();
-
-        foreach ($schedules as $schedule){
-            if(($this->startTime <= $schedule->time_in && $this->endTime >= $schedule->time_in) ||
-               ($this->startTime <= $schedule->time_out && $this->endTime <= $schedule->time_out)){
-
-                return false;
-            }
-        }
+//        $schedules = DB::select("SELECT * FROM vw_schedules WHERE date = '$this->date' AND (merchandiser_id = '$this->merchandiser_id' OR customer_code = '$value')");
+//
+//        foreach ($schedules as $schedule){
+//            if(($this->startTime <= $schedule->time_in && $this->endTime >= $schedule->time_in) ||
+//               ($this->startTime <= $schedule->time_out && $this->endTime <= $schedule->time_out)){
+//
+//                return false;
+//            }
+//        }
         return true;
     }
 
