@@ -120,9 +120,7 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::get('/reports/merchandiserAttendance', 'ReportsController@merchandiserAttendance');
 
 
-
 });
-
 
 
 Route::get('importExport', 'MaatwebsiteController@importExport');

@@ -7,9 +7,17 @@
 
 
     <div class="login-box">
-        <div class="login-logo">
-            <b>PLILI</b> <br> MobileDiser Portal
+        <div class="card-header bg-transparent pb-5">
+            <div class="btn-wrapper text-center">
+                <img src="{{ url('img/plili.png') }}" class="navbar-brand-img" style="height: 120px">&nbsp;
+            </div>
         </div>
+
+
+        <div class="login-logo">
+            <b>MobileDiser</b> Portal
+        </div>
+
         <!-- /.login-logo -->
         <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>

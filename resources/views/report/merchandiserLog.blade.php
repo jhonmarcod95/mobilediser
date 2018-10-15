@@ -1,6 +1,37 @@
 @extends('layouts.app')
 @section('content')
 
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#dataTable').DataTable( {
+                "paging":   false
+            } );
+        } );
+
+        var tableToExcel = (function() {
+            var uri = 'data:application/vnd.ms-excel;base64,'
+                , template =
+                '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
+                    '<head></head>' +
+                    '<body>' +
+                        '<table>' +
+                            '<tr>' +
+                                '<td></td>' +
+                                '<td></td>' +
+                            '</tr>' +
+                        '</table>' +
+                        '<table border=\'1\'>{table}</table>' +
+                    '</body>' +
+                '</html>'
+                , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+                , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+            return function(table, name) {
+                if (!table.nodeType) table = document.getElementById(table)
+                var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+                window.location.href = uri + base64(format(template, ctx))
+            }
+        })()
+    </script>
 
     <section class="content-header">
         <h1>
@@ -40,6 +71,12 @@
                                 <div class="form-group">
                                     <label class="text-muted">&nbsp;</label><br>
                                     {!! Form::Submit('Filter', ['class' => 'btn btn-primary']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group pull-right">
+                                    <label class="text-muted">&nbsp;</label><br>
+                                    {!! Form::button('Export to Excel', ['class' => 'btn btn-primary', 'onclick' => 'tableToExcel(\'dataTable\', \'Off Take Report\')']) !!}
                                 </div>
                             </div>
                         </div>

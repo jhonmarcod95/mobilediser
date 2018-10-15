@@ -130,52 +130,6 @@
                     @endif
                 </div>
 
-
-                <!-- Offtake Per Customer -->
-                @if(count($chainOfftakes))
-                {{--<div class="nav-tabs-custom">--}}
-                    {{--<div class="box box-info">--}}
-                        {{--<div class="box-header with-border">--}}
-                            {{--<h3 class="box-title">Offtake Per Customer Group</h3>--}}
-
-                            {{--<div class="box-tools pull-right">--}}
-                                {{--<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>--}}
-                                {{--</button>--}}
-                                {{--<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="box-body">--}}
-                            {{--<div class="chart">--}}
-                                {{--<div class="table-responsive">--}}
-                                    {{--<table id="tblGroup" class="table no-margin table-striped table-hover">--}}
-                                        {{--<thead>--}}
-                                        {{--<tr>--}}
-                                            {{--<th>Chain</th>--}}
-                                            {{--<th>Material</th>--}}
-                                            {{--<th>Offtake</th>--}}
-                                            {{--<th>Ending balance</th>--}}
-
-                                        {{--</tr>--}}
-                                        {{--</thead>--}}
-                                        {{--<tbody>--}}
-                                            {{--@foreach($chainOfftakes as $chainOfftake)--}}
-                                                {{--<tr>--}}
-                                                    {{--<td>{{ $chainOfftake->description }}</td>--}}
-                                                    {{--<td>{{ $chainOfftake->material_description }}</td>--}}
-                                                    {{--<td>{{ $chainOfftake->offtake }}</td>--}}
-                                                    {{--<td>{{ $chainOfftake->ending_balance }}</td>--}}
-                                                {{--</tr>--}}
-                                            {{--@endforeach--}}
-                                        {{--</tbody>--}}
-                                    {{--</table>--}}
-                                {{--</div>--}}
-                                {{--<a href="#" class="small-box-footer">More Details <i class="fa fa-arrow-circle-right"></i></a>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-                {{--</div>--}}
-                @endif
-
             </section>
             <!-- /.Left col -->
 
