@@ -48,7 +48,7 @@
                     <div class="box-body">
                         <div class="table-responsive">
                             <div class="table table-responsive">
-                                <table class="table table-bordered" style="white-space: nowrap; width: 1%">
+                                <table id="dataTable2" class="table table-bordered" style="white-space: nowrap; width: 1%">
                                     <thead>
                                     <th>Code</th>
                                     <th>Customer</th>

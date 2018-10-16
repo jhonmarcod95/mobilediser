@@ -46,16 +46,13 @@
                             </div>
                             {!! Form::close() !!}
                         </div>
-
-
-
                     </div>
 
                     {{-- Content --}}
                     <div class="box-body">
                         <div class="table-responsive">
                             <div class="table table-responsive">
-                                <table class="table table-bordered" style="white-space: nowrap; width: 1%">
+                                <table id="dataTable1" class="table table-bordered" style="white-space: nowrap; width: 1%">
                                     <thead>
                                     <th>Merchandiser</th>
                                     @foreach($dates as $date)

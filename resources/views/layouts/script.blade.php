@@ -44,20 +44,42 @@
 <script src="{{  asset('adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{  asset('adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{  asset('adminLTE/bower_components/datatables.net/js/dataTables.rowsGroup.js') }}"></script>
+<script src="{{  asset('customDataTable/dataTables.fixedColumns.min.js') }}"></script>
 
-<script src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
+<!-- Select2 -->
+<script src="{{  asset('adminLTE/bower_components/select2/dist/js/select2.full.min.js') }}"></script>
+
 <script>
     $(function () {
-        $('#dataTable').DataTable()
+        $('#dataTable').DataTable();
+        $('#dataTable1').DataTable({
+            scrollY:        "400px",
+            scrollX:        true,
+            scrollCollapse: true,
+            paging:         false,
+            ordering: false,
+            searching: false,
+            fixedColumns:   {
+                leftColumns: 1
+            }
+        });
+
         $('#dataTable2').DataTable({
-            'paging'      : true,
-            'lengthChange': false,
-            'searching'   : false,
-            'ordering'    : true,
-            'info'        : true,
-            'autoWidth'   : false
-        })
-    })
+            scrollY:        "400px",
+            scrollX:        true,
+            scrollCollapse: true,
+            paging:         false,
+            ordering: false,
+            searching: false,
+            fixedColumns:   {
+                leftColumns: 2
+            }
+        });
+
+        $('.select2').select2();
+    });
+
+
 </script>
 
 <!-- fullCalendar -->
@@ -67,12 +89,6 @@
 
 
 
-
-<!-- Select2 -->
-<script src="{{  asset('adminLTE/bower_components/select2/dist/js/select2.full.min.js') }}"></script>
-<script>
-    $('.select2').select2();
-</script>
 @yield('select2Script')
 
 

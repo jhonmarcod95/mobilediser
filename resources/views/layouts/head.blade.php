@@ -21,8 +21,13 @@
 {{--<!-- fullCalendar -->--}}
 {{--<link rel="stylesheet" href="{{  asset('adminLTE/bower_components/fullcalendar/dist/fullcalendar.min.css') }}">--}}
 {{--<link rel="stylesheet" href="{{  asset('adminLTE/bower_components/fullcalendar/dist/fullcalendar.print.min.css') }}" media="print">--}}
+
+
 <!-- DataTables -->
 <link rel="stylesheet" href="{{  asset('adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{  asset('customDataTable/fixedColumns.bootstrap4.min.css') }}">
+
+
 <!-- AdminLTE Skins. Choose a skin from the css/skins
      folder instead of downloading all of them to reduce the load. -->
 <link rel="stylesheet" href="{{  asset('adminLTE/dist/css/skins/_all-skins.min.css') }}">
