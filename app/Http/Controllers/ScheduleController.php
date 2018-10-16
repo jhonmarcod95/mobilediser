@@ -176,6 +176,7 @@ class ScheduleController extends Controller
                 $schedules = collect($reader->toArray());
 
                 /*------------------- save schedule ----------------------*/
+                DB::beginTransaction();
                 foreach ($schedules as $schedule){
                     $weekDays = explode('/', $schedule['day']); #split slashes to get days
                     $timeLog = explode('-', $schedule['time']); #split dashes to get timein and timeout
@@ -187,6 +188,7 @@ class ScheduleController extends Controller
 
                         $days = $this->getDates($monthYear, $weekDay); #get dates of weekdays
                         foreach ($days as $day){
+
                             $sched = new MerchandiserSchedule();
                             $sched->merchandiser_id = $schedule['id'];
                             $sched->customer_code = $schedule['code'];
@@ -195,9 +197,11 @@ class ScheduleController extends Controller
                             $sched->time_out = $timeOut;
                             $sched->status = '002'; #not visited
                             $sched->save();
+
                         }
                     }
                 }
+                DB::commit();
                 /*--------------------------------------------------------*/
             });
 
