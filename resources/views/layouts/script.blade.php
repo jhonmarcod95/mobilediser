@@ -22,7 +22,7 @@
 <!-- jQuery Knob Chart -->
 <script src="{{  asset('adminLTE/bower_components/jquery-knob/dist/jquery.knob.min.js') }}"></script>
 <!-- daterangepicker -->
-<script src="{{  asset('adminLTE/bower_components/moment/min/moment.min.js') }}"></script>
+{{--<script src="{{  asset('adminLTE/bower_components/moment/min/moment.min.js') }}"></script>--}}
 <script src="{{  asset('adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
 <!-- datepicker -->
 <script src="{{  asset('adminLTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
@@ -64,6 +64,12 @@
             }
         });
 
+        $('.select2').select2({
+            maximumSelectionLength: 10
+        });
+    });
+
+    function setDataTable(freezeIndex){
         $('#dataTable2').DataTable({
             scrollY:        "400px",
             scrollX:        true,
@@ -72,25 +78,29 @@
             ordering: false,
             searching: false,
             fixedColumns:   {
-                leftColumns: 2
+                leftColumns: freezeIndex
             }
         });
+    }
 
-        $('.select2').select2();
-    });
+    function showLoading(state) {
+        if(state){
+            $("#loading").show();
+        }
+        else{
+            $("#loading").hide();
+        }
 
-
+    }
 </script>
 
-<!-- fullCalendar -->
-<script src="{{  asset('adminLTE/bower_components/moment/moment.js') }}"></script>
-<script src="{{  asset('adminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>
-<!-- Page specific script -->
-
-
+{{--<!-- fullCalendar -->--}}
+{{--<script src="{{  asset('adminLTE/bower_components/moment/moment.js') }}"></script>--}}
+{{--<script src="{{  asset('adminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>--}}
+{{--<!-- Page specific script -->--}}
 
 @yield('select2Script')
-
+@yield('script')
 
 {{-- External Source --}}
 

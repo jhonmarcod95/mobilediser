@@ -89,7 +89,11 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::post('/customers/categories/update', 'CustomerCategoryController@update');
 
     #customer carried materials
-    Route::get('/customers/carried', 'CustomerMaterialController@show');
+    Route::get('/customer-carried', 'CustomerMaterialController@index');
+    Route::get('/customer-carried-data', 'CustomerMaterialController@indexData');
+
+    Route::post('/customer-carried/setCarried/{customer}/{material}', 'CustomerMaterialController@setCarried');
+
 
     #municipalities
     Route::get('/municipalities', 'MunicipalityController@show');

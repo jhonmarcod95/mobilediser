@@ -14,6 +14,7 @@
     @include('layouts.sidebar')
 
     <div id="app" class="content-wrapper">
+        <div id="loading"></div>
         @yield('content')
     </div>
 
