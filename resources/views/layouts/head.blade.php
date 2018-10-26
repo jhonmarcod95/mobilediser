@@ -47,35 +47,15 @@
 <!-- Theme style -->
 <link rel="stylesheet" href="{{  asset('adminLTE/dist/css/AdminLTE.min.css') }}">
 
-
-<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
-
 <!-- Google Font -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<link rel="stylesheet" href="{{  asset('adminLTE/css.css') }}">
 
-
-{{-- External Libraries --}}
 
 {{-- Image Upload preview --}}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="{{  asset('adminLTE/jquery.min.js') }}"></script>
 
 {{-- Laravel SweetAlert --}}
-<script src="https://unpkg.com/sweetalert2@7.18.0/dist/sweetalert2.all.js"></script>
-
-{{-- High Cahrts --}}
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-
-
-{{-- VUE--}}
-<script src="https://unpkg.com/vue@2.1.6/dist/vue.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="{{  asset('adminLTE/sweetalert2.all.js') }}"></script>
 
 
 {{-- MY SCRIPT --}}
@@ -93,20 +73,6 @@
     }
 
 </script>
-
-
-<style>
-    #loading {
-        background-color: rgba(0, 0, 0, 0.25);
-        z-index: 999;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        display: none;
-    }
-</style>
 
 @yield('headScript')
 

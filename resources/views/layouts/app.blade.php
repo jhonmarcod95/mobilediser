@@ -14,11 +14,9 @@
     @include('layouts.sidebar')
 
     <div id="app" class="content-wrapper">
-        <div id="loading"></div>
         @yield('content')
     </div>
 
-    @yield('vue')
     @include('layouts.footer')
 </div>
 @include('layouts.script')

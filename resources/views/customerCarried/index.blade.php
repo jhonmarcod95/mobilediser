@@ -54,7 +54,9 @@
                         </div>
                     </div>
 
-
+                    <div class="overlay" hidden>
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -72,7 +74,7 @@
 @section('script')
     <script>
         function retrieveCustomerCarried(){
-            showLoading(true);
+            $('.overlay').show();
 
             var query = $('#formFilter').serialize();
             $.ajax({
@@ -121,26 +123,26 @@
                     );
 
                     setDataTable(2);
-                    showLoading(false);
+                    $('.overlay').hide();
                 },
                 error: function(data){
-                    showLoading(false);
+                    $('.overlay').hide();
                 }
             });
         }
         
         function setCarried(customer_code, material_code) {
-            showLoading(true);
+            $('.overlay').show();
             $.ajax({
                 type: 'POST',
                 url: '/customer-carried/setCarried/' + customer_code + '/' + material_code,
                 data: '_token={{ csrf_token() }}',
                 success: function(data){
                     console.log(data);
-                    showLoading(false);
+                    $('.overlay').hide();
                 },
                 error: function(data){
-                    showLoading(true);
+                    $('.overlay').show();
                 }
             });
         }

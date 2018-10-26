@@ -13,36 +13,24 @@
 
     <section class="content">
         <div class="row">
-            <div class="col-md-12">
-                <div class="box box-primary">
+            <div class="col-md-9">
+
+                <div class="box box-default">
 
                     <div class="box-header ">
-                        <h3 class="box-title">Schedule Record</h3>
-
                         <div class="row">
                             {!! Form::open(['url' => '/schedules', 'method' => 'GET']) !!}
-                            <div class="col-md-12">
-
-                                <div class="pull-right">
-                                    <br>
-                                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i>&nbsp; Search</button>
-
-                                </div>
-
-                                <div class="pull-right">&nbsp;</div>
-
-                                <div class="pull-right">
-                                    <span>Date: </span> <br>
-                                    <input name="monthYear" type="month" class="form-control" value="{{ Request::get('monthYear') }}" required>
-                                </div>
-
-                                <div class="pull-right">&nbsp;</div>
-
-                                <div class="pull-right">
-                                    <span>Merchandiser: </span> <br>
-                                    {!! Form::select('merchandiser_ids[]', $merchandisers, null, ['class' => 'form-control select2', 'multiple', 'required']) !!}
-                                </div>
-
+                            <div class="col-md-7">
+                                <label>Search Merchandiser: </label>
+                                {!! Form::select('merchandiser_ids[]', $merchandisers, null, ['class' => 'form-control select2', 'multiple', 'required']) !!}
+                            </div>
+                            <div class="col-md-3">
+                                <label>Date: </label>
+                                <input name="monthYear" type="month" class="form-control" value="{{ Request::get('monthYear') }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <br>
+                                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i>&nbsp; Search</button>
                             </div>
                             {!! Form::close() !!}
                         </div>
@@ -79,52 +67,48 @@
                                             @endforeach
                                         </tr>
                                     @endforeach
-                                    {{--@foreach($merchandisers as $merchandiser)--}}
-                                        {{--<tr>--}}
-                                            {{--<td>{{ $merchandiser->fullname }}</td>--}}
-                                            {{--@foreach($dates as $date)--}}
-                                                {{--<td style="cursor: pointer;" ondblclick="location.href = '{{ url('/schedules/records/' . $merchandiser->merchandiser_id . '/' . Carbon\Carbon::parse($date)->format('Y-m-d')) }}';">--}}
-                                                    {{--@foreach($schedules->where('merchandiser_id', $merchandiser->merchandiser_id)--}}
-                                                                       {{--->where('date', $date) as $schedule)--}}
-
-                                                        {{--{{ $schedule->customer_name . ' (' . $schedule->time_in . '-' . $schedule->time_out . ')' }}--}}
-                                                        {{--<br>--}}
-                                                    {{--@endforeach--}}
-                                                {{--</td>--}}
-                                            {{--@endforeach--}}
-                                        {{--</tr>--}}
-                                    {{--@endforeach--}}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="box-footer">
-                        <div class="row">
-                            {!! Form::open(['url' => '/schedules/upload', 'method' => 'POST', 'files' => true]) !!}
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Date: </label>
-                                    <input name="monthYear" type="month" class="form-control" style="width: 200px" required>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label>&nbsp; </label>
-                                <div class="fileinput fileinput-new" data-provides="fileinput">
-                                    <span class="btn btn-default btn-file">
-                                        <span>Import Excel</span>
-                                        {!! Form::file('import_file') !!}
-                                    </span>
-                                    <span class="fileinput-filename"></span><span class="fileinput-new"></span>
-                                    <button type="submit" class="btn btn-primary">Upload Excel</button>
-                                </div>
-                            </div>
-                            {!! Form::close() !!}
-
-                        </div>
+            <div class="col-md-3">
+                <div class="box box-default">
+                    <div class="box-header ">
+                        <h3 class="box-title">Upload Excel File</h3>
                     </div>
 
+                    {{-- Content --}}
+                    <div class="box-body">
+                        {!! Form::open(['url' => '/schedules/upload', 'method' => 'POST', 'files' => true]) !!}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Date: </label>
+                                    <input name="monthYear" type="month" class="form-control input-sm" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                        {!! Form::file('import_file') !!}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-sm">Upload</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {!! Form::close() !!}
+                    </div>
                 </div>
             </div>
         </div>

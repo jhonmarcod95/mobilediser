@@ -49,8 +49,7 @@ class ScheduleController extends Controller
             ->get();
 
         $customers = $this->customers;
-        $merchandisers = $this->merchandisers
-            ->put('0', 'All');
+        $merchandisers = $this->merchandisers;
 
         return view('schedule.show', compact(
             'monthYear',
@@ -168,7 +167,7 @@ class ScheduleController extends Controller
 
         $validation = $request->validate([
             'monthYear' => 'required',
-            'import_file' => ['required', new ScheduleUploadRule($monthYear)],
+            'import_file' => ['required', 'mimes:xlsx,xls', new ScheduleUploadRule($monthYear)],
         ]);
 
         if($request->hasFile('import_file')){
@@ -178,26 +177,24 @@ class ScheduleController extends Controller
                 /*------------------- save schedule ----------------------*/
                 DB::beginTransaction();
                 foreach ($schedules as $schedule){
-                    $weekDays = explode('/', $schedule['day']); #split slashes to get days
-                    $timeLog = explode('-', $schedule['time']); #split dashes to get timein and timeout
+                    $weekDays = MerchandiserSchedule::parseExcelWeekDay($schedule);
+                    $timeLog = MerchandiserSchedule::parseExcelTime($schedule);
 
                     $timeIn = date("H:i", strtotime($timeLog[0]));
                     $timeOut = date("H:i", strtotime($timeLog[1]));
 
                     foreach ($weekDays as $weekDay){
 
-                        $days = $this->getDates($monthYear, $weekDay); #get dates of weekdays
+                        $days =  MerchandiserSchedule::parseDates($monthYear, $weekDay); #get dates of weekdays
                         foreach ($days as $day){
-
                             $sched = new MerchandiserSchedule();
-                            $sched->merchandiser_id = $schedule['id'];
-                            $sched->customer_code = $schedule['code'];
+                            $sched->merchandiser_id = $schedule[MerchandiserSchedule::$ID];
+                            $sched->customer_code = $schedule[MerchandiserSchedule::$BRANCH_CODE];
                             $sched->date = $day;
                             $sched->time_in = $timeIn;
                             $sched->time_out = $timeOut;
                             $sched->status = '002'; #not visited
                             $sched->save();
-
                         }
                     }
                 }
@@ -214,10 +211,8 @@ class ScheduleController extends Controller
 
 
     /*---------------------- Functions ---------------------------*/
-
     public static function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
     {
-
         $dates = array();
         $current = strtotime($first);
         $last = strtotime($last);
@@ -229,27 +224,6 @@ class ScheduleController extends Controller
         }
 
         return $dates;
-    }
-
-    public static function getDates($monthYear, $dayDesc){
-
-        $day = date('N', strtotime($dayDesc));
-        /*---- to format 1 = sunday, 7 = saturday ----*/
-        $day = $day + 1;
-        if($day > 7) $day = 1;
-        /*--------------------------------------------*/
-
-        $date = "$monthYear-01";
-        $first_day = date('N',strtotime($date));
-        $first_day = $day -  $day - $first_day + $day;
-        $last_day =  date('t',strtotime($date));
-        $days = array();
-        for($i=$first_day; $i<=$last_day; $i=$i+7 ){
-            if($i > 0){ //avoid negative values
-                $days[] = "$monthYear-" . sprintf('%02d', $i);
-            }
-        }
-        return  $days;
     }
 
     public function merchandiserIdSearch($merchandiser_ids){

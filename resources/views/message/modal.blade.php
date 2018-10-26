@@ -1,5 +1,5 @@
 <div class="modal fade" id="modal-default">
-    <div class="modal-dialog direct-chat direct-chat-warning">
+    <div class="modal-dialog modal-lg direct-chat direct-chat-warning">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="box-header">

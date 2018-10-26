@@ -22,6 +22,10 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     #dashboard
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/getInStore', 'HomeController@getInStore');
+    Route::get('/getVisitedStore', 'HomeController@getVisitedStore');
+    Route::get('/getInventory', 'HomeController@getInventory');
+    Route::get('/getOfftake', 'HomeController@getOfftake');
 
     #announcement
     Route::get('/announcements', 'AnnouncementController@show');

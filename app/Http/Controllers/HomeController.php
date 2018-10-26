@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Announcement;
 use App\InventoryTransactionHeader;
 use App\MerchandiserSchedule;
-use App\TransactionOfftake;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -29,8 +27,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-
-
         $dateToday = Carbon::now()->format('Y-m-d');
 
         $msgHeaders = DB::table('vw_merchandiser_message_header')
@@ -43,32 +39,32 @@ class HomeController extends Controller
             ->get()
             ->sortByDesc('created_at');
 
-
-        $msgCount = $msgHeaders->count();
-
-        $inventoryCount = InventoryTransactionHeader::where(DB::raw('DATE(created_at)'), $dateToday)
-            ->get()
-            ->count();
-
-        $announcementCount = Announcement::where(DB::raw('DATE(created_at)'), $dateToday)
-            ->get()
-            ->count();
-
-        $scheduleCount = MerchandiserSchedule::where('date', $dateToday)
-            ->get()
-            ->count();
-
         return view('home', compact(
             'msgHeaders',
-            'msgCount',
-            'inventoryCount',
-            'announcementCount',
-            'scheduleCount',
             'announcements'
         ));
     }
 
+    public function getInStore(){
+        return MerchandiserSchedule::join('merchandiser_attendance', 'merchandiser_schedule.id', '=', 'merchandiser_attendance.schedule_id')
+            ->whereDate('date', Carbon::now()->toDateString())
+            ->whereNull('merchandiser_attendance.time_out')
+            ->get();
+    }
 
+    public function getVisitedStore(){
+        return MerchandiserSchedule::where('status', '001')
+            ->whereDate('date', Carbon::now()->toDateString())
+            ->get();
+    }
 
+    public function getInventory(){
+        return InventoryTransactionHeader::whereDate('created_at', Carbon::now()->toDateString())
+            ->get();
+    }
+
+    public function getOfftake(){
+
+    }
 
 }

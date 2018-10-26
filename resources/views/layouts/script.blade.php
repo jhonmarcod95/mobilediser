@@ -1,5 +1,10 @@
 <!-- Scripts -->
 <!-- ./wrapper -->
+{{-- High Cahrts --}}
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
 
 <!-- jQuery 3 -->
 <script src="{{  asset('adminLTE/bower_components/jquery/dist/jquery.min.js') }}"></script>
@@ -83,14 +88,15 @@
         });
     }
 
-    function showLoading(state) {
+    function showLoading(elementId, state) {
         if(state){
-            $("#loading").show();
+            $('#' + elementId).attr('class', 'overlay');
+            $('#' + elementId).html("<i class=\"fa fa-refresh fa-spin\"></i>");
         }
         else{
-            $("#loading").hide();
+            $('#' + elementId).attr('class', '');
+            $('#' + elementId).html("");
         }
-
     }
 </script>
 
@@ -101,6 +107,3 @@
 
 @yield('select2Script')
 @yield('script')
-
-{{-- External Source --}}
-

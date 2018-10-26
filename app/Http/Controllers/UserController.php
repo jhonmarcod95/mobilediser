@@ -8,6 +8,7 @@ use App\Rules\PasswordRule;
 use App\User;
 use App\UserImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -17,8 +18,15 @@ class UserController extends Controller
 {
     public function show(){
 
-        $users = DB::table('vw_merchandiser')
-            ->get();
+        if(Auth::user()->account_type == '1'){
+            $users = DB::table('vw_merchandiser')
+                ->get();
+        }
+        else{
+            $users = DB::table('vw_merchandiser')
+                ->where('account_id', '<>', '1')
+                ->get();
+        }
 
         return view('masterData.user',compact(
             'users'
@@ -53,8 +61,7 @@ class UserController extends Controller
     }
 
     public function save(Request $request){
-
-        $validation = $request->validate([
+        $request->validate([
             'last_name' => 'required',
             'first_name' => 'required',
             'agency' => 'required',
@@ -69,7 +76,6 @@ class UserController extends Controller
             //'email' => 'required|unique:users|email',
         ]);
 
-
         if(empty($request->file('img'))){
             $path = "avatars/avatar.png";
         }
@@ -77,9 +83,14 @@ class UserController extends Controller
             $path = $request->file('img')->store('avatars','public');
         }
 
-
         #user
         $user = new User();
+
+        //if new user is diser
+        if($request->accountType == 3){
+            $user->merchandiser_id = User::where('account_type', '3')->max('merchandiser_id') + 1;
+        }
+
         $user->last_name = $request->last_name;
         $user->first_name = $request->first_name;
         $user->agency_code = $request->agency;
