@@ -98,6 +98,20 @@
             $('#' + elementId).html("");
         }
     }
+
+
+    function toDateTimeFormat(datetime){
+        var datetime = new Date(datetime);
+        return datetime.toLocaleString('en-US', {
+            month: 'numeric',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        });
+
+    }
 </script>
 
 {{--<!-- fullCalendar -->--}}

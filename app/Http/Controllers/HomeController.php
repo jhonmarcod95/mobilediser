@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Announcement;
+use App\Attendance;
 use App\InventoryTransactionHeader;
 use App\MerchandiserSchedule;
 use Carbon\Carbon;
@@ -63,8 +64,25 @@ class HomeController extends Controller
             ->get();
     }
 
-    public function getOfftake(){
-
+    public function getSchedule(){
+        return MerchandiserSchedule::whereDate('date', Carbon::now()->toDateString())
+            ->get();
     }
 
+    public function getRecentlyLogin(){
+        return Attendance::join('merchandiser_schedule', 'merchandiser_attendance.schedule_id', 'merchandiser_schedule.id')
+            ->join('users', 'merchandiser_schedule.merchandiser_id', 'users.merchandiser_id')
+            ->join('customer_master_data', 'merchandiser_schedule.customer_code', 'customer_master_data.customer_code')
+            ->orderByDesc('merchandiser_attendance.id')
+            ->get([
+                'merchandiser_attendance.id',
+                'merchandiser_attendance.created_at',
+                'merchandiser_attendance.time_in',
+                'users.last_name',
+                'users.first_name',
+                'customer_master_data.name AS store',
+                'customer_master_data.branch',
+            ])
+            ->take(5);
+    }
 }

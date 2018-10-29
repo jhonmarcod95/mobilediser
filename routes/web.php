@@ -25,7 +25,8 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::get('/getInStore', 'HomeController@getInStore');
     Route::get('/getVisitedStore', 'HomeController@getVisitedStore');
     Route::get('/getInventory', 'HomeController@getInventory');
-    Route::get('/getOfftake', 'HomeController@getOfftake');
+    Route::get('/getSchedule', 'HomeController@getSchedule');
+    Route::get('/getRecentlyLogin', 'HomeController@getRecentlyLogin');
 
     #announcement
     Route::get('/announcements', 'AnnouncementController@show');
