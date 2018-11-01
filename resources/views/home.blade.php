@@ -194,6 +194,37 @@
                 </div>
             </section>
 
+            {{-- Schedule Summary --}}
+            {{--<section class="col-lg-5 connectedSortable">--}}
+                {{--<div class="box box-primary">--}}
+                    {{--<div class="box-header">--}}
+                        {{--<h3 class="box-title">Schedule Summary</h3>--}}
+                    {{--</div>--}}
+
+                    {{--<div class="box-body">--}}
+                        {{--<div class="table-responsive">--}}
+                            {{--<table class="table no-margin">--}}
+                                {{--<thead>--}}
+                                {{--<tr>--}}
+                                    {{--<th>Name</th>--}}
+                                    {{--<th>Store</th>--}}
+                                    {{--<th>Date & Time</th>--}}
+                                {{--</tr>--}}
+                                {{--</thead>--}}
+                                {{--<tbody id="tbody-schedule-summary">--}}
+                                {{--</tbody>--}}
+                            {{--</table>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+
+                    {{--<div class="box-footer">--}}
+
+                    {{--</div>--}}
+                    {{--<div id="loading-schedule"></div>--}}
+                {{--</div>--}}
+            {{--</section>--}}
+
+
             {{-- Offtake --}}
             {{--<section class="col-lg-12 connectedSortable">--}}
                 {{--<div class="box">--}}
@@ -392,12 +423,25 @@
                     '<tr>' +
                         '<td>' + val.first_name + ' ' + val.last_name +
                         '<td>' + val.store + ' - ' + val.branch +
-                        '<td><small class="text-muted"><i class="fa fa-clock-o"></i> ' + toDateTimeFormat(val.created_at) + '</small></td>' +
+                        '<td><small class="text-muted"><i class="fa fa-clock-o"></i> ' + moment(val.created_at).format('MMM DD, YYYY hh:mm a'); + '</small></td>' +
                     '</tr>';
                 });
                 //display table body
                 $('#tbody-recently-login').html(tbody);
                 showLoading('loading-recent', false);
+            }
+        });
+    }
+
+    function getScheduleSummary(){
+        showLoading('tbody-schedule-summary', loadingState);
+        $.ajax({
+            type: 'GET',
+            url: '/getScheduleSummary',
+            success: function(data){
+                console.log(data);
+                // $('#schedule-count').text(data.length);
+                showLoading('tbody-schedule-summary', false);
             }
         });
     }
@@ -408,6 +452,7 @@
         getInventory();
         getSchedule();
         getRecentlyLogin();
+        getScheduleSummary();
     }
 
     onLoad();

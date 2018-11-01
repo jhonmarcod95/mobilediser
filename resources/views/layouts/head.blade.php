@@ -6,7 +6,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-
 <!-- Favicon -->
 <link href="{{ url('img/pliliLogo.png') }}" rel="icon" type="image/png">
 
@@ -18,15 +17,11 @@
 <link rel="stylesheet" href="{{  asset('adminLTE/bower_components/font-awesome/css/font-awesome.min.css') }}">
 <!-- Ionicons -->
 <link rel="stylesheet" href="{{  asset('adminLTE/bower_components/Ionicons/css/ionicons.min.css') }}">
-{{--<!-- fullCalendar -->--}}
-{{--<link rel="stylesheet" href="{{  asset('adminLTE/bower_components/fullcalendar/dist/fullcalendar.min.css') }}">--}}
-{{--<link rel="stylesheet" href="{{  asset('adminLTE/bower_components/fullcalendar/dist/fullcalendar.print.min.css') }}" media="print">--}}
 
 
 <!-- DataTables -->
 <link rel="stylesheet" href="{{  asset('adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{  asset('customDataTable/fixedColumns.bootstrap4.min.css') }}">
-
 
 <!-- AdminLTE Skins. Choose a skin from the css/skins
      folder instead of downloading all of them to reduce the load. -->
@@ -56,23 +51,6 @@
 
 {{-- Laravel SweetAlert --}}
 <script src="{{  asset('adminLTE/sweetalert2.all.js') }}"></script>
-
-
-{{-- MY SCRIPT --}}
-<script>
-    function hideElement(id){
-        $('#' + id).hide();
-    }
-
-    function showElement(id){
-        $('#' + id).show();
-    }
-
-    function setElementValue(id, val) {
-        $('#' + id).val(val);
-    }
-
-</script>
 
 @yield('headScript')
 

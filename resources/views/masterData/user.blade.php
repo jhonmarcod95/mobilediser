@@ -32,7 +32,7 @@
                             <thead>
                             <tr>
                                 <th></th>
-                                {{--<th>User ID</th>--}}
+                                <th>User ID</th>
                                 <th>Name</th>
                                 <th>Address</th>
                                 <th>Contact#</th>
@@ -53,7 +53,7 @@
 
                                     </div>
                                 </td>
-                                {{--<td>{{ $user->merchandiser_id }}</td>--}}
+                                <td>{{ $user->merchandiser_id }}</td>
                                 <td>{{ $user->first_name . ' ' . $user->last_name }}</td>
                                 <td>{{ $user->address }}</td>
                                 <td>{{ $user->contact_number }}</td>

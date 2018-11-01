@@ -29,7 +29,7 @@
             </li>
 
             <li>
-                <a href="{{ url('/message') }}">
+                <a href="{{ url('/messages') }}">
                     <i class="fa fa-envelope"></i> <span>Messages</span>
                     <span class="pull-right-container">
                     {{--<small class="label pull-right bg-yellow">12</small>--}}

@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::get('/getInventory', 'HomeController@getInventory');
     Route::get('/getSchedule', 'HomeController@getSchedule');
     Route::get('/getRecentlyLogin', 'HomeController@getRecentlyLogin');
+    Route::get('/getScheduleSummary', 'HomeController@getScheduleSummary');
 
     #announcement
     Route::get('/announcements', 'AnnouncementController@show');
@@ -37,14 +38,16 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::post('/announcements/update/{id}', 'AnnouncementController@update');
 
     #message
-    Route::get('/message', 'MessageController@show');
+    Route::get('/messages', 'MessageController@index');
+    Route::get('/messages-all', 'MessageController@indexData');
     Route::get('/message/chat/{id}', 'MessageController@chat');
 
     Route::post('/message/addChat', 'MessageController@addChat');
     Route::post('/message/closeMessage', 'MessageController@closeMessage');
 
     #schedule
-    Route::get('/schedules', 'ScheduleController@show');
+    Route::get('/schedules', 'ScheduleController@index');
+    Route::get('/schedules-data', 'ScheduleController@indexData');
     Route::get('/schedules/records/{merchandiser_id}/{date}', 'ScheduleController@records');
     Route::get('/schedules/edit/{id}', 'ScheduleController@edit');
 

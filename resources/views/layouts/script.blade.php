@@ -5,6 +5,7 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
+<script src="{{ asset('/calendar/lib/moment.min.js') }}"></script>
 
 <!-- jQuery 3 -->
 <script src="{{  asset('adminLTE/bower_components/jquery/dist/jquery.min.js') }}"></script>
@@ -16,34 +17,13 @@
 </script>
 <!-- Bootstrap 3.3.7 -->
 <script src="{{  asset('adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<!-- Morris.js charts -->
-<script src="{{  asset('adminLTE/bower_components/raphael/raphael.min.js') }}"></script>
-<script src="{{  asset('adminLTE/bower_components/morris.js/morris.min.js') }}"></script>
-<!-- Sparkline -->
-<script src="{{  asset('adminLTE/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script>
-<!-- jvectormap -->
-<script src="{{  asset('adminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
-<script src="{{  asset('adminLTE/plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
-<!-- jQuery Knob Chart -->
-<script src="{{  asset('adminLTE/bower_components/jquery-knob/dist/jquery.knob.min.js') }}"></script>
-<!-- daterangepicker -->
-{{--<script src="{{  asset('adminLTE/bower_components/moment/min/moment.min.js') }}"></script>--}}
-<script src="{{  asset('adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
-<!-- datepicker -->
-<script src="{{  asset('adminLTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-<!-- Bootstrap WYSIHTML5 -->
-<script src="{{  asset('adminLTE/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
+
 <!-- Slimscroll -->
 <script src="{{  asset('adminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
 <!-- FastClick -->
 <script src="{{  asset('adminLTE/bower_components/fastclick/lib/fastclick.js') }}"></script>
 <!-- AdminLTE App -->
 <script src="{{  asset('adminLTE/dist/js/adminlte.min.js') }}"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{  asset('adminLTE/dist/js/pages/dashboard.js') }}"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="{{  asset('adminLTE/dist/js/demo.js') }}"></script>
-
 
 <!-- DataTables -->
 <script src="{{  asset('adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
@@ -99,25 +79,34 @@
         }
     }
 
+    function toTimeString(time){
+        return  moment('1995-12-30 ' + time).format('hh:mm a');
+    }
 
-    function toDateTimeFormat(datetime){
-        var datetime = new Date(datetime);
-        return datetime.toLocaleString('en-US', {
-            month: 'numeric',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
-        });
+    function showPageNavigation(data){
+        var current_page = data.current_page;
+        var last_page = data.last_page;
+        var next_page_url = data.next_page_url;
+        var prev_page_url = data.prev_page_url;
+        var prev_page_button = '';
+        var next_page_button = '';
+        if(prev_page_url != null) prev_page_button = '<button class="btn btn-default btn-sm" onclick="getMessages(\'' + prev_page_url + '\')"><i class="fa fa-arrow-left"></i></button>';
+        if(next_page_url != null) next_page_button = '<button class="btn btn-default btn-sm" onclick="getMessages(\'' + next_page_url + '\')"><i class="fa fa-arrow-right"></i></button>';
 
+        var page_nav = '' +
+            '<div class="mailbox-controls pull-right">' +
+                prev_page_button +
+                '<span> Page ' + current_page + ' </span>' +
+                '<span> of ' + last_page + ' </span>' +
+                next_page_button +
+            '</div>';
+        return page_nav;
     }
 </script>
 
-{{--<!-- fullCalendar -->--}}
-{{--<script src="{{  asset('adminLTE/bower_components/moment/moment.js') }}"></script>--}}
-{{--<script src="{{  asset('adminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>--}}
-{{--<!-- Page specific script -->--}}
+
+
+
 
 @yield('select2Script')
 @yield('script')

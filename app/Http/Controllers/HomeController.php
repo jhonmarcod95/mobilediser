@@ -7,7 +7,10 @@ use App\Attendance;
 use App\InventoryTransactionHeader;
 use App\MerchandiserSchedule;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 
 class HomeController extends Controller
 {
@@ -84,5 +87,34 @@ class HomeController extends Controller
                 'customer_master_data.branch',
             ])
             ->take(5);
+    }
+
+    public function getScheduleSummary(Request $request){
+
+        $schedules = MerchandiserSchedule::join('users', 'merchandiser_schedule.merchandiser_id', 'users.merchandiser_id')
+            ->whereDate('date', Carbon::now()->toDateString())
+            ->select(
+                'merchandiser_schedule.merchandiser_id',
+                'users.last_name',
+                'users.first_name',
+                'merchandiser_schedule.customer_code',
+                'merchandiser_schedule.status'
+            )
+            ->get()
+            ->groupBy('merchandiser_id')
+
+            ;
+
+        $page = Input::get('page', 1); // Get the ?page=1 from the url
+        $perPage = 15; // Number of items per page
+        $offset = ($page * $perPage) - $perPage;
+
+        return new LengthAwarePaginator(
+            array_slice($schedules->toArray(), $offset, $perPage, true), // Only grab the items we need
+            count($schedules), // Total items
+            $perPage, // Items per page
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
     }
 }

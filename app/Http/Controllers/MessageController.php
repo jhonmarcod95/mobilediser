@@ -2,14 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\App;
 use App\MessageHeader;
 use App\MessageItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+
 class MessageController extends Controller
 {
+    public function index(){
+        return view('message.index');
+    }
+
+    public function indexData(Request $request){
+        $messages = DB::table('vw_merchandiser_message_header')
+            ->where('last_name', 'LIKE', '%' . $request->search . '%')
+            ->orWhere('first_name', 'LIKE', '%' . $request->search . '%')
+            ->orWhere('subject', 'LIKE', '%' . $request->search . '%')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return $messages;
+
+    }
+
     public function show()
     {
         $messages = DB::table('vw_merchandiser_message_header')
@@ -55,7 +73,6 @@ class MessageController extends Controller
         $validation = $request->validate([
             'message' => 'required|max:255',
         ]);
-
 
         $message_id = session('message_id');
 

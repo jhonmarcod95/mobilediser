@@ -31,34 +31,46 @@ class ScheduleController extends Controller
         $this->customers = Customer::showCodeAndName();
     }
 
-    public function show(Request $request)
+    public function index(Request $request)
     {
-        $merchandiser_ids = $request->merchandiser_ids;
+        $merchandisers = $this->merchandisers
+            ->put('0', 'All');
+
+        return view('schedule.index', compact(
+            'merchandisers'
+        ));
+    }
+
+    public function indexData(Request $request){
+        $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
         $monthYear = $request->monthYear;
+
         $month = Carbon::parse($monthYear)->month;
         $year = Carbon::parse($monthYear)->year;
 
         $daysCount = cal_days_in_month(CAL_GREGORIAN, $month, $year);
-
         $dates = $this->dateRange("$year-$month-01", "$year-$month-$daysCount");
 
-        $merchandiser_ids = $this->merchandiserIdSearch($merchandiser_ids);
+        $merchandisers = User::where('account_type', 3)
+            ->whereIn('merchandiser_id', $merchandiser_ids)
+            ->get([
+                'merchandiser_id',
+                'first_name',
+                'last_name',
+            ]);
 
         $schedules = DB::table('vw_schedules')
             ->whereIn('merchandiser_id', $merchandiser_ids)
+            ->whereBetween('date', [$dates[0], $dates[count($dates) - 1]])
             ->get();
 
-        $customers = $this->customers;
-        $merchandisers = $this->merchandisers;
-
-        return view('schedule.show', compact(
-            'monthYear',
-            'dates',
-            'merchandisers',
-            'customers',
-            'schedules'
-        ));
+        return [
+            'merchandisers' => $merchandisers,
+            'dates' => $dates,
+            'schedules' => $schedules,
+        ];
     }
+
 
     public function records($merchandiser_id, $date)
     {
@@ -165,7 +177,7 @@ class ScheduleController extends Controller
     public function upload(Request $request){
         $monthYear = $request->monthYear;
 
-        $validation = $request->validate([
+        $request->validate([
             'monthYear' => 'required',
             'import_file' => ['required', 'mimes:xlsx,xls', new ScheduleUploadRule($monthYear)],
         ]);
@@ -201,11 +213,9 @@ class ScheduleController extends Controller
                 DB::commit();
                 /*--------------------------------------------------------*/
             });
-
-            alert()->success('Schedule has been uploaded','');
         }
 
-        return redirect('/schedules');
+        return 'success';
     }
 
 
