@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::group(['middleware' => ['auth', 'role:admin']], function () {
+Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
 
     #dashboard
     Route::get('/', 'HomeController@index')->name('home');
@@ -48,13 +48,16 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     #schedule
     Route::get('/schedules', 'ScheduleController@index');
     Route::get('/schedules-data', 'ScheduleController@indexData');
+    Route::get('/schedules/show/{id}', 'ScheduleController@show');
     Route::get('/schedules/records/{merchandiser_id}/{date}', 'ScheduleController@records');
     Route::get('/schedules/edit/{id}', 'ScheduleController@edit');
 
-    Route::post('/schedules/save', 'ScheduleController@save');
-    Route::post('/schedules/update', 'ScheduleController@update');
-    Route::post('/schedules/delete', 'ScheduleController@delete');
-    Route::post('/schedules/upload', 'ScheduleController@upload');
+    Route::group(['middleware' => ['role:admin']], function () {
+        Route::post('/schedules/save', 'ScheduleController@save');
+        Route::post('/schedules/update', 'ScheduleController@update');
+        Route::post('/schedules/delete', 'ScheduleController@delete');
+        Route::post('/schedules/upload', 'ScheduleController@upload');
+    });
 
     #users
     Route::get('/users', 'UserController@show');

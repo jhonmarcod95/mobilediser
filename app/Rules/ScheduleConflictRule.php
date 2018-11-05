@@ -2,26 +2,26 @@
 
 namespace App\Rules;
 
+use App\MerchandiserSchedule;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 
 class ScheduleConflictRule implements Rule
 {
+    private $schedule_id;
     private $merchandiser_id;
-    private $date;
-    private $startTime;
-    private $endTime;
+    private $dates;
+
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct($merchadiser_id, $date, $starTime, $endTime)
+    public function __construct($schedule_id, $merchadiser_id, $dates)
     {
+        $this->schedule_id = $schedule_id;
         $this->merchandiser_id = $merchadiser_id;
-        $this->date = $date;
-        $this->startTime = $starTime;
-        $this->endTime = $endTime;
+        $this->dates = $dates;
     }
 
     /**
@@ -33,6 +33,35 @@ class ScheduleConflictRule implements Rule
      */
     public function passes($attribute, $value)
     {
+        $schedule_ids = $this->schedule_id;
+        $dates = $this->dates;
+        $merchandiser_id = $this->merchandiser_id;
+
+        //for saving
+        if(empty($schedule_ids)){
+            foreach ($dates as $date){
+                if(MerchandiserSchedule::where('merchandiser_id', $merchandiser_id)
+                    ->where('customer_code', $value)
+                    ->where('status', '002')
+                    ->whereDate('date', $date)
+                    ->exists()){
+                    return false;
+                }
+            }
+        }
+        //for updating
+        else{
+            if(MerchandiserSchedule::where('merchandiser_id', $merchandiser_id)
+                ->where('customer_code', $value)
+                ->where('status', '002')
+                ->whereIn('date', $dates)
+                ->whereNotIn('id', $schedule_ids)
+                ->exists()){
+                return false;
+            }
+            return true;
+        }
+
 //        $schedules = DB::select("SELECT * FROM vw_schedules WHERE date = '$this->date' AND (merchandiser_id = '$this->merchandiser_id' OR customer_code = '$value')");
 //
 //        foreach ($schedules as $schedule){
@@ -52,6 +81,6 @@ class ScheduleConflictRule implements Rule
      */
     public function message()
     {
-        return 'Unable to add schedule due to conflict to another.';
+        return 'Schedule already exists.';
     }
 }

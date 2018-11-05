@@ -56,12 +56,24 @@ class Handler extends ExceptionHandler
             $exception instanceof \jeremykenedy\LaravelRoles\Exceptions\RoleDeniedException ||
             $exception instanceof \jeremykenedy\LaravelRoles\Exceptions\PermissionDeniedException ||
             $exception instanceof \jeremykenedy\LaravelRoles\Exceptions\LevelDeniedException;
-
+//
         if ($userLevelCheck) {
-            Auth::logout();
 
-            session(['message' => 'You are not allowed to login.']);
-            return redirect('/');
+            if ($request->expectsJson()) {
+                return response()->json(array(
+                    'error'    =>  403,
+                    'message'   =>  'Unauthorized.'
+                ), 403);
+            }
+            else{
+                Auth::logout();
+
+                session(['message' => 'You are not allowed to login.']);
+                return redirect('/');
+            }
+
+            abort(403);
+
         }
 
         return parent::render($request, $exception);

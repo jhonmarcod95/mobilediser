@@ -50,9 +50,17 @@
         });
 
         $('.select2').select2({
-            maximumSelectionLength: 10
+            maximumSelectionLength: 10,
+            width: '100%'
         });
     });
+
+    /* set's select tag into select2 and its default value ********/
+    function setSelect2(id, val) {
+        $("#" + id).select2({width: '100%'});
+        $("#" + id).select2('val', val);
+    }
+    /**************************************************************/
 
     function setDataTable(freezeIndex){
         $('#dataTable2').DataTable({
@@ -83,6 +91,26 @@
         return  moment('1995-12-30 ' + time).format('hh:mm a');
     }
 
+    function getCheckboxChecked(arrayId) {
+        var checked = [];
+        $("input[id='" + arrayId+ "']:checked").each(function ()
+        {
+            checked.push($(this).val());
+        });
+        return checked;
+    }
+
+    //in operator
+    function whereIn(varString, varArray){
+        var result = false;
+        $.each(varArray, function(key, arr) {
+            if(arr == varString){
+                result = true;
+            }
+        });
+        return result;
+    }
+
     function showPageNavigation(data){
         var current_page = data.current_page;
         var last_page = data.last_page;
@@ -101,6 +129,54 @@
                 next_page_button +
             '</div>';
         return page_nav;
+    }
+
+    function showSuccessAlert(text){
+        var result = '<div class="alert bg-success alert-dismissible text-success small" role="alert">' + text + '<button type="button" class="close text-green" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+        return result;
+    }
+
+    function showErrorAlert(data) {
+        var errors = $.parseJSON(data.responseText);
+        var errList = '';
+        $.each(errors.errors, function (key, val) {
+            errList += '<li>' + val + '</li>';
+        });
+        return '<div class="alert bg-danger text-danger"><button type="button" class="close text-red" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p><i class="fa fa-warning"></i><b style="margin-left: 6px">Error</b> ' + errors.message + '</p><ul class="small">' + errList + '</ul></div>';
+    }
+
+    function getDaysOfMonth(monthYear, pDay){
+        var days = [];
+        var day = moment(monthYear).day(pDay);
+
+        if (day.date() > 7) day.add(7, 'd');
+        var month = day.month();
+
+        while (month === day.month()) {
+            days.push(day.format('YYYY-MM-DD'));
+            day.add(7, 'd');
+        }
+        return days;
+    }
+
+    //for selection with `all` options using multiple select2
+    function getSelectMultipleValue(id, allString) {
+        var result = [];
+        var val = $("#" + id).val()
+
+        if(val.includes(allString)){
+            $('#' + id + ' option').each(function()
+            {
+                var value = $(this).val();
+                if(value != allString){
+                    result.push(value);
+                }
+            });
+        }
+        else{
+            result = val;
+        }
+        return result
     }
 </script>
 
