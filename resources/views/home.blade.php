@@ -379,18 +379,17 @@
 
     $('#date-entry').change(function() {
         $('#date-entry').css('display', 'none');
-
         $('#dashboard-date').text($('#date-entry').val()).css('display', '');
 
         if($('#dashboard-date').text() == dateToday){
+            dateSelected =  $('#dashboard-date').text();
             $('#dashboard-date').text('Today\'s Report');
             realTimeState = true; //activate realtime for date today filter
         }
         else{
             realTimeState = false;
+            dateSelected =  $('#dashboard-date').text();
         }
-
-        dateSelected =  $('#dashboard-date').text();
         onLoad();
     });
     /****************************************************/
