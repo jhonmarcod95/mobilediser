@@ -5,7 +5,9 @@
     <section class="content-header">
         <h1>
             Dashboard
-            <small>Today's Report</small>
+            <small id="dashboard-date">Today's Report</small>
+            <input class="small" id="date-entry" type="date" style="display:none;">
+
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -359,14 +361,45 @@
 
 
 @section('script')<script>
+
     var loadingState = true;
     var refreshInterval = 60000; //1min
+    var realTimeState = true; //use to enable & disable real-time
+    var dateToday = moment().format('Y-M-DD');
+    var dateSelected = dateToday;
+
+    /* dashboard filtering ******************************/
+    $('#dashboard-date').click(function() {
+        $('#dashboard-date').css('display', 'none');
+        $('#date-entry')
+            .val($('#dashboard-date').text())
+            .css('display', '')
+            .focus();
+    });
+
+    $('#date-entry').change(function() {
+        $('#date-entry').css('display', 'none');
+
+        $('#dashboard-date').text($('#date-entry').val()).css('display', '');
+
+        if($('#dashboard-date').text() == dateToday){
+            $('#dashboard-date').text('Today\'s Report');
+            realTimeState = true; //activate realtime for date today filter
+        }
+        else{
+            realTimeState = false;
+        }
+
+        dateSelected =  $('#dashboard-date').text();
+        onLoad();
+    });
+    /****************************************************/
 
     function getInStore() {
         showLoading('loading-1', loadingState);
         $.ajax({
             type: 'GET',
-            url: '/getInStore',
+            url: '/getInStore/' + dateSelected,
             success: function(data){
                 $('#in-store-count').text(data.length);
                 showLoading('loading-1', false);
@@ -378,7 +411,7 @@
         showLoading('loading-2', loadingState);
         $.ajax({
             type: 'GET',
-            url: '/getVisitedStore',
+            url: '/getVisitedStore/' + dateSelected,
             success: function(data){
                 $('#visited-store-count').text(data.length);
                 showLoading('loading-2', false);
@@ -390,7 +423,7 @@
         showLoading('loading-3', loadingState);
         $.ajax({
             type: 'GET',
-            url: '/getInventory',
+            url: '/getInventory/' + dateSelected,
             success: function(data){
                 $('#submitted-inventory-count').text(data.length);
                 showLoading('loading-3', false);
@@ -402,7 +435,7 @@
         showLoading('loading-4', loadingState);
         $.ajax({
             type: 'GET',
-            url: '/getSchedule',
+            url: '/getSchedule/' + dateSelected,
             success: function(data){
                 $('#schedule-count').text(data.length);
                 showLoading('loading-4', false);
@@ -453,13 +486,16 @@
         getSchedule();
         getRecentlyLogin();
         getScheduleSummary();
+
     }
 
     onLoad();
 
     setInterval(function() {
-        loadingState = false; //to hide loading for auto-refresh
-        onLoad();
+        if(realTimeState){
+            loadingState = false; //to hide loading for auto-refresh
+            onLoad();
+        }
     }, refreshInterval);
 
 </script>@endsection

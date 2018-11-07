@@ -49,26 +49,26 @@ class HomeController extends Controller
         ));
     }
 
-    public function getInStore(){
+    public function getInStore($date){
         return MerchandiserSchedule::join('merchandiser_attendance', 'merchandiser_schedule.id', '=', 'merchandiser_attendance.schedule_id')
-            ->whereDate('date', Carbon::now()->toDateString())
+            ->whereDate('date', $date)
             ->whereNull('merchandiser_attendance.time_out')
             ->get();
     }
 
-    public function getVisitedStore(){
+    public function getVisitedStore($date){
         return MerchandiserSchedule::where('status', '001')
-            ->whereDate('date', Carbon::now()->toDateString())
+            ->whereDate('date', $date)
             ->get();
     }
 
-    public function getInventory(){
-        return InventoryTransactionHeader::whereDate('created_at', Carbon::now()->toDateString())
+    public function getInventory($date){
+        return InventoryTransactionHeader::whereDate('created_at', $date)
             ->get();
     }
 
-    public function getSchedule(){
-        return MerchandiserSchedule::whereDate('date', Carbon::now()->toDateString())
+    public function getSchedule($date){
+        return MerchandiserSchedule::whereDate('date', $date)
             ->get();
     }
 

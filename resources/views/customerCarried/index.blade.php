@@ -17,29 +17,22 @@
                 <div class="box box-primary">
 
                     <div class="box-header ">
-                        <h3 class="box-title">Customer Carried Material List</h3>
-
                         <div class="row">
                             {!! Form::open(['id' => 'formFilter', 'url' => '/customer-carried', 'method' => 'GET']) !!}
-                            <div class="col-md-12">
-                                <div class="pull-right">
-                                    <br>
-                                    <button class="btn btn-primary" type="button" onclick="retrieveCustomerCarried()"><i class="fa fa-search"></i>&nbsp; Search</button>
-                                </div>
 
-                                <div class="pull-right">&nbsp;</div>
+                            <div class="col-md-4">
+                                <label>Customer: </label>
+                                {!! Form::select('customer_ids[]', $search_customers, null, ['class' => 'form-control select2', 'multiple', 'required']) !!}
+                            </div>
 
-                                <div class="pull-right">
-                                    <span>Material: </span> <br>
-                                    {!! Form::select('material_ids[]', $search_materials, null, ['class' => 'form-control select2', 'multiple', 'required']) !!}
-                                </div>
+                            <div class="col-md-4">
+                                <label>Material: </label>
+                                {!! Form::select('material_ids[]', $search_materials, null, ['class' => 'form-control select2', 'multiple', 'required']) !!}
+                            </div>
 
-                                <div class="pull-right">&nbsp;</div>
-
-                                <div class="pull-right">
-                                    <span>Customer: </span> <br>
-                                    {!! Form::select('customer_ids[]', $search_customers, null, ['class' => 'form-control select2', 'multiple', 'required']) !!}
-                                </div>
+                            <div class="col-md-4">
+                                <br>
+                                <button class="btn btn-primary" type="button" onclick="retrieveCustomerCarried()"><i class="fa fa-search"></i>&nbsp; Search</button>
                             </div>
                             {!! Form::close() !!}
                         </div>
