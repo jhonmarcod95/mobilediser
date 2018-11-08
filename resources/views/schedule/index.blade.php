@@ -182,6 +182,7 @@
                                     </table>
                                 </div>
                             </div>
+
                         </div>
 
                         <div id="loading-schedule-show"></div>
@@ -502,9 +503,9 @@
                         //table body
                         tbody +=
                             '<tr>' +
-                            '<td><a href="#" data-toggle="modal" data-target="#modal-default" onclick="showSchedule(\'' + merchandiser.merchandiser_id + '\')">' + merchandiser.first_name + ' ' + merchandiser.last_name +
-                            columnStore
-                        '</tr>';
+                                '<td><a href="#" data-toggle="modal" data-target="#modal-default" onclick="showSchedule(\'' + merchandiser.merchandiser_id + '\')">' + merchandiser.first_name + ' ' + merchandiser.last_name +
+                                columnStore
+                            '</tr>';
                     });
                     //table
                     var table =

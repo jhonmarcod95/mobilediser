@@ -68,8 +68,97 @@ class HomeController extends Controller
     }
 
     public function getSchedule($date){
-        return MerchandiserSchedule::whereDate('date', $date)
-            ->get();
+        $schedules = MerchandiserSchedule::leftjoin('merchandiser_attendance', 'merchandiser_schedule.id', '=', 'merchandiser_attendance.schedule_id')
+            ->join('users', 'merchandiser_schedule.merchandiser_id', '=', 'users.merchandiser_id')
+            ->join('agency_master_data', 'agency_master_data.agency_code', '=', 'users.agency_code')
+            ->join('customer_master_data', 'merchandiser_schedule.customer_code', '=', 'customer_master_data.customer_code')
+            ->whereDate('date', $date)
+            ->get([
+                'merchandiser_schedule.id',
+                'merchandiser_schedule.time_in AS start_time',
+                'merchandiser_schedule.time_out AS end_time',
+                'merchandiser_attendance.time_in',
+                'merchandiser_attendance.time_out',
+                'merchandiser_schedule.status',
+                'users.merchandiser_id',
+                'users.first_name',
+                'users.last_name',
+                'agency_master_data.agency_code',
+                'agency_master_data.name AS agency',
+                'customer_master_data.name AS store',
+                'customer_master_data.branch',
+            ]);
+
+        $agencies = collect($schedules)
+            ->groupBy('agency');
+
+        $totalAgencyScheduleCount = 0;
+        $totalVisitedCount = 0;
+        $totalRemaining = 0;
+        $totalInStoreCount = 0;
+
+        foreach ($agencies as $key => $agency){
+            $agencyScheduleCount = $agency->count();
+            $visitedCount = $agency->where('status', '001')->count();
+            $remainingCount = $agency->where('time_in', null)->where('time_out', null)->count();
+            $inStoreCount = $agency->where('time_in', '!=', null)->where('time_out', null)->count();
+
+            $status = ['in-store', 'visited', 'remaining'];
+
+            $agencySchedules[] = [
+                'text' => $key . ': '  . $agencyScheduleCount,
+                'agency' => $key,
+                'nodes' => [
+                    [
+                        'text' => 'In Store: ' . $inStoreCount,
+                        'agency' => $key,
+                        'status' => $status[0]
+                    ],
+                    [
+                        'text' => 'Visited: ' . $visitedCount,
+                        'agency' => $key,
+                        'status' => $status[1]
+                    ],
+                    [
+                        'text' => 'Remaining: ' . $remainingCount,
+                        'agency' => $key,
+                        'status' => $status[2]
+                    ],
+                ]
+            ];
+
+            $totalAgencyScheduleCount += $agencyScheduleCount;
+            $totalVisitedCount += $visitedCount;
+            $totalRemaining += $remainingCount;
+            $totalInStoreCount += $inStoreCount;
+        }
+
+        $agencies = [
+            [
+                'text' => 'Total Schedule: ' . $totalAgencyScheduleCount,
+                'agency' => '',
+                'nodes' => $agencySchedules
+            ],
+            [
+                'text' => 'Total In Store: ' . $totalInStoreCount,
+                'agency' => '',
+                'status' => $status[0]
+            ],
+            [
+                'text' => 'Total Visited: ' . $totalVisitedCount,
+                'agency' => '',
+                'status' => $status[1]
+            ],
+            [
+                'text' => 'Total Remaining: ' . $totalRemaining,
+                'agency' => '',
+                'status' => $status[2]
+            ],
+            'total' => $totalAgencyScheduleCount,
+            'schedules' => $schedules
+        ];
+
+        return $agencies;
     }
 
     public function getRecentlyLogin(){

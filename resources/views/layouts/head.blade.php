@@ -45,6 +45,9 @@
 <!-- Google Font -->
 <link rel="stylesheet" href="{{  asset('adminLTE/css.css') }}">
 
+{{-- Boostrap tree --}}
+<link rel="stylesheet" href="{{  asset('bstree/bootstrap-treeview.css') }}">
+
 
 {{-- Image Upload preview --}}
 <script src="{{  asset('adminLTE/jquery.min.js') }}"></script>

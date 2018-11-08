@@ -74,7 +74,7 @@
                     <div class="icon">
                         <i class="ion ion-calendar"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="#" data-toggle="modal" data-target="#modal-default" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                     <div id="loading-4"></div>
                 </div>
             </div>
@@ -82,8 +82,6 @@
 
         <!-- Main row -->
         <div class="row">
-
-
             {{-- Announcement --}}
             <section class="col-lg-7 connectedSortable">
                 <div class="box box-success">
@@ -357,16 +355,66 @@
             {{--</section>--}}
         </div>
     </section>
+
+    {{-- Modal --}}
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog modal-lg direct-chat direct-chat-warning">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="box-header">
+                        <h3 id="chat_title" class="box-title">Schedule Dashboard</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body" >
+                    <div class="box-default">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div id="schedule-tree"></div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="table-responsive" style="height: 500px">
+                                    <table id="table-schedule" class="table table-bordered no-margin">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Store</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="tbody-schedule">
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {!! Form::button('Export to Excel', ['class' => 'btn btn-primary btn-sm', 'onclick' => 'tableToExcel(\'table-schedule\', \'Schedule\')']) !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 
 @section('script')<script>
 
-    var loadingState = true;
-    var refreshInterval = 60000; //1min
+    var loadingState = true; //use to show & hide loading
     var realTimeState = true; //use to enable & disable real-time
+    var refreshInterval = 60000; //1min
     var dateToday = moment().format('Y-M-DD');
     var dateSelected = dateToday;
+
+    // $( "#modal-default" ).on('shown', function(){
+    //     alert("I want this to appear after the modal has opened!");
+    // });
 
     /* dashboard filtering ******************************/
     $('#dashboard-date').click(function() {
@@ -385,11 +433,13 @@
             dateSelected =  $('#dashboard-date').text();
             $('#dashboard-date').text('Today\'s Report');
             realTimeState = true; //activate realtime for date today filter
+            loadingState = true; //show loading to know if filtering works
         }
         else{
-            realTimeState = false;
+            realTimeState = false; //disable realtime if current day is not today
             dateSelected =  $('#dashboard-date').text();
         }
+
         onLoad();
     });
     /****************************************************/
@@ -430,17 +480,89 @@
         });
     }
 
+    /* schedule dashboard ***********************************/
     function getSchedule(){
         showLoading('loading-4', loadingState);
         $.ajax({
             type: 'GET',
             url: '/getSchedule/' + dateSelected,
             success: function(data){
-                $('#schedule-count').text(data.length);
+                $('#schedule-count').text(data.total);
                 showLoading('loading-4', false);
+
+                var scheduleTree = data;
+                var schedules = data.schedules;
+
+                //display schedule treeview
+                $('#schedule-tree').treeview({
+                    data: scheduleTree,
+                    enableLinks: true,
+
+                    //treeview event
+                    onNodeSelected: function(event, data) {
+
+                        var status = data.status;
+
+                        //filter by agency
+                        var filterSchedule = $.map(schedules, function(i) {
+                            if (i.agency.match(data.agency)){
+                                return i;
+                            }
+                        });
+
+                        //filter by agency -> instore
+                        if(status == 'in-store'){
+                            filterSchedule = $.map(schedules, function(i) {
+                                if (i.agency.match(data.agency) && (i.time_in != null && i.time_out == null)){
+                                    return i;
+                                }
+                            });
+                        }
+
+                        //filter by agency -> visited
+                        if(status == 'visited'){
+                            filterSchedule = $.map(schedules, function(i) {
+                                if (i.agency.match(data.agency) && i.status.match('001')){
+                                    return i;
+                                }
+                            });
+                        }
+
+                        //filter by agency -> remaining
+                        if(status == 'remaining'){
+                            filterSchedule = $.map(schedules, function(i) {
+                                if (i.agency.match(data.agency) && (i.time_in == null && i.time_out == null)){
+                                    return i;
+                                }
+                            });
+                        }
+                        populateScheduleTable(filterSchedule);
+                    }
+                });
+
+                $('#schedule-tree').treeview('collapseAll', { silent: true });
+                populateScheduleTable(schedules);
             }
         });
     }
+    /********************************************************/
+
+    function populateScheduleTable(schedules){
+        var tbody = '';
+        $.each(schedules, function(key, schedule) {
+            tbody +=
+                '<tr>' +
+                    '<td>' + parseInt(key + 1) +
+                    '<td>' + schedule.first_name + ' ' + schedule.last_name +
+                    '<td>' + schedule.store + ' ' + schedule.branch +
+                '</tr>';
+        });
+        if(tbody == ''){
+            tbody = '<tr><td colspan="3" style="text-align: center">No data available.</tr>'
+        }
+        $('#tbody-schedule').html(tbody);
+    }
+
 
     function getRecentlyLogin(){
         showLoading('loading-recent', loadingState);
@@ -478,14 +600,24 @@
         });
     }
 
+    /* modal states ****************************************/
+    $('.modal').on('hide.bs.modal', function (e) {
+        realTimeState = true;
+    });
+
+
+    $('.modal').on('shown.bs.modal', function (e) {
+        realTimeState = false;
+    });
+    /*******************************************************/
+
     function onLoad(){
         getInStore();
         getVisitedStore();
         getInventory();
         getSchedule();
         getRecentlyLogin();
-        getScheduleSummary();
-
+        // getScheduleSummary();
     }
 
     onLoad();
@@ -496,5 +628,6 @@
             onLoad();
         }
     }, refreshInterval);
+
 
 </script>@endsection
