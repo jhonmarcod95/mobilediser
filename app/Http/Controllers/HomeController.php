@@ -171,7 +171,7 @@ class HomeController extends Controller
 
         }
 
-        // add total counts into array
+        // add total counts into schedules
         $agencySchedules[] = [
             'text' => 'Total In Store: ' . $totalInStoreCount,
             'model' => $model[0],
@@ -191,6 +191,21 @@ class HomeController extends Controller
             'model' => $model[0],
             'agency' => '',
             'status' => $status[2]
+        ];
+
+        // add total counts into merchandiser
+        $merchandiserSchedules[] = [
+            'text' => 'Total Login: ' . $totalUserLoginCount,
+            'model' => $model[1],
+            'agency' => '',
+            'status' => $status[3]
+        ];
+
+        $merchandiserSchedules[] = [
+            'text' => 'Total Not Login: ' . $totalUserNotLoginCount,
+            'model' => $model[1],
+            'agency' => '',
+            'status' => $status[4]
         ];
 
         $scheduleDashboard = [
