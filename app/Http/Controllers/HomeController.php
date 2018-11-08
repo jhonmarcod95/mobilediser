@@ -96,6 +96,9 @@ class HomeController extends Controller
         $totalVisitedCount = 0;
         $totalRemaining = 0;
         $totalInStoreCount = 0;
+        $totalUserCount = 0;
+        $totalUserLoginCount = 0;
+        $totalUserNotLoginCount = 0;
 
         foreach ($agencies as $key => $agency){
             $agencyScheduleCount = $agency->count();
@@ -103,27 +106,58 @@ class HomeController extends Controller
             $remainingCount = $agency->where('time_in', null)->where('time_out', null)->count();
             $inStoreCount = $agency->where('time_in', '!=', null)->where('time_out', null)->count();
 
-            $status = ['in-store', 'visited', 'remaining'];
+            $userCount = $agency->unique('merchandiser_id')->count();
+            $userLoginCount = $agency->unique('merchandiser_id')->where('time_in', '!=', null)->count();
+            $userNotLoginCount = $agency->unique('merchandiser_id')->where('time_in', null)->count();
 
+            $status = ['in-store', 'visited', 'remaining', 'login', 'not-login'];
+            $model = ['agency', 'merchandiser'];
+
+            //agency schedule
             $agencySchedules[] = [
                 'text' => $key . ': '  . $agencyScheduleCount,
                 'agency' => $key,
+                'model' => $model[0],
                 'nodes' => [
                     [
                         'text' => 'In Store: ' . $inStoreCount,
                         'agency' => $key,
+                        'model' => $model[0],
                         'status' => $status[0]
                     ],
                     [
                         'text' => 'Visited: ' . $visitedCount,
                         'agency' => $key,
+                        'model' => $model[0],
                         'status' => $status[1]
                     ],
                     [
                         'text' => 'Remaining: ' . $remainingCount,
                         'agency' => $key,
+                        'model' => $model[0],
                         'status' => $status[2]
                     ],
+                ]
+            ];
+
+            //merchandiser schedule
+            $merchandiserSchedules[] = [
+                'text' => $key . ': '  . $userCount,
+                'agency' => $key,
+                'model' => $model[1],
+                'nodes' => [
+                    [
+                        'text' => 'Login: ' . $userLoginCount,
+                        'agency' => $key,
+                        'model' => $model[1],
+                        'status' => $status[3]
+                    ],
+                    [
+                        'text' => 'Not Login: ' . $userNotLoginCount,
+                        'agency' => $key,
+                        'model' => $model[1],
+                        'status' => $status[4]
+                    ]
                 ]
             ];
 
@@ -131,34 +165,52 @@ class HomeController extends Controller
             $totalVisitedCount += $visitedCount;
             $totalRemaining += $remainingCount;
             $totalInStoreCount += $inStoreCount;
+            $totalUserCount += $userCount;
+            $totalUserLoginCount += $userLoginCount;
+            $totalUserNotLoginCount += $userNotLoginCount;
+
         }
 
-        $agencies = [
+        // add total counts into array
+        $agencySchedules[] = [
+            'text' => 'Total In Store: ' . $totalInStoreCount,
+            'model' => $model[0],
+            'agency' => '',
+            'status' => $status[0]
+        ];
+
+        $agencySchedules[] = [
+            'text' => 'Total Visited: ' . $totalVisitedCount,
+            'model' => $model[0],
+            'agency' => '',
+            'status' => $status[1]
+        ];
+
+        $agencySchedules[] = [
+            'text' => 'Total Remaining: ' . $totalRemaining,
+            'model' => $model[0],
+            'agency' => '',
+            'status' => $status[2]
+        ];
+
+        $scheduleDashboard = [
             [
-                'text' => 'Total Schedule: ' . $totalAgencyScheduleCount,
+                'text' => 'Schedules: ' . $totalAgencyScheduleCount,
                 'agency' => '',
-                'nodes' => $agencySchedules
+                'nodes' => $agencySchedules,
+                'model' => $model[0],
             ],
             [
-                'text' => 'Total In Store: ' . $totalInStoreCount,
+                'text' => 'Merchandisers: ' . $totalUserCount,
                 'agency' => '',
-                'status' => $status[0]
-            ],
-            [
-                'text' => 'Total Visited: ' . $totalVisitedCount,
-                'agency' => '',
-                'status' => $status[1]
-            ],
-            [
-                'text' => 'Total Remaining: ' . $totalRemaining,
-                'agency' => '',
-                'status' => $status[2]
+                'nodes' => $merchandiserSchedules,
+                'model' => $model[1],
             ],
             'total' => $totalAgencyScheduleCount,
             'schedules' => $schedules
         ];
 
-        return $agencies;
+        return $scheduleDashboard;
     }
 
     public function getRecentlyLogin(){

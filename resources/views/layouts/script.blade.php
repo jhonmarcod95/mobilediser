@@ -37,6 +37,10 @@
 {{-- Boostrap tree --}}
 <script src="{{  asset('bstree/bootstrap-treeview.js') }}"></script>
 
+{{-- alasql --}}
+<script src="{{  asset('alasql/alasql@0.4.js') }}"></script>
+
+
 <script>
     $(function () {
         $('#dataTable').DataTable();
@@ -146,6 +150,14 @@
             errList += '<li>' + val + '</li>';
         });
         return '<div class="alert bg-danger text-danger"><button type="button" class="close text-red" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p><i class="fa fa-warning"></i><b style="margin-left: 6px">Error</b> ' + errors.message + '</p><ul class="small">' + errList + '</ul></div>';
+    }
+
+    function objectPluck(objects, field) {
+        var result = [];
+        for (i in objects) {
+            result.push(objects[i][field]);
+        }
+        return result;
     }
 
     function getDaysOfMonth(monthYear, pDay){

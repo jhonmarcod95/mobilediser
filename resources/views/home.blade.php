@@ -377,15 +377,7 @@
                             <div class="col-md-7">
                                 <div class="table-responsive" style="height: 500px">
                                     <table id="table-schedule" class="table table-bordered no-margin">
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Name</th>
-                                            <th>Store</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="tbody-schedule">
-                                        </tbody>
+
                                     </table>
                                 </div>
 
@@ -500,43 +492,49 @@
 
                     //treeview event
                     onNodeSelected: function(event, data) {
-
+                        var model = data.model;
                         var status = data.status;
 
-                        //filter by agency
-                        var filterSchedule = $.map(schedules, function(i) {
-                            if (i.agency.match(data.agency)){
-                                return i;
+                        if (model == 'agency'){
+
+                            //filter by agency
+                            var filterSchedule = alasql("SELECT * FROM ? WHERE agency LIKE '%" + data.agency + "%'", [schedules]);
+
+                            //filter by instore
+                            if(status == 'in-store'){
+                                filterSchedule = alasql("SELECT * FROM ? WHERE agency LIKE '%" + data.agency + "%' AND (time_in IS NOT NULL AND time_out IS NULL)", [schedules]);
                             }
-                        });
 
-                        //filter by agency -> instore
-                        if(status == 'in-store'){
-                            filterSchedule = $.map(schedules, function(i) {
-                                if (i.agency.match(data.agency) && (i.time_in != null && i.time_out == null)){
-                                    return i;
-                                }
-                            });
+                            //filter by visited
+                            if(status == 'visited'){
+                                filterSchedule = alasql("SELECT * FROM ? WHERE agency LIKE '%" + data.agency + "%' AND status = '001'", [schedules]);
+                            }
+
+                            //filter by remaining
+                            if(status == 'remaining'){
+                                filterSchedule = alasql("SELECT * FROM ? WHERE agency LIKE '%" + data.agency + "%' AND (time_in IS NULL AND time_out IS NULL)", [schedules]);
+                            }
+
+                            populateScheduleTable(filterSchedule);
+                        }
+                        else if(model == 'merchandiser'){
+                            //filter by merchandiser
+                            var filterMerchandiser = alasql("SELECT * FROM ? WHERE agency LIKE '%" + data.agency + "%' GROUP BY merchandiser_id", [schedules]);
+
+                            //filter by login
+                            if(status == 'login'){
+                                filterMerchandiser = alasql("SELECT * FROM ? WHERE agency LIKE '%" + data.agency + "%' AND time_in IS NOT NULL GROUP BY merchandiser_id", [schedules]);
+                            }
+
+                            //filter by not login
+                            if(status == 'not-login'){
+                                var loginIds = alasql("SELECT merchandiser_id FROM ? WHERE agency LIKE '%" + data.agency + "%' AND time_in IS NOT NULL GROUP BY merchandiser_id", [schedules]);
+                                filterMerchandiser = alasql("SELECT * FROM ? WHERE agency LIKE '%" + data.agency + "%' AND merchandiser_id NOT IN (" + objectPluck(loginIds, 'merchandiser_id').join() + ") GROUP BY merchandiser_id", [schedules]);
+                            }
+
+                            populateMerchandiserTable(filterMerchandiser)
                         }
 
-                        //filter by agency -> visited
-                        if(status == 'visited'){
-                            filterSchedule = $.map(schedules, function(i) {
-                                if (i.agency.match(data.agency) && i.status.match('001')){
-                                    return i;
-                                }
-                            });
-                        }
-
-                        //filter by agency -> remaining
-                        if(status == 'remaining'){
-                            filterSchedule = $.map(schedules, function(i) {
-                                if (i.agency.match(data.agency) && (i.time_in == null && i.time_out == null)){
-                                    return i;
-                                }
-                            });
-                        }
-                        populateScheduleTable(filterSchedule);
                     }
                 });
 
@@ -560,7 +558,45 @@
         if(tbody == ''){
             tbody = '<tr><td colspan="3" style="text-align: center">No data available.</tr>'
         }
-        $('#tbody-schedule').html(tbody);
+
+        $('#table-schedule').html(
+            '<thead>' +
+                '<tr>' +
+                    '<th>#' +
+                    '<th>Name' +
+                    '<th>Store' +
+                '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+                tbody +
+            '</tbody>>'
+        );
+    }
+
+    function populateMerchandiserTable(schedules){
+        var tbody = '';
+        $.each(schedules, function(key, schedule) {
+            tbody +=
+                '<tr>' +
+                    '<td>' + parseInt(key + 1) +
+                    '<td>' + schedule.first_name + ' ' + schedule.last_name +
+                '</tr>';
+        });
+        if(tbody == ''){
+            tbody = '<tr><td colspan="3" style="text-align: center">No data available.</tr>'
+        }
+
+        $('#table-schedule').html(
+            '<thead>' +
+                '<tr>' +
+                '<th>#' +
+                '<th>Name' +
+            '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+                tbody +
+            '</tbody>>'
+        );
     }
 
 
