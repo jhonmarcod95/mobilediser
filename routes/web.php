@@ -23,11 +23,11 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/getInStore/{date}', 'HomeController@getInStore');
-    Route::get('/getVisitedStore/{date}', 'HomeController@getVisitedStore');
     Route::get('/getInventory/{date}', 'HomeController@getInventory');
+    Route::get('/getOfftake/{date}', 'HomeController@getOfftake');
     Route::get('/getSchedule/{date}', 'HomeController@getSchedule');
     Route::get('/getRecentlyLogin', 'HomeController@getRecentlyLogin');
-    Route::get('/getScheduleSummary', 'HomeController@getScheduleSummary');
+
 
     #announcement
     Route::get('/announcements', 'AnnouncementController@show');

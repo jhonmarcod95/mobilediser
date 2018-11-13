@@ -41,6 +41,9 @@
 <script src="{{  asset('alasql/alasql@0.4.js') }}"></script>
 
 
+<script src="{{  asset('artisan/techniques.js') }}"></script>
+
+
 <script>
     $(function () {
         $('#dataTable').DataTable();
@@ -107,16 +110,7 @@
         return checked;
     }
 
-    //in operator
-    function whereIn(varString, varArray){
-        var result = false;
-        $.each(varArray, function(key, arr) {
-            if(arr == varString){
-                result = true;
-            }
-        });
-        return result;
-    }
+
 
     function showPageNavigation(data){
         var current_page = data.current_page;
@@ -152,14 +146,6 @@
         return '<div class="alert bg-danger text-danger"><button type="button" class="close text-red" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p><i class="fa fa-warning"></i><b style="margin-left: 6px">Error</b> ' + errors.message + '</p><ul class="small">' + errList + '</ul></div>';
     }
 
-    function objectPluck(objects, field) {
-        var result = [];
-        for (i in objects) {
-            result.push(objects[i][field]);
-        }
-        return result;
-    }
-
     function getDaysOfMonth(monthYear, pDay){
         var days = [];
         var day = moment(monthYear).day(pDay);
@@ -193,6 +179,8 @@
         }
         return result
     }
+
+
 
     /* export to excel function **********************************/
     var tableToExcel = (function() {

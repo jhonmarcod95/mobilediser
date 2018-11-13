@@ -9,5 +9,5 @@ class CustomerCategory extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
-    protected $table = 'customer_category';
+    protected $table = 'customer_accounts';
 }

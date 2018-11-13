@@ -5,7 +5,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Customer Category Master Data
+            Customer Account
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-database"></i>Customer Category Master Data</a></li>
@@ -19,7 +19,7 @@
 
                 <div class="box">
                     <div class="box-header ">
-                        <h3 class="box-title">Customer Category List</h3>
+                        <h3 class="box-title">Customer Account List</h3>
 
                         {{-- Register --}}
                         <a class="btn btn-primary pull-right" href="{{ url('/customers/categories/add') }}"><i class="fa fa-plus"></i></a>
@@ -31,7 +31,7 @@
                             <table id="dataTable" class="table table-hover table-striped" style="width: 100%; white-space: nowrap">
                                 <thead>
                                 <tr>
-                                    <th>Category Code</th>
+                                    <th>Account Code</th>
                                     <th>Description</th>
                                 </tr>
                                 </thead>

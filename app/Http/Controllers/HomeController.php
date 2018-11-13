@@ -6,6 +6,7 @@ use App\Announcement;
 use App\Attendance;
 use App\InventoryTransactionHeader;
 use App\MerchandiserSchedule;
+use App\TransactionOfftake;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -63,8 +64,15 @@ class HomeController extends Controller
     }
 
     public function getInventory($date){
-        return InventoryTransactionHeader::whereDate('created_at', $date)
+        $inventories = MerchandiserSchedule::leftjoin('inventory_transaction_header', 'inventory_transaction_header.schedule_id', 'merchandiser_schedule.id')
+            ->join('users', 'merchandiser_schedule.merchandiser_id', '=', 'users.merchandiser_id')
+            ->join('agency_master_data', 'agency_master_data.agency_code', '=', 'users.agency_code')
+            ->join('customer_master_data', 'merchandiser_schedule.customer_code', '=', 'customer_master_data.customer_code')
+            ->whereDate('date', $date)
+            ->where('inventory_transaction_header.transaction_number', '!=', 'NULL')
             ->get();
+
+        return $inventories;
     }
 
     public function getSchedule($date){
@@ -89,143 +97,49 @@ class HomeController extends Controller
                 'customer_master_data.branch',
             ]);
 
-        $agencies = collect($schedules)
-            ->groupBy('agency');
+        return $schedules;
+    }
 
-        $totalAgencyScheduleCount = 0;
-        $totalVisitedCount = 0;
-        $totalRemaining = 0;
-        $totalInStoreCount = 0;
-        $totalUserCount = 0;
-        $totalUserLoginCount = 0;
-        $totalUserNotLoginCount = 0;
+    public function getOfftake($date){
+        $offtakes = TransactionOfftake::join('customer_master_data', 'customer_master_data.customer_code', 'transaction_offtake.customer_code')
+            ->join('material_master_data', 'material_master_data.material_code', 'transaction_offtake.material_code')
+            ->join('chain', 'chain.chain_code', 'customer_master_data.chain_code')
+            ->join('customer_accounts', 'customer_accounts.account_code', 'chain.account_code')
+            ->join('inventory_transaction_header', 'inventory_transaction_header.transaction_number', 'transaction_offtake.transaction_number')
+            ->join('users', 'users.merchandiser_id', 'inventory_transaction_header.merchandiser_id')
+            ->leftJoin('material_group_main', 'material_group_main.code', 'material_master_data.main_group')
+            ->leftJoin('material_group_sub', 'material_group_sub.code', 'material_master_data.sub_group')
+            ->whereDate('transaction_offtake.created_at', $date)
+            ->get([
+                'transaction_offtake.id',
+                'transaction_offtake.transaction_number',
+                'transaction_offtake.base_uom',
+                'transaction_offtake.beginning_balance',
+                'transaction_offtake.delivery',
+                'transaction_offtake.rtv',
+                'transaction_offtake.physical_count',
+                'transaction_offtake.warehouse_area',
+                'transaction_offtake.bo_area',
+                'transaction_offtake.shelves_area',
+                'transaction_offtake.offtake',
+                'transaction_offtake.ending_balance',
+                'customer_master_data.customer_code',
+                'customer_master_data.name AS customer_name',
+                'material_master_data.material_code',
+                'material_master_data.material_description',
+                'chain.chain_code',
+                'chain.description AS chain_description',
+                'customer_accounts.account_code',
+                'customer_accounts.description AS account_description',
+                'material_group_main.code AS group_main_code',
+                'material_group_main.description AS group_main_description',
+                'material_group_sub.code AS group_sub_code',
+                'material_group_sub.description AS group_sub_description',
+                'transaction_offtake.created_at',
+                'transaction_offtake.updated_at'
+            ]);
 
-        foreach ($agencies as $key => $agency){
-            $agencyScheduleCount = $agency->count();
-            $visitedCount = $agency->where('status', '001')->count();
-            $remainingCount = $agency->where('time_in', null)->where('time_out', null)->count();
-            $inStoreCount = $agency->where('time_in', '!=', null)->where('time_out', null)->count();
-
-            $userCount = $agency->unique('merchandiser_id')->count();
-            $userLoginCount = $agency->unique('merchandiser_id')->where('time_in', '!=', null)->count();
-            $userNotLoginCount = $agency->unique('merchandiser_id')->where('time_in', null)->count();
-
-            $status = ['in-store', 'visited', 'remaining', 'login', 'not-login'];
-            $model = ['agency', 'merchandiser'];
-
-            //agency schedule
-            $agencySchedules[] = [
-                'text' => $key . ': '  . $agencyScheduleCount,
-                'agency' => $key,
-                'model' => $model[0],
-                'nodes' => [
-                    [
-                        'text' => 'In Store: ' . $inStoreCount,
-                        'agency' => $key,
-                        'model' => $model[0],
-                        'status' => $status[0]
-                    ],
-                    [
-                        'text' => 'Visited: ' . $visitedCount,
-                        'agency' => $key,
-                        'model' => $model[0],
-                        'status' => $status[1]
-                    ],
-                    [
-                        'text' => 'Remaining: ' . $remainingCount,
-                        'agency' => $key,
-                        'model' => $model[0],
-                        'status' => $status[2]
-                    ],
-                ]
-            ];
-
-            //merchandiser schedule
-            $merchandiserSchedules[] = [
-                'text' => $key . ': '  . $userCount,
-                'agency' => $key,
-                'model' => $model[1],
-                'nodes' => [
-                    [
-                        'text' => 'Login: ' . $userLoginCount,
-                        'agency' => $key,
-                        'model' => $model[1],
-                        'status' => $status[3]
-                    ],
-                    [
-                        'text' => 'Not Login: ' . $userNotLoginCount,
-                        'agency' => $key,
-                        'model' => $model[1],
-                        'status' => $status[4]
-                    ]
-                ]
-            ];
-
-            $totalAgencyScheduleCount += $agencyScheduleCount;
-            $totalVisitedCount += $visitedCount;
-            $totalRemaining += $remainingCount;
-            $totalInStoreCount += $inStoreCount;
-            $totalUserCount += $userCount;
-            $totalUserLoginCount += $userLoginCount;
-            $totalUserNotLoginCount += $userNotLoginCount;
-
-        }
-
-        // add total counts into schedules
-        $agencySchedules[] = [
-            'text' => 'Total In Store: ' . $totalInStoreCount,
-            'model' => $model[0],
-            'agency' => '',
-            'status' => $status[0]
-        ];
-
-        $agencySchedules[] = [
-            'text' => 'Total Visited: ' . $totalVisitedCount,
-            'model' => $model[0],
-            'agency' => '',
-            'status' => $status[1]
-        ];
-
-        $agencySchedules[] = [
-            'text' => 'Total Remaining: ' . $totalRemaining,
-            'model' => $model[0],
-            'agency' => '',
-            'status' => $status[2]
-        ];
-
-        // add total counts into merchandiser
-        $merchandiserSchedules[] = [
-            'text' => 'Total Login: ' . $totalUserLoginCount,
-            'model' => $model[1],
-            'agency' => '',
-            'status' => $status[3]
-        ];
-
-        $merchandiserSchedules[] = [
-            'text' => 'Total Not Login: ' . $totalUserNotLoginCount,
-            'model' => $model[1],
-            'agency' => '',
-            'status' => $status[4]
-        ];
-
-        $scheduleDashboard = [
-            [
-                'text' => 'Schedules: ' . $totalAgencyScheduleCount,
-                'agency' => '',
-                'nodes' => $agencySchedules,
-                'model' => $model[0],
-            ],
-            [
-                'text' => 'Merchandisers: ' . $totalUserCount,
-                'agency' => '',
-                'nodes' => $merchandiserSchedules,
-                'model' => $model[1],
-            ],
-            'total' => $totalAgencyScheduleCount,
-            'schedules' => $schedules
-        ];
-
-        return $scheduleDashboard;
+        return $offtakes;
     }
 
     public function getRecentlyLogin(){
@@ -243,34 +157,5 @@ class HomeController extends Controller
                 'customer_master_data.branch',
             ])
             ->take(5);
-    }
-
-    public function getScheduleSummary(Request $request){
-
-        $schedules = MerchandiserSchedule::join('users', 'merchandiser_schedule.merchandiser_id', 'users.merchandiser_id')
-            ->whereDate('date', Carbon::now()->toDateString())
-            ->select(
-                'merchandiser_schedule.merchandiser_id',
-                'users.last_name',
-                'users.first_name',
-                'merchandiser_schedule.customer_code',
-                'merchandiser_schedule.status'
-            )
-            ->get()
-            ->groupBy('merchandiser_id')
-
-            ;
-
-        $page = Input::get('page', 1); // Get the ?page=1 from the url
-        $perPage = 15; // Number of items per page
-        $offset = ($page * $perPage) - $perPage;
-
-        return new LengthAwarePaginator(
-            array_slice($schedules->toArray(), $offset, $perPage, true), // Only grab the items we need
-            count($schedules), // Total items
-            $perPage, // Items per page
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
     }
 }
