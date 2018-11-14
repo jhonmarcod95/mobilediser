@@ -528,10 +528,69 @@
             url: '/getInventory/' + dateSelected,
             success: function(data){
 
-                var inventories = data;
+                let inventories = data;
 
+                let agencies = alasql("SELECT DISTINCT agency_code, agency FROM ?", [inventories]);
+                let columns = "`store` + ' - ' + `branch` AS `Store`," +
+                    "first_name + ' ' + last_name AS `Merchandiser`," +
+                    "created_at AS `Date Submitted`";
 
-                $('#inventory-count').text(data.length);
+                let inventoryAgencyNodes = JSON.parse('[]');
+                let inventoryAll = [];
+                let remainingAll = [];
+
+                //agency node
+                $.each(agencies, function(key, agency) {
+                    let agency_code = agency.agency_code;
+                    let agency_name = agency.agency;
+                    let inventoryAgency = alasql("SELECT " + columns + " FROM ? WHERE agency_code = " + agency_code + " AND transaction_number IS NOT NULL", [inventories]);
+
+                    /* status node *********/
+                    let statusNodes = JSON.parse('[]');
+                    let remainingAgency =  alasql("SELECT " + columns + " FROM ? WHERE agency_code = " + agency_code + " AND transaction_number IS NULL", [inventories]);
+                    statusNodes.push({
+                        "text": "Remaining: " + remainingAgency.length,
+                        "values": remainingAgency
+                    });
+                    remainingAll.push.apply(remainingAll, remainingAgency);
+                    /* ********************/
+
+                    inventoryAgencyNodes.push({
+                        "text": agency_name + ": " + inventoryAgency.length,
+                        "nodes": statusNodes,
+                        "values": inventoryAgency
+                    });
+                    inventoryAll.push.apply(inventoryAll, inventoryAgency);
+                });
+
+                //total remaining
+                inventoryAgencyNodes.push({
+                    "text": "Total Remaining: " + remainingAll.length,
+                    "values": remainingAll
+                });
+
+                //set tree
+                var inventoryTree = [{
+                    "text": "Total Submitted: " + inventoryAll.length,
+                    "nodes": inventoryAgencyNodes,
+                    "values": inventoryAll
+                }];
+
+                //display schedule treeview
+                $('#inventory-tree').treeview({
+                    data: inventoryTree,
+                    enableLinks: true,
+
+                    //treeview event
+                    onNodeSelected: function(event, data) {
+                        let filteredInventory = data.values;
+                        populateTable('table-inventory', filteredInventory);
+                    }
+                });
+
+                $('#inventory-count').text(inventoryAll.length);
+                $('#inventory-tree').treeview('collapseAll', { silent: true });
+                populateTable('table-inventory', inventoryAll);
                 showLoading('loading-2', false);
             }
         });

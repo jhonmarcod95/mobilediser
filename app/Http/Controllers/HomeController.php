@@ -69,8 +69,23 @@ class HomeController extends Controller
             ->join('agency_master_data', 'agency_master_data.agency_code', '=', 'users.agency_code')
             ->join('customer_master_data', 'merchandiser_schedule.customer_code', '=', 'customer_master_data.customer_code')
             ->whereDate('date', $date)
-            ->where('inventory_transaction_header.transaction_number', '!=', 'NULL')
-            ->get();
+            ->get([
+                'inventory_transaction_header.schedule_id',
+                'users.merchandiser_id',
+                'users.last_name',
+                'users.first_name',
+                'agency_master_data.agency_code',
+                'agency_master_data.name AS agency',
+                'customer_master_data.customer_code',
+                'customer_master_data.name AS store',
+                'customer_master_data.branch',
+                'merchandiser_schedule.date',
+                'merchandiser_schedule.time_in',
+                'merchandiser_schedule.time_out',
+                'merchandiser_schedule.remarks',
+                'inventory_transaction_header.transaction_number',
+                'inventory_transaction_header.created_at'
+            ]);
 
         return $inventories;
     }
