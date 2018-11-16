@@ -19,14 +19,11 @@
 
                 <div class="box">
                     <div class="box-header ">
-                        <h3 class="box-title">Customer List</h3>
-
-                        {{-- Register --}}
-                        <a class="btn btn-primary pull-right" href="{{ url('/customers/add') }}"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-primary btn-sm pull-right" href="{{ url('/customers/add') }}"><i class="fa fa-plus"></i>&nbsp;Add New</a>
                     </div>
+
                     <!-- /.box-header -->
                     <div class="box-body">
-
                         <div class="table-responsive mailbox-messages">
                             <table id="dataTable" class="table table-hover table-striped" style="width: 100%; white-space: nowrap">
                                 <thead>

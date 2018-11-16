@@ -23,6 +23,7 @@
 
                         {{-- Register --}}
                         <a class="btn btn-primary pull-right" href="{{ url('/users/register') }}"><i class="fa fa-user-plus"></i></a>
+
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
