@@ -22,7 +22,7 @@
                         <h3 class="box-title">Chain List</h3>
 
                         {{-- Register --}}
-                        <a class="btn btn-primary pull-right" href="{{ url('/customers/types/add') }}"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-primary btn-sm pull-right" href="{{ url('/customers/types/add') }}"><i class="fa fa-plus"></i>&nbsp; Add New</a>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -33,8 +33,8 @@
                                 <tr>
                                     <th>Chain Code</th>
                                     <th>Description</th>
-                                    <th>Category Code</th>
-                                    <th>Category Description</th>
+                                    <th>Account Code</th>
+                                    <th>Account Description</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -48,8 +48,8 @@
                                             &nbsp;
                                             {{ $customerType->chain_code }}</td>
                                         <td>{{ $customerType->description }}</td>
-                                        <td>{{ $customerType->category_code }}</td>
-                                        <td>{{ $customerType->category_description }}</td>
+                                        <td>{{ $customerType->account_code }}</td>
+                                        <td>{{ $customerType->account_description }}</td>
                                     </tr>
                                 @endforeach
 

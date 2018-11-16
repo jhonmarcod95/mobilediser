@@ -44,7 +44,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="text-muted">Customer Code</label>
-                                    {!! @Form::text('customer_code', $customer->customer_code, ['class' => 'form-control', 'maxlength' => '255', 'required']) !!}
+                                    {!! @Form::text('customer_code', $customer->customer_code, ['class' => 'form-control', 'maxlength' => '191', 'required']) !!}
                                 </div>
                             </div>
                         </div>
@@ -53,7 +53,17 @@
                             <div class="col-md-10">
                                 <div class="form-group">
                                     <label class="text-muted">Customer Description</label>
-                                    {!! @Form::text('name', $customer->name, ['class' => 'form-control', 'maxlength' => '255', 'required']) !!}
+                                    {!! @Form::text('name', $customer->name, ['class' => 'form-control', 'maxlength' => '191', 'required']) !!}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="text-muted">Branch</label>
+                                    {!! @Form::text('branch', $customer->branch, ['class' => 'form-control', 'maxlength' => '191', 'required']) !!}
                                 </div>
                             </div>
                         </div>

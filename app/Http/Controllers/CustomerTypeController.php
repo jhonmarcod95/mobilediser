@@ -32,8 +32,8 @@ class CustomerTypeController extends Controller
             }
         }
 
-        $customerCategories = CustomerCategory::get()
-            ->pluck('description', 'category_code');
+        $customerCategories = CustomerCategory::all()
+            ->pluck('description', 'account_code');
 
 
         return view('masterData.customerTypeInfo',compact(
@@ -49,14 +49,14 @@ class CustomerTypeController extends Controller
         $validation = $request->validate([
             'chain_code' => 'required|unique:chain',
             'description' => 'required',
-            'category_code' => 'required',
+            'account_code' => 'required',
         ]);
 
         #save customer type
         $customerType = new CustomerType();
         $customerType->chain_code = $request->chain_code;
         $customerType->description = $request->description;
-        $customerType->category_code = $request->category_code;
+        $customerType->account_code = $request->account_code;
         $customerType->save();
 
         alert()->success('New Customer Type has been added.','');
@@ -69,7 +69,7 @@ class CustomerTypeController extends Controller
         $validation = $request->validate([
             'chain_code' => 'required|unique:chain,chain_code,' . $id,
             'description' => 'required',
-            'category_code' => 'required',
+            'account_code' => 'required',
         ]);
 
 
@@ -77,7 +77,7 @@ class CustomerTypeController extends Controller
         $customerType = CustomerType::find($id);
         $customerType->chain_code = $request->chain_code;
         $customerType->description = $request->description;
-        $customerType->category_code = $request->category_code;
+        $customerType->account_code = $request->account_code;
         $customerType->save();
 
 

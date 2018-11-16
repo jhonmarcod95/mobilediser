@@ -62,7 +62,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="text-muted">Category Description</label>
-                                    {!! @Form::select('category_code', $customerCategories, $customerType->category_code, ['class' => 'form-control select2', 'placeholder' => '', 'required']) !!}
+                                    {!! @Form::select('account_code', $customerCategories, $customerType->account_code, ['class' => 'form-control select2', 'placeholder' => '', 'required']) !!}
                                 </div>
                             </div>
                         </div>

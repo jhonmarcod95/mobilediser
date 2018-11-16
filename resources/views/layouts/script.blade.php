@@ -68,6 +68,7 @@
             scrollX:        true,
             scrollCollapse: true,
             paging:         false,
+            info:     false,
             ordering: false,
             searching: false,
             fixedColumns:   {

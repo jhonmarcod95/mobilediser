@@ -28,7 +28,6 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::get('/getSchedule/{date}', 'HomeController@getSchedule');
     Route::get('/getRecentlyLogin', 'HomeController@getRecentlyLogin');
 
-
     #announcement
     Route::get('/announcements', 'AnnouncementController@show');
     Route::get('/announcements/edit/{id}', 'AnnouncementController@edit');

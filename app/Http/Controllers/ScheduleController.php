@@ -44,6 +44,7 @@ class ScheduleController extends Controller
             '2' => '2nd',
             '3' => '3rd',
             '4' => '4th',
+            '5' => '5th',
             '%' => 'All'
         ];
 
@@ -165,14 +166,17 @@ class ScheduleController extends Controller
 
         DB::beginTransaction();
         foreach ($weekdays as $weekday) {
-            $schedule = new MerchandiserSchedule();
-            $schedule->merchandiser_id = $request->merchandiser_id;
-            $schedule->customer_code = $request->store;
-            $schedule->date = $weekday;
-            $schedule->time_in = $request->start_time;
-            $schedule->time_out = $request->end_time;
-            $schedule->status = '002';
-            $schedule->save();
+            if (!empty($weekday)){ #not include those 5fth weeks without dates (null values).
+                $schedule = new MerchandiserSchedule();
+                $schedule->merchandiser_id = $request->merchandiser_id;
+                $schedule->customer_code = $request->store;
+                $schedule->date = $weekday;
+                $schedule->time_in = $request->start_time;
+                $schedule->time_out = $request->end_time;
+                $schedule->status = '002';
+                $schedule->save();
+            }
+
         }
         DB::commit();
 
