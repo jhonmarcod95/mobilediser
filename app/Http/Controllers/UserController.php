@@ -86,10 +86,10 @@ class UserController extends Controller
         #user
         $user = new User();
 
-        //if new user is diser
-        if($request->accountType == 3){
-            $user->merchandiser_id = User::where('account_type', '3')->max('merchandiser_id') + 1;
-        }
+//        //if new user is diser
+//        if($request->accountType == 3){
+//            $user->merchandiser_id = User::where('account_type', '3')->max('merchandiser_id') + 1;
+//        }
 
         $user->last_name = $request->last_name;
         $user->first_name = $request->first_name;
