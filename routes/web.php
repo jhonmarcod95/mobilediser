@@ -128,13 +128,16 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
 
     #reports
     Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
-    Route::get('/reports/merchandiserLog', 'ReportsController@merchandiserLog');
+
     Route::get('/reports/inventoryLog', 'ReportsController@inventoryLog');
     Route::get('/reports/inventoryLogTransaction/{transactionNumber}', 'ReportsController@inventoryLogTransaction');
     Route::get('/reports/merchandiserAttendance', 'ReportsController@merchandiserAttendance');
 
     Route::get('/reports/merchandiser-performance-data', 'ScheduleController@merchandiserPerformanceData');
     Route::get('/reports/merchandiserPerformance', 'ScheduleController@merchandiserPerformance');
+
+    Route::get('/reports/merchandiserLog', 'ScheduleController@merchandiserLog');
+    Route::get('/reports/merchandiser-log-data', 'ScheduleController@merchandiserLogData');
 
 
 });

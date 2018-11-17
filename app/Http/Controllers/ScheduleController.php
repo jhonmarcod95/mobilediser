@@ -151,7 +151,6 @@ class ScheduleController extends Controller
         ));
     }
 
-
     public function save(Request $request)
     {
         $request->validate([
@@ -284,6 +283,7 @@ class ScheduleController extends Controller
     }
 
 
+    /* Reports *****************************/
     public function merchandiserPerformanceData(Request $request){
         $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
         $startOfMonth = $request->startOfMonth;
@@ -336,7 +336,50 @@ class ScheduleController extends Controller
         ));
     }
 
-    /*---------------------- Functions ---------------------------*/
+    public function merchandiserLogData(Request $request){
+        $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
+        $startOfMonth = $request->startOfMonth;
+        $endOfMonth = $request->endOfMonth;
+
+        $logs = MerchandiserSchedule::join('merchandiser_attendance', 'merchandiser_schedule.id', 'merchandiser_attendance.schedule_id')
+            ->join('merchandiser_attendance_image', 'merchandiser_attendance_image.schedule_id', 'merchandiser_attendance.schedule_id')
+            ->join('users', 'merchandiser_schedule.merchandiser_id', 'users.merchandiser_id')
+            ->join('customer_master_data', 'merchandiser_schedule.customer_code', 'customer_master_data.customer_code')
+            ->leftjoin('inventory_transaction_header', 'inventory_transaction_header.schedule_id', 'merchandiser_schedule.id')
+            ->whereIn('users.merchandiser_id', $merchandiser_ids)
+            ->whereBetween('merchandiser_schedule.date', [$startOfMonth, $endOfMonth])
+            ->get([
+                'merchandiser_schedule.id',
+                'merchandiser_schedule.date',
+                'merchandiser_schedule.time_in AS start_time',
+                'merchandiser_schedule.time_out AS end_time',
+                'merchandiser_schedule.status',
+                'merchandiser_attendance.time_in',
+                'merchandiser_attendance.time_out',
+                'merchandiser_attendance_image.image_path',
+                'inventory_transaction_header.transaction_number',
+                'merchandiser_schedule.status',
+                'users.merchandiser_id',
+                'users.first_name',
+                'users.last_name',
+                'customer_master_data.name AS store',
+                'customer_master_data.branch',
+            ]);
+
+        return $logs;
+    }
+
+    public function merchandiserLog(){
+        $merchandisers = $this->merchandisers;
+        return view('report.merchandiserLog', compact(
+            'merchandisers'
+        ));
+    }
+    /* *************************************/
+
+
+
+    /* Function ****************************/
     private function getDateRange($start, $end){
         $periodEnd = new DateTime($end);
 
@@ -387,5 +430,5 @@ class ScheduleController extends Controller
         }
         return $merchandiser_ids;
     }
-    /*------------------------------------------------------------*/
+    /* *************************************/
 }

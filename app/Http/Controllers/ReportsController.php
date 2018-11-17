@@ -40,17 +40,6 @@ class ReportsController extends Controller
         ));
     }
 
-    public function merchandiserLog(Request $request){
-        $date_from = $request->date_from;
-        $date_to = $request->date_to;
-
-        $merchandiser_logs = DB::select("CALL p_merchandiser_logs ('" . $date_from . "', '" .$date_to . "')");
-
-        return view('report.merchandiserLog', compact(
-            'merchandiser_logs'
-        ));
-    }
-
     public function inventoryLog(Request $request){
         $date_from = $request->date_from;
         $date_to = $request->date_to;

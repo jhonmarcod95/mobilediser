@@ -91,6 +91,11 @@
 
     function setDataTable(freezeIndex){
         $('#dataTable2').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5',
+                'csvHtml5'
+            ],
             scrollY:        "400px",
             scrollX:        true,
             scrollCollapse: true,
@@ -115,7 +120,8 @@
     }
 
     function toTimeString(time){
-        return  moment('1995-12-30 ' + time).format('hh:mm a');
+        if(time != null) return moment('1995-12-30 ' + time).format('hh:mm a');
+        return '';
     }
 
     function getCheckboxChecked(arrayId) {
