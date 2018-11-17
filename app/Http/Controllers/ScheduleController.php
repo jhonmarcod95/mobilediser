@@ -9,6 +9,9 @@ use App\Rules\ScheduleUploadRule;
 use App\Rules\MerchandiserIdRule;
 use App\User;
 use Carbon\Carbon;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -68,9 +71,10 @@ class ScheduleController extends Controller
 
     public function indexData(Request $request){
         $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
-        $monthYear = $request->monthYear;
+        $startOfMonth = $request->startOfMonth;
+        $endOfMonth = $request->endOfMonth;
 
-        $dates = $this->getMonthDays($monthYear);
+        $dates = $this->getDateRange($startOfMonth, $endOfMonth);
 
         $merchandisers = User::where('account_type', 3)
             ->whereIn('merchandiser_id', $merchandiser_ids)
@@ -82,7 +86,7 @@ class ScheduleController extends Controller
 
         $schedules = DB::table('vw_schedules')
             ->whereIn('merchandiser_id', $merchandiser_ids)
-            ->whereBetween('date', [$dates[0], $dates[count($dates) - 1]])
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->get();
 
         return [
@@ -280,8 +284,74 @@ class ScheduleController extends Controller
     }
 
 
+    public function merchandiserPerformanceData(Request $request){
+        $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
+        $startOfMonth = $request->startOfMonth;
+        $endOfMonth = $request->endOfMonth;
+
+        $dates = $this->getDateRange($startOfMonth, $endOfMonth);
+
+        $merchandisers = User::where('account_type', 3)
+            ->whereIn('merchandiser_id', $merchandiser_ids)
+            ->get([
+                'merchandiser_id',
+                'first_name',
+                'last_name',
+            ]);
+
+        $schedules = MerchandiserSchedule::leftjoin('merchandiser_attendance', 'merchandiser_schedule.id', '=', 'merchandiser_attendance.schedule_id')
+            ->join('users', 'merchandiser_schedule.merchandiser_id', '=', 'users.merchandiser_id')
+            ->join('agency_master_data', 'agency_master_data.agency_code', '=', 'users.agency_code')
+            ->join('customer_master_data', 'merchandiser_schedule.customer_code', '=', 'customer_master_data.customer_code')
+            ->whereIn('users.merchandiser_id', $merchandiser_ids)
+            ->whereBetween('merchandiser_schedule.date', [$startOfMonth, $endOfMonth])
+            ->get([
+                'merchandiser_schedule.id',
+                'merchandiser_schedule.date',
+                'merchandiser_schedule.time_in AS start_time',
+                'merchandiser_schedule.time_out AS end_time',
+                'merchandiser_attendance.time_in',
+                'merchandiser_attendance.time_out',
+                'merchandiser_schedule.status',
+                'users.merchandiser_id',
+                'users.first_name',
+                'users.last_name',
+                'agency_master_data.agency_code',
+                'agency_master_data.name AS agency',
+                'customer_master_data.name AS store',
+                'customer_master_data.branch',
+            ]);
+
+        return [
+            'merchandisers' => $merchandisers,
+            'dates' => $dates,
+            'schedules' => $schedules
+        ];
+    }
+
+    public function merchandiserPerformance(){
+        $merchandisers = $this->merchandisers;
+        return view('report.merchandiserPerformance', compact(
+            'merchandisers'
+        ));
+    }
 
     /*---------------------- Functions ---------------------------*/
+    private function getDateRange($start, $end){
+        $periodEnd = new DateTime($end);
+
+        $period = new DatePeriod(
+            new DateTime($start),
+            new DateInterval('P1D'),
+            $periodEnd->add(new DateInterval('P1D'))
+        );
+
+        foreach ($period as $key => $value) {
+            $dates[] = $value->format('Y-m-d');
+        }
+        return $dates;
+    }
+
     private function getMonthDays($monthYear){
         $month = Carbon::parse($monthYear)->month;
         $year = Carbon::parse($monthYear)->year;

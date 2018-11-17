@@ -127,8 +127,6 @@
         return checked;
     }
 
-
-
     function showPageNavigation(data){
         var current_page = data.current_page;
         var last_page = data.last_page;
@@ -180,7 +178,7 @@
     //for selection with `all` options using multiple select2
     function getSelectMultipleValue(id, allString) {
         var result = [];
-        var val = $("#" + id).val()
+        var val = $("#" + id).val();
 
         if(val.includes(allString)){
             $('#' + id + ' option').each(function()
@@ -196,8 +194,6 @@
         }
         return result
     }
-
-
 
     /* export to excel function **********************************/
     var tableToExcel = (function() {

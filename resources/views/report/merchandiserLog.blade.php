@@ -84,7 +84,7 @@
 
                         <div class="table-responsive mailbox-messages">
                             <div class="table table-responsive">
-                                <table id="dataTable" class="table table-bordered table-striped" style="white-space: nowrap; width: 100%">
+                                <table id="" class="table table-bordered table-striped" style="white-space: nowrap; width: 100%">
                                     <thead>
                                     <th></th>
                                     <th>Merchandiser</th>

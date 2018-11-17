@@ -96,3 +96,8 @@ function populateJsonArrayTable(jsonArray, withNumber, hiddenColumn){
             tbody +
         '</tbody>';
 }
+
+function removeLastComma(value) {
+    value = value.replace(/,\s*$/, "");
+    return value;
+}

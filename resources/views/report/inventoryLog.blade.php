@@ -11,7 +11,6 @@
         </ol>
     </section>
 
-
     <section class="content">
         <div class="row">
             <div class="col-md-12">
@@ -83,4 +82,5 @@
 
         @include('report.inventoryLogModal')
     </section>
+
 @endsection

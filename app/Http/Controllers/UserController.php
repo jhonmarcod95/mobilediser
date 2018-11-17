@@ -167,4 +167,5 @@ class UserController extends Controller
         alert()->success('User Account has been updated.','');
         return redirect('/users');
     }
+
 }

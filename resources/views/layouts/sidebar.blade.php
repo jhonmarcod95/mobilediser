@@ -69,7 +69,6 @@
                     <li><a href="{{ url('/customer-carried') }}"><i class="fa fa-circle"></i> Customer Carried Materials</a></li>
                     <li><a href="{{ url('/municipalities') }}"><i class="fa fa-circle"></i> Municipalities</a></li>
                     <li><a href="{{ url('/materials') }}"><i class="fa fa-circle"></i> Material</a></li>
-
                 </ul>
             </li>
             <li>
@@ -86,9 +85,11 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="{{ url('/reports/merchandiserLog') }}"><i class="fa fa-circle-o"></i> Merchandiser Logs</a></li>
-                    <li><a href="{{ url('/reports/inventoryLog') }}"><i class="fa fa-circle-o"></i> Inventory Logs</a></li>
                     <li><a href="{{ url('/reports/merchandiserAttendance') }}"><i class="fa fa-circle-o"></i> Merchandiser Attendance</a></li>
+                    <li><a href="{{ url('/reports/merchandiserPerformance') }}"><i class="fa fa-circle-o"></i> Merchandiser Log Summary</a></li>
+                    <li><a href="{{ url('/reports/inventoryLog') }}"><i class="fa fa-circle-o"></i> Inventory Logs</a></li>
                     <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle-o"></i> Offtake Per Customer</a></li>
+
                 </ul>
             </li>
 

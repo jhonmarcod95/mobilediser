@@ -218,13 +218,20 @@
         /**************************************************/
 
         /* searching **************************************/
-        var merchandiser_ids = '';
-        var monthYear = '';
-        var scheduleUrl = '/schedules-data';
+        let merchandiser_ids = '';
+        let monthYear = '';
+        let scheduleUrl = '/schedules-data';
+        let startOfMonth = '';
+        let endOfMonth = '';
 
         $('#search-button').click(function () {
+
             merchandiser_ids = $('#merchandiser_ids').val();
             monthYear = $('#monthYear').val();
+
+            startOfMonth = moment(monthYear).startOf('month').format('YYYY-MM-DD');
+            endOfMonth   = moment(monthYear).endOf('month').format('YYYY-MM-DD');
+
             fetchSchedules(scheduleUrl);
         });
         /**************************************************/
@@ -465,7 +472,9 @@
                 contentType: 'application/json',
                 data: {
                     merchandiser_ids: merchandiser_ids,
-                    monthYear: monthYear
+                    monthYear: monthYear,
+                    startOfMonth: startOfMonth,
+                    endOfMonth: endOfMonth
                 },
                 success: function (data) {
                     /*--------------------------- table content ---------------------------------*/

@@ -788,7 +788,7 @@
     }
     /********************************************************/
 
-    /* offtake dashboard *****************************(******/
+    /* offtake dashboard ************************************/
     function getOfftake(){
         showLoading('loading-3', loadingState);
         $.ajax({
@@ -951,7 +951,6 @@
     $('.modal').on('hide.bs.modal', function (e) {
         realTimeState = true;
     });
-
 
     $('.modal').on('shown.bs.modal', function (e) {
         realTimeState = false;

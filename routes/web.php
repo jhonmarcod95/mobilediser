@@ -133,6 +133,9 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::get('/reports/inventoryLogTransaction/{transactionNumber}', 'ReportsController@inventoryLogTransaction');
     Route::get('/reports/merchandiserAttendance', 'ReportsController@merchandiserAttendance');
 
+    Route::get('/reports/merchandiser-performance-data', 'ScheduleController@merchandiserPerformanceData');
+    Route::get('/reports/merchandiserPerformance', 'ScheduleController@merchandiserPerformance');
+
 
 });
 
