@@ -299,7 +299,7 @@ class ScheduleController extends Controller
                 'last_name',
             ]);
 
-        $schedules = MerchandiserSchedule::leftjoin('merchandiser_attendance', 'merchandiser_schedule.id', '=', 'merchandiser_attendance.schedule_id')
+        $schedules = MerchandiserSchedule::join('merchandiser_attendance', 'merchandiser_schedule.id', '=', 'merchandiser_attendance.schedule_id')
             ->join('users', 'merchandiser_schedule.merchandiser_id', '=', 'users.merchandiser_id')
             ->join('agency_master_data', 'agency_master_data.agency_code', '=', 'users.agency_code')
             ->join('customer_master_data', 'merchandiser_schedule.customer_code', '=', 'customer_master_data.customer_code')

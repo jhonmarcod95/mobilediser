@@ -94,8 +94,19 @@
                 endOfMonth: endOfMonth
             },
             success: function (data) {
-
-                let logs = data;
+                //note: there's  a chance to have a null values in image_path due to GROUP BY clause
+                let logs = alasql("SELECT " +
+                    "id, " +
+                    "LAST(first_name) AS first_name, " +
+                    "LAST(last_name) AS last_name, " +
+                    "LAST(`store`) AS `store`, " +
+                    "LAST(date) AS date, " +
+                    "LAST(time_in) AS time_in, " +
+                    "LAST(time_out) AS time_out, " +
+                    "LAST(transaction_number) AS transaction_number," +
+                    "LAST(image_path) AS image_path " +
+                    "FROM ? " +
+                    "GROUP BY id", [data]);
 
                 //table-body
                 let body = '';

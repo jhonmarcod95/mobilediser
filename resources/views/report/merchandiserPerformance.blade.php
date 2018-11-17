@@ -119,7 +119,8 @@
                     let dateKey = '';
                     let totalLoginCount = 0;
                     for (let date of dates) {
-                        let loginCount = alasql("SELECT count(id) AS login_count FROM ? WHERE merchandiser_id = " + merchandiser_id + " AND date = '" + date + "' AND time_in IS NOT NULL", [schedules])[0].login_count;
+                        //count distinct due to chances to have a duplicate id's in other foreign tables
+                        let loginCount = alasql("SELECT COUNT(DISTINCT id) AS login_count FROM ? WHERE merchandiser_id = " + merchandiser_id + " AND date = '" + date + "'", [schedules])[0].login_count;
                         dateKey += '"' + moment(date).format('D-MMM-YY') +  '": "' + loginCount + '",'; //ex: {"2018-11-17", "5"}
                         totalLoginCount += loginCount;
                     }
@@ -127,8 +128,7 @@
 
                     //create json string
                     merchandiserLog += '{' +
-                            '"First Name": "' + first_name + '", ' +
-                            '"Last Name": "' + last_name + '", ' +
+                            '"Merchandiser": "' + first_name + ' ' + last_name + '", ' +
                             '' + dateKey + ',' +
                             '"Grand Total":' + totalLoginCount +
                         '},';
