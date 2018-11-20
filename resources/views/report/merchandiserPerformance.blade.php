@@ -110,6 +110,9 @@
 
                 //get merchandisers
                 let merchandiserLog = '';
+                let grandTotalLoginCount = 0;
+
+
                 for (let merchandiser of merchandisers) {
                     let merchandiser_id = merchandiser.merchandiser_id;
                     let first_name = merchandiser.first_name;
@@ -121,22 +124,35 @@
                     for (let date of dates) {
                         //count distinct due to chances to have a duplicate id's in other foreign tables
                         let loginCount = alasql("SELECT COUNT(DISTINCT id) AS login_count FROM ? WHERE merchandiser_id = " + merchandiser_id + " AND date = '" + date + "'", [schedules])[0].login_count;
+                        //create json string values
                         dateKey += '"' + moment(date).format('D-MMM-YY') +  '": "' + loginCount + '",'; //ex: {"2018-11-17", "5"}
                         totalLoginCount += loginCount;
                     }
                     dateKey = removeLastComma(dateKey);
 
-                    //create json string
+                    //create json string array
                     merchandiserLog += '{' +
                             '"Merchandiser": "' + first_name + ' ' + last_name + '", ' +
                             '' + dateKey + ',' +
-                            '"Grand Total":' + totalLoginCount +
+                            '"Total":' + totalLoginCount +
                         '},';
+
+                    grandTotalLoginCount += totalLoginCount;
                 }
                 merchandiserLog = removeLastComma(merchandiserLog);
                 merchandiserLog = JSON.parse('[' + merchandiserLog + ']');
 
-                $('#table-log').html(populateJsonArrayTable(merchandiserLog, true));
+                let keyLength = countJsonKeys(merchandiserLog);
+
+                let footer =
+                    '<tfoot>' +
+                        '<tr>' +
+                            '<td colspan="' + keyLength + '">' +
+                            '<td>Grand Total : ' + grandTotalLoginCount +
+                        '</tr>' +
+                    '</tfoot>';
+
+                $('#table-log').html(populateJsonArrayTable(merchandiserLog, true, null, footer));
                 showLoading('loading-log', false);
             }
         });

@@ -18,71 +18,36 @@
             <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header ">
-                        <h3 class="box-title">Attendance Record</h3>
                     </div>
 
                     <div class="box-body">
-                        {!! Form::open(['url' => '/reports/merchandiserAttendance', 'method' => 'GET']) !!}
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="text-muted">Merchandiser</label>
-                                    {!! Form::select('merchandiser', $merchandisers->pluck('fullname', 'merchandiser_id'), null, ['class' => 'select2 form-control', 'multiple', 'data-placeholder' => 'Select a Merchandiser', 'style' => 'width: 300px']) !!}
+                                    <label>Search Merchandiser: </label>
+                                    {!! Form::select('merchandiser_ids[]', $merchandisers, null, ['id' => 'merchandiser_ids', 'class' => 'form-control select2', 'multiple']) !!}
                                 </div>
                             </div>
-
-                        </div>
-                        <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
+                                    <label class="text-muted">Date From</label>
+                                    <input type="date" id="date-from" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="text-muted">Date To</label>
+                                    <input type="date" id="date-to" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="text-muted">&nbsp;</label><br>
+                                    <button id="btn-filter" class="btn btn-default btn-sm"><i class="fa fa-filter"></i>&nbsp;Filter</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="table table-responsive">
-                            <table class="table table-bordered" style="white-space: nowrap; width: 1%">
-                                <thead>
-                                <th>Merchandiser</th>
-                                @foreach($dates as $date)
-                                    <th>{{ Carbon\Carbon::parse($date)->format('M d, Y') }}</th>
-                                @endforeach
-                                </thead>
-                                <tbody>
-                                @foreach($merchandisers as $merchandiser)
-                                    <tr>
-                                        <td>{{ $merchandiser->fullname }}</td>
-                                        @foreach($dates as $date)
-                                            <td>
-                                                @foreach($schedules->where('merchandiser_id', $merchandiser->merchandiser_id)
-                                                                   ->where('date', $date) as $schedule)
-
-                                                    {{ $schedule->customer_name }} &nbsp;
-
-                                                    <small class="label
-                                                        @if($schedule->status == '001')
-                                                            {{ 'label-success' }}
-                                                        @elseif($schedule->status == '002')
-                                                            {{ 'label-warning' }}
-                                                        @else
-                                                            {{ 'label-danger' }}
-                                                        @endif">
-                                                        {{ $schedule->status_description }}
-                                                    </small>
-                                                    <br>
-                                                @endforeach
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                            </div>
-                        </div>
-                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>

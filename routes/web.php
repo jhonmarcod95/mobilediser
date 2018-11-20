@@ -135,6 +135,7 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
 
     Route::get('/reports/merchandiser-performance-data', 'ScheduleController@merchandiserPerformanceData');
     Route::get('/reports/merchandiserPerformance', 'ScheduleController@merchandiserPerformance');
+    Route::get('/reports/merchandiserAttendance', 'ScheduleController@merchandiserAttendance');
 
     Route::get('/reports/merchandiserLog', 'ScheduleController@merchandiserLog');
     Route::get('/reports/merchandiser-log-data', 'ScheduleController@merchandiserLogData');

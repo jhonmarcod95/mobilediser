@@ -375,8 +375,14 @@ class ScheduleController extends Controller
             'merchandisers'
         ));
     }
-    /* *************************************/
 
+    public function merchandiserAttendance(){
+        $merchandisers = $this->merchandisers;
+        return view('report.merchandiserAttendance', compact(
+            'merchandisers'
+        ));
+    }
+    /* *************************************/
 
 
     /* Function ****************************/

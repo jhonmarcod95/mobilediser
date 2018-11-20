@@ -54,7 +54,7 @@ function objectSum(objects, field) {
 * param2: if you want to display a running number at first column
 * param3: hide an specific column for some purpose
 */
-function populateJsonArrayTable(jsonArray, withNumber, hiddenColumn){
+function populateJsonArrayTable(jsonArray, withNumber, hiddenColumn, footerCustom){
 
     let thead = '';
     let tbody = '';
@@ -82,9 +82,9 @@ function populateJsonArrayTable(jsonArray, withNumber, hiddenColumn){
     });
 
 
-
     if(tbody == ''){
         tbody = '<tr><td colspan="" style="text-align: center">No data available.</tr>'
+        footerCustom = '';
     }
 
     return '<thead>' +
@@ -94,7 +94,21 @@ function populateJsonArrayTable(jsonArray, withNumber, hiddenColumn){
         '</thead>' +
         '<tbody>' +
             tbody +
-        '</tbody>';
+        '</tbody>' +
+        footerCustom;
+}
+
+function countJsonKeys(jsonArray) {
+    let result = 0;
+    $.each(jsonArray, function(key, value) {
+        let columns = [];
+        $.each(value, function(key, value){
+            columns.push(key);
+        });
+        result = columns.length;
+        return false;
+    });
+    return result;
 }
 
 function removeLastComma(value) {
