@@ -199,6 +199,8 @@
         return result
     }
 
+    
+
     /* export to excel function **********************************/
     var tableToExcel = (function() {
         var uri = 'data:application/vnd.ms-excel;base64,'

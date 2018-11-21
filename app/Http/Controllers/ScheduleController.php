@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Agency;
 use App\Customer;
 use App\MerchandiserSchedule;
 use App\Rules\ScheduleConflictRule;
 use App\Rules\ScheduleUploadRule;
-use App\Rules\MerchandiserIdRule;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -23,6 +25,7 @@ class ScheduleController extends Controller
     private $customers;
     private $weekDays;
     private $weeks;
+    private $agencies;
 
     public function __construct()
     {
@@ -30,6 +33,10 @@ class ScheduleController extends Controller
             DB::raw("CONCAT(first_name, ' ', last_name) AS fullname"), 'merchandiser_id')
             ->where('account_type', 3)
             ->pluck('fullname', 'merchandiser_id')
+            ->put('0', 'All');
+
+        $this->agencies = Agency::all()
+            ->pluck('name', 'agency_code')
             ->put('0', 'All');
 
         $this->weekDays = [
@@ -322,6 +329,7 @@ class ScheduleController extends Controller
                 'customer_master_data.branch',
             ]);
 
+
         return [
             'merchandisers' => $merchandisers,
             'dates' => $dates,
@@ -376,10 +384,57 @@ class ScheduleController extends Controller
         ));
     }
 
+    public function merchandiserAttendanceData(Request $request){
+        $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
+        $agency_ids = $this->agencyIdSearch($request->agency_ids);
+
+        $dateFrom = $request->date_from;
+        $dateTo = $request->date_to;
+
+        $attendances = MerchandiserSchedule::join('customer_master_data', 'customer_master_data.customer_code', 'merchandiser_schedule.customer_code')
+            ->leftjoin('merchandiser_attendance', 'merchandiser_attendance.schedule_id', 'merchandiser_schedule.id')
+            ->join('users', 'users.merchandiser_id', 'merchandiser_schedule.merchandiser_id')
+            ->join('agency_master_data', 'agency_master_data.agency_code', 'users.agency_code')
+            ->whereIn('merchandiser_schedule.merchandiser_id', $merchandiser_ids)
+            ->whereIn('agency_master_data.agency_code', $agency_ids)
+            ->whereBetween('merchandiser_schedule.date', [$dateFrom, $dateTo])
+            ->get([
+                'merchandiser_schedule.id',
+                'merchandiser_schedule.merchandiser_id',
+                'merchandiser_schedule.date',
+                'customer_master_data.customer_code',
+                'customer_master_data.name  AS store',
+                'customer_master_data.branch',
+                'merchandiser_schedule.time_in AS start_time',
+                'merchandiser_schedule.time_out AS end_time',
+                'merchandiser_attendance.time_in',
+                'merchandiser_attendance.time_out'
+            ])
+            ->groupBy('merchandiser_id');
+
+        $merchandisers = User::where('account_type',3)->get();
+        $agencies = Agency::all();
+        $dates = $this->getDateRange($dateFrom, $dateTo);
+
+        $jsonDates = [];
+        foreach ($dates as $date){
+            $jsonDates[] = ["date" => $date];
+        }
+
+        return [
+            'merchandisers' => $merchandisers,
+            'attendances' => $attendances,
+            'agencies' => $agencies,
+            'dates' => $jsonDates
+        ];
+    }
+
     public function merchandiserAttendance(){
+        $agencies = $this->agencies;
         $merchandisers = $this->merchandisers;
         return view('report.merchandiserAttendance', compact(
-            'merchandisers'
+            'merchandisers',
+            'agencies'
         ));
     }
     /* *************************************/
@@ -436,5 +491,18 @@ class ScheduleController extends Controller
         }
         return $merchandiser_ids;
     }
+
+    public function agencyIdSearch($agency_ids){
+        if(empty($agency_ids)){
+            return [null];
+        }
+        foreach ($agency_ids as $agency_id) {
+            if($agency_id == 0){
+                return Agency::all()->pluck('agency_code');
+            }
+        }
+        return $agency_ids;
+    }
+
     /* *************************************/
 }

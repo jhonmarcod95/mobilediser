@@ -608,6 +608,7 @@
 
                 var schedules = data;
 
+
                 // var agencies = alasql("SELECT * FROM ? GROUP BY agency_code", [schedules]);
                 var agencies = alasql("SELECT DISTINCT agency_code, agency FROM ?", [schedules]);
                 var scheduleAgencyNodes = JSON.parse('[]');

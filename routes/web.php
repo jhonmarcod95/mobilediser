@@ -126,20 +126,26 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::post('/locations/geofences/save', 'LocationController@save');
 
 
-    #reports
+    /* reports *************************************************/
+
     Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
 
+    #inventory log (raw)
     Route::get('/reports/inventoryLog', 'ReportsController@inventoryLog');
     Route::get('/reports/inventoryLogTransaction/{transactionNumber}', 'ReportsController@inventoryLogTransaction');
-    Route::get('/reports/merchandiserAttendance', 'ReportsController@merchandiserAttendance');
 
+    #diser performance
     Route::get('/reports/merchandiser-performance-data', 'ScheduleController@merchandiserPerformanceData');
     Route::get('/reports/merchandiserPerformance', 'ScheduleController@merchandiserPerformance');
-    Route::get('/reports/merchandiserAttendance', 'ScheduleController@merchandiserAttendance');
 
+    #diser attendance (dtr)
+    Route::get('/reports/merchandiserAttendance', 'ScheduleController@merchandiserAttendance');
+    Route::get('/reports/merchandiser-attendance-data', 'ScheduleController@merchandiserAttendanceData');
+
+    #diser logs (raw)
     Route::get('/reports/merchandiserLog', 'ScheduleController@merchandiserLog');
     Route::get('/reports/merchandiser-log-data', 'ScheduleController@merchandiserLogData');
-
+    /***********************************************************/
 
 });
 

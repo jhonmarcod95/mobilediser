@@ -45,7 +45,35 @@ function objectSum(objects, field) {
     return result;
 }
 
+function dateTimeDifference(fromDateTime, toDateTime) {
+    let ms = moment(toDateTime,"YYYY/MM/DD HH:mm a").diff(moment(fromDateTime,"YYYY/MM/DD HH:mm a"));
+    if (ms < 0) ms = 0;
+    return ms;
+}
 
+function getTimeStampHrs(timestamp){
+    let d = moment.duration(timestamp);
+    return Math.floor(d.asHours());
+
+}
+
+function getTimeStampMins(timestamp){
+    return moment.utc(timestamp).format("mm");
+}
+
+function renderedText(rendered){
+    let d = moment.duration(rendered);
+    let hours = Math.floor(d.asHours());
+    let minutes = moment.utc(rendered).format("mm");
+    return hours + ' hrs ' + minutes + ' min';
+}
+
+function toBlankText(text) {
+    if (typeof text == 'undefined' || text == null){
+        return '';
+    }
+    return text;
+}
 
 /* translates json array to html table format string. by marco
 * requires jquery
