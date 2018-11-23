@@ -518,7 +518,7 @@
                     });
                     //table
                     var table =
-                        '<table id=\'dataTable2\' class=\'table table-bordered\' style=\'white-space: nowrap; width: 1%\'>' +
+                        '<table id=\'data-table-freeze\' class=\'table table-bordered\' style=\'white-space: nowrap; width: 1%\'>' +
                             '<thead>' +
                             '<th>Merchandiser</th>' +
                             thead +
@@ -530,7 +530,7 @@
                     $('#schedule-table').html(table);
                     /*--------------------------------------------------------------------------*/
 
-                    setDataTable(1);
+                    setDataTable(1, null, '400px');
                     showLoading('loading-schedules', false);
                 }
             });

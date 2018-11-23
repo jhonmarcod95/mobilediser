@@ -16,21 +16,36 @@ use jeremykenedy\LaravelRoles\Models\Role;
 
 class UserController extends Controller
 {
-    public function show(){
+
+    public function index(){
+        $accountTypes = AccountType::get()->pluck('type', 'id');
+        $agencies = Agency::get()->pluck('name', 'agency_code');
+
+        return view('masterData.user.index',compact(
+            'accountTypes',
+            'agencies'
+        ));
+    }
+
+    public function indexData(Request $request){
+        $paginate = $request->paginate;
+        $search = $request->search;
 
         if(Auth::user()->account_type == '1'){
             $users = DB::table('vw_merchandiser')
-                ->get();
+                ->where('last_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('first_name', 'LIKE', '%' . $search . '%')
+                ->paginate($paginate);
         }
         else{
             $users = DB::table('vw_merchandiser')
                 ->where('account_id', '<>', '1')
-                ->get();
+                ->where('last_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('first_name', 'LIKE', '%' . $search . '%')
+                ->paginate($paginate);
         }
 
-        return view('masterData.user',compact(
-            'users'
-        ));
+        return $users;
     }
 
     public function register(Request $request){
@@ -61,36 +76,31 @@ class UserController extends Controller
     }
 
     public function save(Request $request){
+
         $request->validate([
-            'last_name' => 'required',
-            'first_name' => 'required',
+            'last_name' => 'required|max:191',
+            'first_name' => 'required|max:191',
             'agency' => 'required',
-            //'contact_number' => 'required|unique:users|digits:11',
-            'password' => 'required',
+            'contact_number' => 'required|unique:users|digits:11',
+            'password' => 'required|min:6',
             'gender' => 'required',
             'birthday' => 'required',
-            'address' => 'required',
-            'accountType' => 'required',
-            'accountStatus' => 'required',
-            'username' => 'required|unique:users',
-            //'email' => 'required|unique:users|email',
+            'address' => 'required|max:191',
+            'account_type' => 'required',
+            'account_status' => 'required',
+            'username' => 'required|unique:users|max:30',
+            'email' => 'required|unique:users|email|max:191',
         ]);
 
-        if(empty($request->file('img'))){
+        if(empty($request->file('img_user'))){
             $path = "avatars/avatar.png";
         }
         else{
-            $path = $request->file('img')->store('avatars','public');
+            $path = $request->file('img_user')->store('avatars','public');
         }
 
         #user
         $user = new User();
-
-//        //if new user is diser
-//        if($request->accountType == 3){
-//            $user->merchandiser_id = User::where('account_type', '3')->max('merchandiser_id') + 1;
-//        }
-
         $user->last_name = $request->last_name;
         $user->first_name = $request->first_name;
         $user->agency_code = $request->agency;
@@ -102,8 +112,8 @@ class UserController extends Controller
         $user->address = $request->address;
         $user->email = $request->email;
         $user->contact_number = $request->contact_number;
-        $user->account_type = $request->accountType;
-        $user->account_status = $request->accountStatus;
+        $user->account_type = $request->account_type;
+        $user->account_status = $request->account_status;
         $user->save();
 
         #image
@@ -112,26 +122,25 @@ class UserController extends Controller
         $userImage->user()->associate($user);
         $userImage->save();
 
-        alert()->success('New user has been registered.','');
-        return redirect('/users');
+        return $user;
     }
 
     public function update(Request $request){
 
         $id = $request->merchandiser_id;
-        $validation = $request->validate([
-            'last_name' => 'required',
-            'first_name' => 'required',
+
+        $request->validate([
+            'last_name' => 'required|max:191',
+            'first_name' => 'required|max:191',
             'agency' => 'required',
             'contact_number' => 'required|unique:users,contact_number,' . $id . ',merchandiser_id|digits:11',
-            'password' => [new PasswordRule()],
             'gender' => 'required',
             'birthday' => 'required',
-            'address' => 'required',
-            'accountType' => 'required',
-            'accountStatus' => 'required',
-            'username' => 'required|unique:users,username,' . $id . ',merchandiser_id',
-            'email' => 'required|unique:users,email,' . $id . ',merchandiser_id',
+            'address' => 'required|max:191',
+            'account_type' => 'required',
+            'account_status' => 'required',
+            'username' => 'required|unique:users,username,' . $id . ',merchandiser_id|max:30',
+            'email' => 'required|unique:users,email,' . $id . ',merchandiser_id|max:191',
         ]);
 
         #user
@@ -152,20 +161,19 @@ class UserController extends Controller
         $user->address = $request->address;
         $user->email = $request->email;
         $user->contact_number = $request->contact_number;
-        $user->account_type = $request->accountType;
-        $user->account_status = $request->accountStatus;
+        $user->account_type = $request->account_type;
+        $user->account_status = $request->account_status;
         $user->save();
 
         #image
-        if(!empty($request->file('img'))){ #will not update image path if no upload
+        if(!empty($request->file('img_user'))){ #will not update image path if no upload
             $userImage = UserImage::find($id);
-            $path = $request->file('img')->store('avatars','public');
+            $path = $request->file('img_user')->store('avatars','public');
             $userImage->image_path = $path;
             $userImage->save();
         }
 
-        alert()->success('User Account has been updated.','');
-        return redirect('/users');
+        return $user;
     }
 
 }

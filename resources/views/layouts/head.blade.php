@@ -48,6 +48,7 @@
 {{-- Boostrap tree --}}
 <link rel="stylesheet" href="{{  asset('bstree/bootstrap-treeview.css') }}">
 
+
 {{-- modal custom size --}}
 <style>
     .modal-xl {
@@ -55,6 +56,8 @@
     }
 
 </style>
+
+
 
 {{-- Image Upload preview --}}
 <script src="{{  asset('adminLTE/jquery.min.js') }}"></script>

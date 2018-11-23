@@ -75,6 +75,27 @@ function toBlankText(text) {
     return text;
 }
 
+
+function showPageNavigation(data, prevButton, nextButton){
+    var current_page = data.current_page;
+    var last_page = data.last_page;
+    var next_page_url = data.next_page_url;
+    var prev_page_url = data.prev_page_url;
+    var prev_page_button = '';
+    var next_page_button = '';
+    if(prev_page_url != null) prev_page_button = prevButton;
+    if(next_page_url != null) next_page_button = nextButton;
+
+    var page_nav = '' +
+        '<div class="mailbox-controls pull-right">' +
+        prev_page_button +
+        '<span> Page ' + current_page + ' </span>' +
+        '<span> of ' + last_page + ' </span>' +
+        next_page_button +
+        '</div>';
+    return page_nav;
+}
+
 /* translates json array to html table format string. by marco
 * requires jquery
 * ex format: [{name:a},{name:b}]

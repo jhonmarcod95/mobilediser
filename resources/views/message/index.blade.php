@@ -107,14 +107,16 @@
                             '<td><a href="#" onclick="document.getElementById(\'msgFrame\').src = \'' + 'http://' + window.location.hostname + '/message/chat/' + val.message_id + '\'" data-toggle="modal" data-target="#modal-default">' + val.subject +
                             '<td class="mailbox-name">' + val.first_name + ' ' + val.last_name +
                             '<td class="mailbox-subject"><small class="label ' + val.bootstrap_class + '">' + val.status +
-                            '<td class="mailbox-date"><small class="text-muted"><i class="fa fa-clock-o"></i> ' + moment(val.created_at).format('MMM DD, YYYY hh:mm a'); +
+                            '<td class="mailbox-date"><small class="text-muted"><i class="fa fa-clock-o"></i> ' + moment(val.created_at).format('MMM DD, YYYY hh:mm a') +
                         '</tr>';
                 });
                 $('#tbody-messages').html(tbody);
                 /*--------------------------------------------------------------------------*/
 
                 /*------------------------------ paging ------------------------------------*/
-                $('#page-nav').html(showPageNavigation(data));
+                let prevButton = '<button class="btn btn-default btn-sm" onclick="getMessages(\'' + data.prev_page_url + '\')"><i class="fa fa-arrow-left"></i></button>';
+                let nextButton = '<button class="btn btn-default btn-sm" onclick="getMessages(\'' + data.next_page_url + '\')"><i class="fa fa-arrow-right"></i></button>';
+                $('#page-nav').html(showPageNavigation(data, prevButton, nextButton));
                 /*--------------------------------------------------------------------------*/
                 showLoading('loading-message', false);
             }

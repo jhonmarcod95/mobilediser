@@ -8,13 +8,12 @@ use App\MerchandiserSchedule;
 use App\Rules\ScheduleConflictRule;
 use App\Rules\ScheduleUploadRule;
 use App\User;
+use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
 use DateTime;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -436,6 +435,13 @@ class ScheduleController extends Controller
             'merchandisers',
             'agencies'
         ));
+    }
+
+    public function merchandiserAttendancePdf(){
+
+        $data = [];
+        $pdf = PDF::loadView('report.merchandiserAttendancePdf', $data);
+        return $pdf->stream();
     }
     /* *************************************/
 

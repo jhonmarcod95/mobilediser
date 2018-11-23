@@ -56,15 +56,18 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
         Route::post('/schedules/update', 'ScheduleController@update');
         Route::post('/schedules/delete', 'ScheduleController@delete');
         Route::post('/schedules/upload', 'ScheduleController@upload');
+
+        Route::post('/users/save', 'UserController@save');
+        Route::post('/users/update', 'UserController@update');
     });
 
     #users
-    Route::get('/users', 'UserController@show');
+    Route::get('/users', 'UserController@index');
+    Route::get('/users-all', 'UserController@indexData');
+//    Route::get('/users', 'UserController@show');
     Route::get('/users/register', 'UserController@register');
     Route::get('/users/edit', 'UserController@register');
 
-    Route::post('/users/save', 'UserController@save');
-    Route::post('/users/update', 'UserController@update');
 
     #agencies
     Route::get('/agencies', 'AgencyController@show');
@@ -141,10 +144,12 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     #diser attendance (dtr)
     Route::get('/reports/merchandiserAttendance', 'ScheduleController@merchandiserAttendance');
     Route::get('/reports/merchandiser-attendance-data', 'ScheduleController@merchandiserAttendanceData');
+    Route::get('/reports/merchandiser-attendance-pdf', 'ScheduleController@merchandiserAttendancePdf');
 
     #diser logs (raw)
     Route::get('/reports/merchandiserLog', 'ScheduleController@merchandiserLog');
     Route::get('/reports/merchandiser-log-data', 'ScheduleController@merchandiserLogData');
+
     /***********************************************************/
 
 });

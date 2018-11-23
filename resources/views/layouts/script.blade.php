@@ -42,6 +42,10 @@
 
 <script src="{{  asset('artisan/techniques.js') }}"></script>
 
+{{-- jspdf --}}
+<script src="{{  asset('jsPDF/html2canvas.js') }}"></script>
+<script src="{{  asset('jsPDF/jspdf.min.js') }}"></script>
+
 {{-- Datable TO Excel--}}
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
@@ -87,15 +91,20 @@
     }
     /**************************************************************/
 
-    function setDataTable(freezeIndex){
-        $('#dataTable2').DataTable({
+    function setDataTable(freezeIndex, height, width){
+
+        if(height == null) height = true;
+        if(width == null) width = true;
+
+
+        $('#data-table-freeze').DataTable({
             dom: 'Bfrtip',
             buttons: [
                 'excelHtml5',
                 'csvHtml5'
             ],
-            scrollY:        "400px",
-            scrollX:        true,
+            scrollY:        width,
+            scrollX:        height,
             scrollCollapse: true,
             paging:         false,
             ordering: false,
@@ -131,25 +140,6 @@
         return checked;
     }
 
-    function showPageNavigation(data){
-        var current_page = data.current_page;
-        var last_page = data.last_page;
-        var next_page_url = data.next_page_url;
-        var prev_page_url = data.prev_page_url;
-        var prev_page_button = '';
-        var next_page_button = '';
-        if(prev_page_url != null) prev_page_button = '<button class="btn btn-default btn-sm" onclick="getMessages(\'' + prev_page_url + '\')"><i class="fa fa-arrow-left"></i></button>';
-        if(next_page_url != null) next_page_button = '<button class="btn btn-default btn-sm" onclick="getMessages(\'' + next_page_url + '\')"><i class="fa fa-arrow-right"></i></button>';
-
-        var page_nav = '' +
-            '<div class="mailbox-controls pull-right">' +
-                prev_page_button +
-                '<span> Page ' + current_page + ' </span>' +
-                '<span> of ' + last_page + ' </span>' +
-                next_page_button +
-            '</div>';
-        return page_nav;
-    }
 
     function showSuccessAlert(text){
         var result = '<div class="alert bg-success alert-dismissible text-success small" role="alert">' + text + '<button type="button" class="close text-green" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
