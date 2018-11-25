@@ -50,6 +50,7 @@
                                 <div class="form-group">
                                     <label class="text-muted">&nbsp;</label><br>
                                     <button id="btn-filter" class="btn btn-default btn-sm"><i class="fa fa-filter"></i>&nbsp;Filter</button>
+                                    {{--<button id="btn-pdf" class="btn btn-default btn-sm"><i class="fa fa-file-pdf-o"></i>&nbsp;PDF</button>--}}
                                 </div>
                             </div>
                             <div class="col-md-1">
@@ -71,14 +72,15 @@
                 </div>
             </div>
         </div>
-
     </section>
-
 @endsection
 
 
 @section('script')
     <script>
+        //used to store table values that will pass into pdf
+        let attendanceMerchandiser;
+
         /* filtering *************************************/
         let scheduleUrl = '/reports/merchandiser-attendance-data';
         let merchandiser_ids = '';
@@ -96,7 +98,18 @@
             fetchAttendance();
         });
 
+        $('#btn-pdf').click(function() {
+
+            formSubmit('/reports/merchandiser-attendance-pdf', {
+                attendances: JSON.stringify(attendanceMerchandiser),
+                _token: '{{ csrf_token() }}'
+            });
+        });
+
+
         function fetchAttendance() {
+            attendanceMerchandiser = JSON.parse('[]');
+
             showLoading('loading-attendance', true);
             $.ajax({
                 type: 'GET',
@@ -162,9 +175,12 @@
                         //this query will allow to show all dates even without a schedule on a particular date
                         let dateLogs = alasql("SELECT * FROM ? AS dates LEFT JOIN ? AS uniqueLog ON dates.date = uniqueLog.date ORDER BY date", [dates, uniqueLogs]);
 
+                        //used to store logs that will pass into pdf
+                        let attendanceLogs = JSON.parse('[]');
+
                         for(let log of dateLogs){
 
-                            let date = moment(log.date).format('"YYYY/MM/DD');
+                            let date = moment(log.date).format('YYYY/MM/DD');
                             let outDateTime = date + ' ' + log.time_out;
                             let inDateTime = date + ' ' + log.time_in;
                             let startDateTime = date + ' ' + log.start_time;
@@ -179,6 +195,7 @@
                             /* ***********************/
 
                             /* log details ***********/
+                            date = moment(log.date).format('DD-MMM-YY (ddd)');
                             let store = toBlankText(log.store) + ' - ' + toBlankText(log.branch);
                             let schedule = toTimeString(log.start_time) + ' - ' + toTimeString(log.end_time);
                             //time-in and out
@@ -202,9 +219,10 @@
                             }
                             /* ***********************/
 
+
                             content +=
                                 '<tr>' +
-                                    '<td>' + moment(log.date).format('DD-MMM-YY (ddd)') +
+                                    '<td>' + date +
                                     '<td>' + store +
                                     '<td>' + schedule +
                                     '<td>' + timeInOut +
@@ -214,6 +232,16 @@
 
                             totalRendered += timeRendered;
                             totalWorkingHours += workingHrs;
+
+                            //store attendance logs that will be used in pdf
+                            attendanceLogs.push({
+                                "date": date,
+                                "store": store,
+                                "schedule": schedule,
+                                "timeInOut": timeInOut,
+                                "timeRenderedText": timeRenderedText,
+                                "overtime": overtime
+                            });
                         }
 
                         //spacing
@@ -221,25 +249,33 @@
                         /* *******************************************************/
 
                         /* heading ***********************************************/
+                        let mobilediserId = merchandiser.merchandiser_id;
+                        let merchandiserName = merchandiser.merchandiser_name;
+                        let period = moment(dateFrom).format('DD-MMM-YY') + ' to ' +  moment(dateTo).format('DD-MMM-YY');
+                        let agency = merchandiser.agency;
+                        totalRendered = toTimeRenderedText(totalRendered);
+                        totalOvertime = toTimeRenderedText(totalOvertime);
+                        totalWorkingHours = toTimeRenderedText(totalWorkingHours);
+
                         body +=
                         '<tr>' +
-                            '<td colspan="5"><b>MobileDiser Id: </b>' +  merchandiser.merchandiser_id +
-                            '<td><b>Period: </b>' + moment(dateFrom).format('DD-MMM-YY') + ' to ' +  moment(dateTo).format('DD-MMM-YY') +
+                            '<td colspan="5"><b>MobileDiser Id: </b>' +  mobilediserId +
+                            '<td><b>Period: </b>' + period +
                         '</tr>' +
                         '<tr>' +
-                            '<td colspan="5"><b>Merchandiser: </b>' +  merchandiser.merchandiser_name +
-                            '<td><b>Total Rendered: </b>' + toTimeRenderedText(totalRendered) +
+                            '<td colspan="5"><b>Merchandiser: </b>' +  merchandiserName +
+                            '<td><b>Total Rendered: </b>' + totalRendered +
                         '</tr>' +
                         '<tr>' +
-                            '<td colspan="5"><b>Agency: </b>' + merchandiser.agency +
-                            '<td><b>Total Overtime: </b>' + toTimeRenderedText(totalOvertime) +
+                            '<td colspan="5"><b>Agency: </b>' + agency +
+                            '<td><b>Total Overtime: </b>' + totalOvertime +
                         '</tr>' +
                         '<tr>' +
                             '<td colspan="5"><b>Working Days: </b>' + workingDays +
                             '<td><b>Days Present: </b>' + daysPresent +
                         '</tr>' +
                         '<tr>' +
-                            '<td colspan="5"><b>Total Working Hrs: </b>' + toTimeRenderedText(totalWorkingHours) +
+                            '<td colspan="5"><b>Total Working Hrs: </b>' + totalWorkingHours +
                             '<td><b>Days Absent: </b>' + daysAbsent +
                         '</tr>' +
                         '<tr><td colspan="' + colspan + '">&nbsp;</tr>' +
@@ -251,6 +287,21 @@
                             '<td><b>Rendered' +
                             '<td><b>OT' +
                         '</tr>' + content;
+
+                        //store attendance that will be used in pdf
+                        attendanceMerchandiser.push({
+                            "mobilediserId": mobilediserId,
+                            "period": period,
+                            "merchandiserName": merchandiserName,
+                            "totalRendered": totalRendered,
+                            "agency": agency,
+                            "totalOvertime": totalOvertime,
+                            "workingDays": workingDays,
+                            "daysPresent": daysPresent,
+                            "totalWorkingHours": totalWorkingHours,
+                            "daysAbsent": daysAbsent,
+                            "logs": attendanceLogs
+                        });
                     }
                     /* ********************************************************/
 

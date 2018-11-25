@@ -4,15 +4,13 @@ namespace App\Http\Controllers;
 
 use App\AccountType;
 use App\Agency;
-use App\Rules\PasswordRule;
 use App\User;
 use App\UserImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use jeremykenedy\LaravelRoles\Models\Role;
+
 
 class UserController extends Controller
 {
@@ -20,10 +18,12 @@ class UserController extends Controller
     public function index(){
         $accountTypes = AccountType::get()->pluck('type', 'id');
         $agencies = Agency::get()->pluck('name', 'agency_code');
+        $roles = Role::get()->pluck('name', 'id');
 
         return view('masterData.user.index',compact(
             'accountTypes',
-            'agencies'
+            'agencies',
+            'roles'
         ));
     }
 
@@ -31,17 +31,69 @@ class UserController extends Controller
         $paginate = $request->paginate;
         $search = $request->search;
 
+        //it user
         if(Auth::user()->account_type == '1'){
-            $users = DB::table('vw_merchandiser')
-                ->where('last_name', 'LIKE', '%' . $search . '%')
-                ->orWhere('first_name', 'LIKE', '%' . $search . '%')
+            $users = User::leftJoin('merchandiser_picture', 'merchandiser_picture.user_merchandiser_id', 'users.merchandiser_id')
+                ->leftJoin('agency_master_data', 'agency_master_data.agency_code', 'users.agency_code')
+                ->leftJoin('account_type', 'account_type.id', 'users.account_type')
+                ->leftJoin('role_user', 'role_user.user_merchandiser_id', 'users.merchandiser_id')
+                ->where(function ($query) use ($search) {
+                    $query->where('users.last_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('users.first_name', 'LIKE', '%' . $search . '%');
+                })
+                ->select([
+                    'users.merchandiser_id AS merchandiser_id',
+                    'users.last_name AS last_name',
+                    'users.first_name AS first_name',
+                    'users.agency_code AS agency_code',
+                    'users.username AS username',
+                    'users.gender AS gender',
+                    'users.birth_date AS birth_date',
+                    'users.address AS address',
+                    'users.contact_number AS contact_number',
+                    'users.account_status AS account_status',
+                    'role_user.role_id AS role_id',
+                    'merchandiser_picture.image_path AS image_path',
+                    'account_type.type AS account_type',
+                    'agency_master_data.name AS agency_name',
+                    'users.email AS email',
+                    'users.account_type AS account_id',
+                    'users.created_at AS created_at',
+                    'users.updated_at AS updated_at'
+                ])
                 ->paginate($paginate);
         }
+        //admin user
         else{
-            $users = DB::table('vw_merchandiser')
-                ->where('account_id', '<>', '1')
-                ->where('last_name', 'LIKE', '%' . $search . '%')
-                ->orWhere('first_name', 'LIKE', '%' . $search . '%')
+            $users = User::leftJoin('merchandiser_picture', 'merchandiser_picture.user_merchandiser_id', 'users.merchandiser_id')
+                ->leftJoin('agency_master_data', 'agency_master_data.agency_code', 'users.agency_code')
+                ->leftJoin('account_type', 'account_type.id', 'users.account_type')
+                ->leftJoin('role_user', 'role_user.user_merchandiser_id', 'users.merchandiser_id')
+                ->where(function ($query) use ($search) {
+                    $query->where('users.last_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('users.first_name', 'LIKE', '%' . $search . '%');
+                })
+                ->where('users.account_type', '<>', '1')
+                ->select([
+                    'users.merchandiser_id AS merchandiser_id',
+                    'users.last_name AS last_name',
+                    'users.first_name AS first_name',
+                    'users.agency_code AS agency_code',
+                    'users.username AS username',
+                    'users.gender AS gender',
+                    'users.birth_date AS birth_date',
+                    'users.address AS address',
+                    'users.contact_number AS contact_number',
+                    'users.account_status AS account_status',
+                    'role_user.role_id AS role_id',
+                    'merchandiser_picture.image_path AS image_path',
+                    'account_type.type AS account_type',
+                    'agency_master_data.name AS agency_name',
+                    'users.email AS email',
+                    'users.account_type AS account_id',
+                    'users.created_at AS created_at',
+                    'users.updated_at AS updated_at'
+                ])
                 ->paginate($paginate);
         }
 
@@ -80,6 +132,7 @@ class UserController extends Controller
         $request->validate([
             'last_name' => 'required|max:191',
             'first_name' => 'required|max:191',
+            'role' => 'required',
             'agency' => 'required',
             'contact_number' => 'required|unique:users|digits:11',
             'password' => 'required|min:6',
@@ -114,13 +167,17 @@ class UserController extends Controller
         $user->contact_number = $request->contact_number;
         $user->account_type = $request->account_type;
         $user->account_status = $request->account_status;
-        $user->save();
 
-        #image
-        $userImage = new UserImage();
-        $userImage->image_path = $path;
-        $userImage->user()->associate($user);
-        $userImage->save();
+        if($user->save()){
+            // Assigning of role
+            $user->syncRoles($request->role);
+
+            #image
+            $userImage = new UserImage();
+            $userImage->image_path = $path;
+            $userImage->user()->associate($user);
+            $userImage->save();
+        }
 
         return $user;
     }
@@ -132,6 +189,7 @@ class UserController extends Controller
         $request->validate([
             'last_name' => 'required|max:191',
             'first_name' => 'required|max:191',
+            'role' => 'required',
             'agency' => 'required',
             'contact_number' => 'required|unique:users,contact_number,' . $id . ',merchandiser_id|digits:11',
             'gender' => 'required',
@@ -163,14 +221,18 @@ class UserController extends Controller
         $user->contact_number = $request->contact_number;
         $user->account_type = $request->account_type;
         $user->account_status = $request->account_status;
-        $user->save();
 
-        #image
-        if(!empty($request->file('img_user'))){ #will not update image path if no upload
-            $userImage = UserImage::find($id);
-            $path = $request->file('img_user')->store('avatars','public');
-            $userImage->image_path = $path;
-            $userImage->save();
+        if($user->save()){
+            // Assigning of role
+            $user->syncRoles($request->role);
+
+            #image
+            if(!empty($request->file('img_user'))){ #will not update image path if no upload
+                $userImage = UserImage::find($id);
+                $path = $request->file('img_user')->store('avatars','public');
+                $userImage->image_path = $path;
+                $userImage->save();
+            }
         }
 
         return $user;

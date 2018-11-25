@@ -6,7 +6,6 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
-        "barryvdh/laravel-dompdf": "^0.8.3",
         "fideloper/proxy": "~3.3",
         "genealabs/laravel-maps": "^0.5.6",
         "jeremykenedy/laravel-roles": "^1.2",

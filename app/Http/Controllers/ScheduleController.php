@@ -8,7 +8,6 @@ use App\MerchandiserSchedule;
 use App\Rules\ScheduleConflictRule;
 use App\Rules\ScheduleUploadRule;
 use App\User;
-use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
@@ -290,6 +289,7 @@ class ScheduleController extends Controller
 
 
     /* Reports *****************************/
+    //summary report
     public function merchandiserPerformanceData(Request $request){
         $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
         $startOfMonth = $request->startOfMonth;
@@ -343,6 +343,7 @@ class ScheduleController extends Controller
         ));
     }
 
+    //log report
     public function merchandiserLogData(Request $request){
         $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
         $startOfMonth = $request->startOfMonth;
@@ -383,6 +384,7 @@ class ScheduleController extends Controller
         ));
     }
 
+    //attendance
     public function merchandiserAttendanceData(Request $request){
         $merchandiser_ids = $this->merchandiserIdSearch($request->merchandiser_ids);
         $agency_ids = $this->agencyIdSearch($request->agency_ids);
@@ -437,12 +439,12 @@ class ScheduleController extends Controller
         ));
     }
 
-    public function merchandiserAttendancePdf(){
-
-        $data = [];
-        $pdf = PDF::loadView('report.merchandiserAttendancePdf', $data);
-        return $pdf->stream();
-    }
+    //dtr (pdf)
+//    public function merchandiserAttendancePdf(Request $request){
+//        $attendances = ['attendances' => json_decode($request->attendances)];
+//        $pdf = PDF::loadView('report.merchandiserAttendancePdf', $attendances);
+//        return $pdf->stream();
+//    }
     /* *************************************/
 
 
