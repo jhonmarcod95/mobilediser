@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::get('/getInventory/{date}', 'HomeController@getInventory');
     Route::get('/getOfftake/{date}', 'HomeController@getOfftake');
     Route::get('/getSchedule/{date}', 'HomeController@getSchedule');
+    Route::get('/getNearExpiry/{date}', 'HomeController@getNearExpiry');
     Route::get('/getRecentlyLogin', 'HomeController@getRecentlyLogin');
 
     #announcement

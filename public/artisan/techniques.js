@@ -41,7 +41,7 @@ function objectSum(objects, field) {
     for (i in objects) {
         arr.push(objects[i][field]);
     }
-    var result = arr.reduce((a, b) => a + b, 0);
+    var result = arr.reduce((a, b) => parseInt(a) + parseInt(b), 0);
     return result;
 }
 

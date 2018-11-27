@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Announcement;
 use App\Attendance;
+use App\Customer;
 use App\InventoryTransactionHeader;
 use App\MerchandiserSchedule;
 use App\TransactionOfftake;
@@ -155,6 +156,12 @@ class HomeController extends Controller
             ]);
 
         return $offtakes;
+    }
+
+    public function getNearExpiry($date){
+        $expirationMonthRule = 6;
+        return DB::select('CALL p_near_expiry(\'' . $date . '\', ' . $expirationMonthRule . ')');
+
     }
 
     public function getRecentlyLogin(){

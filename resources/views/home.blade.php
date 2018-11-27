@@ -7,7 +7,6 @@
             Dashboard
             <small id="dashboard-date">Today's Report</small>
             <input class="small" id="date-entry" type="date" style="display:none;">
-
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -21,7 +20,7 @@
 
             {{-- Schedules --}}
             <div class="col-lg-3 col-xs-6">
-                <div class="box box-solid small-box bg-red">
+                <div class="box box-solid small-box bg-aqua">
                     <div class="inner">
                         <h3 id="schedule-count">0</h3>
                         <p>Schedules</p>
@@ -64,24 +63,20 @@
                 </div>
             </div>
 
-
-
             {{-- Near Expiry --}}
             <div class="col-lg-3 col-xs-6">
-                <div class="box box-solid small-box bg-aqua">
+                <div class="box box-solid small-box bg-red">
                     <div class="inner">
-                        <h3 id="in-store-count">0</h3>
-                        <p>In Store</p>
+                        <h3 id="near-expiry-count">0</h3>
+                        <p>Near Expiry</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-ios-people"></i>
+                        <i class="ion ion-ios-clock-outline"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="#" data-toggle="modal" data-target="#modal-near-expiry" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                     <div id="loading-1"></div>
                 </div>
             </div>
-
-
         </div>
 
         <!-- Main row -->
@@ -465,6 +460,40 @@
         </div>
     </div>
 
+    {{-- Modal Near Expiry --}}
+    <div class="modal fade" id="modal-near-expiry">
+        <div class="modal-dialog modal-xl direct-chat direct-chat-warning">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="box-header">
+                        <h3 id="chat_title" class="box-title">Near Expiry Dashboard</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="box-default">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div id="near-expiry-tree"></div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="table-responsive" style="height: 500px">
+                                    <table id="table-near-expiry" style="white-space: nowrap; width: 100%" class="table table-bordered no-margin"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {!! Form::button('Export to Excel', ['class' => 'btn btn-primary btn-sm', 'onclick' => 'tableToExcel(\'table-near-expiry\', \'Near Expiry\')']) !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 
@@ -507,18 +536,6 @@
         onLoad();
     });
     /****************************************************/
-
-    function getInStore() {
-        showLoading('loading-1', loadingState);
-        $.ajax({
-            type: 'GET',
-            url: '/getInStore/' + dateSelected,
-            success: function(data){
-                $('#in-store-count').text(data.length);
-                showLoading('loading-1', false);
-            }
-        });
-    }
 
     /* inventory dashboard **********************************/
     function getInventory(){
@@ -919,6 +936,106 @@
     }
     /********************************************************/
 
+    /* near expiry dashboard ********************************/
+    function getNearExpiry() {
+        showLoading('loading-1', loadingState);
+        $.ajax({
+            type: 'GET',
+            url: '/getNearExpiry/' + dateSelected,
+            success: function(data){
+
+                let nearExpirations = data;
+                let customer_accounts = alasql("SELECT DISTINCT account_code, account_description FROM ?", [nearExpirations]);
+                let columns = '' +
+                    'customer_code AS `Customer Code`, ' +
+                    'customer_name + \' - \' + branch AS `Store`, ' +
+                    'material_code AS `Material Code`, ' +
+                    'material_description AS `Material`, ' +
+                    'expiration_date AS `Expiration Date`, ' +
+                    'base_qty AS `Qty`, ' +
+                    'base_uom AS `Base UOM`';
+
+                let nearExpiryAll = [];
+                let customerAccountNodes = JSON.parse('[]');
+                let nearExpiryAllCount = 0;
+
+                //customer account node
+                for (let customer_account of customer_accounts){
+                    let account_code = customer_account.account_code;
+                    let account_description = customer_account.account_description;
+                    let nearExpiryAccount = alasql("SELECT " + columns + " FROM ? WHERE account_code = '" + account_code + "'", [nearExpirations]);
+                    let nearExpiryAccountCount = objectSum(nearExpiryAccount, 'Qty');
+
+                    // customer chain node
+                    let chainNodes = JSON.parse('[]');
+                    let chains = alasql("SELECT DISTINCT chain_code, chain_description FROM ? WHERE account_code = '" + account_code + "'", [nearExpirations]);
+
+                    for(let chain of chains){
+                        let chain_code = chain.chain_code;
+                        let chain_description = chain.chain_description;
+                        let nearExpiryChain = alasql("SELECT " + columns + " FROM ? WHERE account_code = '" + account_code + "' AND chain_code = '" + chain_code + "'", [nearExpirations]);
+                        let nearExpiryChainCount = objectSum(nearExpiryChain, 'Qty');
+
+                        // customer node
+                        let customerNodes = JSON.parse('[]');
+                        let customers = alasql("SELECT DISTINCT customer_code, customer_name, branch FROM ? WHERE account_code = '" + account_code + "' AND chain_code = '" + chain_code + "'", [nearExpirations]);
+
+                        for(let customer of customers) {
+                            let customer_code = customer.customer_code;
+                            let customer_name = customer.customer_name + ' - ' + customer.branch;
+
+                            let nearExpiryCustomer = alasql("SELECT " + columns + " FROM ? WHERE account_code = '" + account_code + "' AND chain_code = '" + chain_code + "' AND customer_code = '" + customer_code + "'", [nearExpirations]);
+                            let nearExpiryCustomerCount = objectSum(nearExpiryCustomer, 'Qty');
+
+                            customerNodes.push({
+                                "text": customer_name + ": " + nearExpiryCustomerCount,
+                                "values": nearExpiryCustomer
+                            });
+                        }
+
+                        chainNodes.push({
+                            "text": chain_description + ": " + nearExpiryChainCount,
+                            "nodes": customerNodes,
+                            "values": nearExpiryChain
+                        });
+                    }
+
+                    customerAccountNodes.push({
+                        "text": account_description + ": " + nearExpiryAccountCount,
+                        "nodes": chainNodes,
+                        "values": nearExpiryAccount
+                    });
+
+                    nearExpiryAll.push.apply(nearExpiryAll, nearExpiryAccount);
+                    nearExpiryAllCount += parseInt(nearExpiryAccountCount);
+                }
+
+                let nearExpiryTree = [{
+                    "text": "Total Near Expiry: " + nearExpiryAllCount,
+                    "nodes": customerAccountNodes,
+                    "values": nearExpiryAll
+                }];
+
+                //display near expiry treeview
+                $('#near-expiry-tree').treeview({
+                    data: nearExpiryTree,
+                    enableLinks: true,
+
+                    //treeview event
+                    onNodeSelected: function(event, data) {
+                        let filteredNearExpiry = data.values;
+                        populateTable('table-near-expiry', filteredNearExpiry);
+                    }
+                });
+
+                $('#near-expiry-count').text(nearExpiryAllCount);
+                populateTable('table-near-expiry', nearExpiryAll);
+                showLoading('loading-1', false);
+            }
+        });
+    }
+    /********************************************************/
+
 
     function populateTable(id, data) {
         $('#' + id).html(populateJsonArrayTable(data, true, 'merchandiser_id'));
@@ -959,7 +1076,7 @@
     /*******************************************************/
 
     function onLoad(){
-        getInStore();
+        getNearExpiry();
         getInventory();
         getOfftake();
         getSchedule();
