@@ -54,13 +54,19 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::get('/schedules/edit/{id}', 'ScheduleController@edit');
 
     Route::group(['middleware' => ['role:admin']], function () {
+        #schedule posts
         Route::post('/schedules/save', 'ScheduleController@save');
         Route::post('/schedules/update', 'ScheduleController@update');
         Route::post('/schedules/delete', 'ScheduleController@delete');
         Route::post('/schedules/upload', 'ScheduleController@upload');
 
+        #users posts
         Route::post('/users/save', 'UserController@save');
         Route::post('/users/update', 'UserController@update');
+
+        #agency posts
+        Route::post('/agencies/save', 'AgencyController@save');
+        Route::post('/agencies/update', 'AgencyController@update');
     });
 
 
@@ -71,14 +77,9 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
 //    Route::get('/users/register', 'UserController@register');
 //    Route::get('/users/edit', 'UserController@register');
 
-
     #agencies
-    Route::get('/agencies', 'AgencyController@show');
-    Route::get('/agencies/add', 'AgencyController@info');
-    Route::get('/agencies/edit', 'AgencyController@info');
-
-    Route::post('/agencies/save', 'AgencyController@save');
-    Route::post('/agencies/update', 'AgencyController@update');
+    Route::get('/agencies', 'AgencyController@index');
+    Route::get('/agency-all', 'AgencyController@indexData');
 
     #customers
     Route::get('/customers', 'CustomerController@show');

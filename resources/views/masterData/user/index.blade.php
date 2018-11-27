@@ -115,7 +115,7 @@
 
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label class="text-muted">Concat #</label>
+                                        <label class="text-muted">Contact #</label>
                                         <input id="contact-number" name="contact_number" type="text" class="form-control" maxlength="255">
                                     </div>
                                 </div>
