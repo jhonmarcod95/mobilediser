@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::get('/schedules/edit/{id}', 'ScheduleController@edit');
 
     Route::group(['middleware' => ['role:admin']], function () {
+
         #schedule posts
         Route::post('/schedules/save', 'ScheduleController@save');
         Route::post('/schedules/update', 'ScheduleController@update');
@@ -67,6 +68,25 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
         #agency posts
         Route::post('/agencies/save', 'AgencyController@save');
         Route::post('/agencies/update', 'AgencyController@update');
+
+        #customer posts
+        Route::post('/customers/save', 'CustomerController@save');
+        Route::post('/customers/update', 'CustomerController@update');
+
+        #chain posts
+        Route::post('/chains/save', 'CustomerTypeController@save');
+        Route::post('/chains/update', 'CustomerTypeController@update');
+
+        #customer accounts
+        Route::post('/customer-accounts/save', 'CustomerCategoryController@save');
+        Route::post('/customer-accounts/update', 'CustomerCategoryController@update');
+
+        #customer carried materials posts
+        Route::post('/customer-carried/setCarried/{customer}/{material}', 'CustomerMaterialController@setCarried');
+
+        #material posts
+        Route::post('/materials/save', 'MaterialController@save');
+        Route::post('/materials/update', 'MaterialController@update');
     });
 
 
@@ -82,34 +102,20 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::get('/agency-all', 'AgencyController@indexData');
 
     #customers
-    Route::get('/customers', 'CustomerController@show');
-    Route::get('/customers/add', 'CustomerController@info');
-    Route::get('/customers/edit', 'CustomerController@info');
+    Route::get('/customers', 'CustomerController@index');
+    Route::get('/customer-all', 'CustomerController@indexData');
 
-    Route::post('/customers/save', 'CustomerController@save');
-    Route::post('/customers/update', 'CustomerController@update');
+    #chain
+    Route::get('/chains', 'CustomerTypeController@index');
+    Route::get('/chain-all', 'CustomerTypeController@indexData');
 
-    #customer type
-    Route::get('/customers/types', 'CustomerTypeController@show');
-    Route::get('/customers/types/add', 'CustomerTypeController@info');
-    Route::get('/customers/types/edit', 'CustomerTypeController@info');
-
-    Route::post('/customers/types/save', 'CustomerTypeController@save');
-    Route::post('/customers/types/update', 'CustomerTypeController@update');
-
-    #customer category
-    Route::get('/customers/categories', 'CustomerCategoryController@show');
-    Route::get('/customers/categories/add', 'CustomerCategoryController@info');
-    Route::get('/customers/categories/edit', 'CustomerCategoryController@info');
-
-    Route::post('/customers/categories/save', 'CustomerCategoryController@save');
-    Route::post('/customers/categories/update', 'CustomerCategoryController@update');
+    #customer account
+    Route::get('/customer-accounts', 'CustomerCategoryController@index');
+    Route::get('/customer-account-all', 'CustomerCategoryController@indexData');
 
     #customer carried materials
     Route::get('/customer-carried', 'CustomerMaterialController@index');
     Route::get('/customer-carried-data', 'CustomerMaterialController@indexData');
-
-    Route::post('/customer-carried/setCarried/{customer}/{material}', 'CustomerMaterialController@setCarried');
 
 
     #municipalities
@@ -121,12 +127,8 @@ Route::group(['middleware' => ['auth', 'role:admin|user']], function () {
     Route::post('/municipalities/update', 'MunicipalityController@update');
 
     #materials
-    Route::get('/materials', 'MaterialController@show');
-    Route::get('/materials/add', 'MaterialController@info');
-    Route::get('/materials/edit', 'MaterialController@info');
-
-    Route::post('/materials/save', 'MaterialController@save');
-    Route::post('/materials/update', 'MaterialController@update');
+    Route::get('/materials', 'MaterialController@index');
+    Route::get('/material-all', 'MaterialController@indexData');
 
     #locations
     Route::get('/locations/geofences', 'LocationController@geofences');

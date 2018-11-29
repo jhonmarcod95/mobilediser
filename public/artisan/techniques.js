@@ -118,7 +118,10 @@ function showPageNavigation(data, prevButton, nextButton){
         '<span> of ' + last_page + ' </span>' +
         next_page_button +
         '</div>';
-    return page_nav;
+
+    var recordCount = 'Showing ' + data.data.length + ' of ' + data.total + ' entries';
+
+    return '<div class="row"><div class="col-md-6">' + recordCount + '</div><div class="col-md-6">' + page_nav + '</div></div>';
 }
 
 /* translates json array to html table format string. by marco
@@ -188,4 +191,23 @@ function countJsonKeys(jsonArray) {
 function removeLastComma(value) {
     value = value.replace(/,\s*$/, "");
     return value;
+}
+
+function toTimeString(time){
+    if(time != null) return moment('1995-12-30 ' + time).format('hh:mm a');
+    return '';
+}
+
+function showSuccessAlert(text){
+    var result = '<div class="alert bg-success alert-dismissible text-success small" role="alert">' + text + '<button type="button" class="close text-green" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+    return result;
+}
+
+function showErrorAlert(data) {
+    var errors = $.parseJSON(data.responseText);
+    var errList = '';
+    $.each(errors.errors, function (key, val) {
+        errList += '<li>' + val + '</li>';
+    });
+    return '<div class="alert bg-danger text-danger"><button type="button" class="close text-red" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p><i class="fa fa-warning"></i><b style="margin-left: 6px">Error</b> ' + errors.message + '</p><ul class="small">' + errList + '</ul></div>';
 }

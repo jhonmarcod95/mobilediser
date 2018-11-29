@@ -37,7 +37,7 @@
                     <div class="box-body">
                         <div id="div-table-users" class="table-responsive mailbox-messages"></div>
                     </div>
-                    <div id="page-nav" class="box-footer no-padding"></div>
+                    <div id="page-nav" class="box-footer"></div>
                     <div id="loading-users"></div>
                 </div>
             </div>

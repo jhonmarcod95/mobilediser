@@ -64,8 +64,8 @@
                     <li><a href="{{ url('/users') }}"><i class="fa fa-circle"></i> Users</a></li>
                     <li><a href="{{ url('/agencies') }}"><i class="fa fa-circle"></i> Agency</a></li>
                     <li><a href="{{ url('/customers') }}"><i class="fa fa-circle"></i> Customer</a></li>
-                    <li><a href="{{ url('/customers/types') }}"><i class="fa fa-circle"></i> Chain</a></li>
-                    <li><a href="{{ url('/customers/categories') }}"><i class="fa fa-circle"></i> Customer Account</a></li>
+                    <li><a href="{{ url('/chains') }}"><i class="fa fa-circle"></i> Chain</a></li>
+                    <li><a href="{{ url('/customer-accounts') }}"><i class="fa fa-circle"></i> Customer Account</a></li>
                     <li><a href="{{ url('/customer-carried') }}"><i class="fa fa-circle"></i> Customer Carried Materials</a></li>
                     <li><a href="{{ url('/municipalities') }}"><i class="fa fa-circle"></i> Municipalities</a></li>
                     <li><a href="{{ url('/materials') }}"><i class="fa fa-circle"></i> Material</a></li>

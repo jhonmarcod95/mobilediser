@@ -36,7 +36,7 @@
                     <div class="box-body">
                         <div id="div-table-agencies" class="table-responsive mailbox-messages"></div>
                     </div>
-                    <div id="page-nav" class="box-footer no-padding"></div>
+                    <div id="page-nav" class="box-footer"></div>
                     <div id="loading-agencies"></div>
                 </div>
             </div>
@@ -48,6 +48,7 @@
                         <h3 class="box-title">Agency Details</h3>
                     </div>
 
+                    {{-- Form Agency --}}
                     <div class="box-body">
                         <form id="form-agency">
                             {{ csrf_field() }}
@@ -207,7 +208,7 @@
         }
 
         /* Agency Details Script  **********************************************************************/
-        //add user button
+        //add button
         $('#btn-add').click(function () {
             showLoading('loading-details', true);
 
@@ -234,7 +235,7 @@
             });
         });
 
-        //update user button
+        //update button
         $('#btn-update').click(function () {
             showLoading('loading-details', true);
 

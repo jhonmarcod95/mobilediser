@@ -84,8 +84,6 @@ class CustomerMaterialController extends Controller
             $customer_material->material_code = $material_code;
             $customer_material->save();
         }
-
-
     }
 
     /* ------------ Functions -------------- */

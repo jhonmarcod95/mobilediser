@@ -109,6 +109,7 @@
             paging:         false,
             ordering: false,
             searching: false,
+            bInfo : false,
             fixedColumns:   {
                 leftColumns: freezeIndex
             }
@@ -126,11 +127,6 @@
         }
     }
 
-    function toTimeString(time){
-        if(time != null) return moment('1995-12-30 ' + time).format('hh:mm a');
-        return '';
-    }
-
     function getCheckboxChecked(arrayId) {
         var checked = [];
         $("input[id='" + arrayId+ "']:checked").each(function ()
@@ -140,20 +136,6 @@
         return checked;
     }
 
-
-    function showSuccessAlert(text){
-        var result = '<div class="alert bg-success alert-dismissible text-success small" role="alert">' + text + '<button type="button" class="close text-green" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-        return result;
-    }
-
-    function showErrorAlert(data) {
-        var errors = $.parseJSON(data.responseText);
-        var errList = '';
-        $.each(errors.errors, function (key, val) {
-            errList += '<li>' + val + '</li>';
-        });
-        return '<div class="alert bg-danger text-danger"><button type="button" class="close text-red" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p><i class="fa fa-warning"></i><b style="margin-left: 6px">Error</b> ' + errors.message + '</p><ul class="small">' + errList + '</ul></div>';
-    }
 
     function getDaysOfMonth(monthYear, pDay){
         var days = [];

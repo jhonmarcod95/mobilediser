@@ -3,48 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Material;
+use App\MaterialGroupMain;
+use App\MaterialGroupSub;
 use Illuminate\Http\Request;
 
 class MaterialController extends Controller
 {
-    public function show(){
-        $materials = Material::all();
 
-        return view('masterData.material',compact(
-            'materials'
+    public function index(){
+        $materialMainGroups = MaterialGroupMain::get()->pluck('description', 'code');
+        $materialSubGroups = MaterialGroupSub::get()->pluck('description', 'code');
+
+        return view('masterData.material.index', compact(
+            'materialMainGroups',
+            'materialSubGroups'
         ));
     }
 
-    public function info(Request $request){
-        $id = $request->id;
-        $isEdit = false;
-        $actionUrl = "save";
+    public function indexData(Request $request){
+        $paginate = $request->paginate;
+        $search = $request->search;
 
-        if(!empty($id)){
-            $material = Material::where('id', $id)
-                ->get();
-
-            #if id exist will edit record
-            if(count($material)){
-                $isEdit = true;
-                $actionUrl = "update";
-                $material = $material->first();
-            }
-        }
-
-        return view('masterData.materialInfo',compact(
-            'material',
-            'isEdit',
-            'actionUrl'
-        ));
+        return Material::leftjoin('material_group_main', 'material_group_main.code', 'material_master_data.main_group')
+            ->leftjoin('material_group_sub', 'material_group_sub.code', 'material_master_data.sub_group')
+            ->where('material_description', 'LIKE', '%' . $search . '%')
+            ->orWhere('material_code', 'LIKE', '%' . $search . '%')
+            ->select([
+                'material_master_data.id',
+                'material_master_data.material_code',
+                'material_master_data.material_description',
+                'material_master_data.base_unit',
+                'material_master_data.main_group',
+                'material_group_main.description AS main_group_description',
+                'material_master_data.sub_group',
+                'material_group_sub.description AS sub_group_description',
+            ])
+            ->paginate($paginate);
     }
 
     public function save(Request $request){
 
-        $validation = $request->validate([
+        $request->validate([
             'material_code' => 'required|unique:material_master_data',
             'material_description' => 'required',
             'base_unit' => 'required',
+            'main_category' => 'required',
+            'sub_category' => 'required',
         ]);
 
         #save
@@ -52,29 +56,32 @@ class MaterialController extends Controller
         $material->material_code = $request->material_code;
         $material->material_description = $request->material_description;
         $material->base_unit = $request->base_unit;
+        $material->main_group = $request->main_category;
+        $material->sub_group = $request->sub_category;
         $material->save();
 
-        alert()->success('New Material has been added.','');
-        return redirect('/materials');
+        return $material;
     }
 
     public function update(Request $request){
 
-        $id = $request->id;
-        $validation = $request->validate([
-            'material_code' => 'required|unique:material_master_data,material_code,' . $id,
+        $request->validate([
+            'material_code' => 'required|unique:material_master_data,material_code,' . $request->id,
             'material_description' => 'required',
             'base_unit' => 'required',
+            'main_category' => 'required',
+            'sub_category' => 'required',
         ]);
 
         #update
-        $material = Material::find($id);
+        $material = Material::find($request->id);
         $material->material_code = $request->material_code;
         $material->material_description = $request->material_description;
         $material->base_unit = $request->base_unit;
+        $material->main_group = $request->main_category;
+        $material->sub_group = $request->sub_category;
         $material->save();
 
-        alert()->success('Material info has been updated.','');
-        return redirect('/materials');
+        return $material;
     }
 }

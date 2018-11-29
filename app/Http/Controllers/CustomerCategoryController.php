@@ -8,70 +8,48 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerCategoryController extends Controller
 {
-    public function show(){
-        $customerCategories = CustomerCategory::all();
 
-        return view('masterData.customerCategory',compact(
-            'customerCategories'
-        ));
+    public function index(){
+        return view('masterData.customer-account.index');
     }
 
-    public function info(Request $request){
-        $id = $request->id;
-        $isEdit = false;
-        $actionUrl = "save";
+    public function indexData(Request $request){
+        $paginate = $request->paginate;
+        $search = $request->search;
 
-        if(!empty($id)){
-            $customerCategory = CustomerCategory::where('id', $id)
-                ->get();
-
-            #if id exist will edit record
-            if(count($customerCategory)){
-                $isEdit = true;
-                $actionUrl = "update";
-                $customerCategory = $customerCategory->first();
-            }
-        }
-
-        return view('masterData.customerCategoryInfo',compact(
-            'customerCategory',
-            'isEdit',
-            'actionUrl'
-        ));
+        return CustomerCategory::where('description', 'LIKE', '%' . $search . '%')
+            ->paginate($paginate);
     }
 
     public function save(Request $request){
 
-        $validation = $request->validate([
-            'category_code' => 'required|unique:customer_category',
+        $request->validate([
+            'account_code' => 'required|unique:customer_accounts',
             'description' => 'required',
         ]);
 
         #save customer category
         $customerCategory = new CustomerCategory();
-        $customerCategory->category_code = $request->category_code;
+        $customerCategory->account_code = $request->account_code;
         $customerCategory->description = $request->description;
         $customerCategory->save();
 
-        alert()->success('New Customer Category has been added.','');
-        return redirect('/customers/categories');
+        return $customerCategory;
     }
 
     public function update(Request $request){
 
-        $id = $request->id;
-        $validation = $request->validate([
-            'category_code' => 'required|unique:customer_category,category_code,' . $id,
+        $request->validate([
+            'account_code' => 'required|unique:customer_accounts,account_code,' . $request->id,
             'description' => 'required',
         ]);
 
         #update customer category
-        $customerCategory = CustomerCategory::find($id);
-        $customerCategory->category_code = $request->category_code;
+        $customerCategory = CustomerCategory::find($request->id);
+        $customerCategory->account_code = $request->account_code;
         $customerCategory->description = $request->description;
         $customerCategory->save();
 
-        alert()->success('Customer Category info has been updated.','');
-        return redirect('/customers/categories');
+        return $customerCategory;
     }
 }

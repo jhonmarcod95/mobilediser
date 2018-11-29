@@ -60,40 +60,4 @@ class AgencyController extends Controller
 
         return $agency;
     }
-
-
-    public function show(){
-
-        $agencies = Agency::get();
-
-        return view('masterData.agency',compact(
-            'agencies'
-        ));
-    }
-
-    public function info(Request $request){
-        $id = $request->id;
-        $isEdit = false;
-        $actionUrl = "save";
-
-
-        if(!empty($id)){
-            $agency = Agency::where('agency_code', $id)->get();
-            #if id exist will edit record
-            if(count($agency)){
-                $isEdit = true;
-                $actionUrl = "update";
-                $agency = $agency->first();
-            }
-        }
-
-        return view('masterData.agencyInfo',compact(
-            'agency',
-            'isEdit',
-            'actionUrl',
-            'agency'
-        ));
-    }
-
-
 }

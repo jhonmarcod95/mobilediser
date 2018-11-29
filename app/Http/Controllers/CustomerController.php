@@ -10,87 +10,86 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
-    public function show(){
-        $customers = DB::select('CALL p_customers (\'%%\')');
+    public function index(){
+        $chains = CustomerType::get()->pluck('description', 'chain_code');
+        $municipalities = CustomerMunicipality::get()->pluck('description', 'municipality_code');
 
-        return view('masterData.customer',compact(
-            'customers'
+        return view('masterData.customer.index',compact(
+            'chains',
+            'municipalities'
         ));
     }
 
-    public function info(Request $request){
-        $customer_id = $request->id;
-        $isEdit = false;
-        $actionUrl = "save";
+    public function indexData(Request $request){
+        $paginate = $request->paginate;
+        $search = $request->search;
 
-        if(!empty($customer_id)){
-            $customer = Customer::where('customer_id', $customer_id)->get();
-            #if id exist will edit record
-            if(count($customer)){
-                $isEdit = true;
-                $actionUrl = "update";
-                $customer = $customer->first();
-            }
-        }
-
-        $customerTypes = CustomerType::get()->pluck('description', 'chain_code');
-        $customerMunicipalities = CustomerMunicipality::get()->pluck('description', 'municipality_code');
-
-        return view('masterData.customerInfo',compact(
-            'customer',
-            'isEdit',
-            'actionUrl',
-            'customerTypes',
-            'customerMunicipalities'
-        ));
+        return Customer::leftjoin('chain', 'chain.chain_code', 'customer_master_data.chain_code')
+            ->leftjoin('place_municipality', 'place_municipality.municipality_code', 'customer_master_data.municipality_code')
+            ->where('customer_master_data.name', 'LIKE', '%' . $search . '%')
+            ->orWhere('customer_master_data.branch', 'LIKE', '%' . $search . '%')
+            ->orWhere('chain.description', 'LIKE', '%' . $search . '%')
+            ->select([
+                'customer_master_data.customer_id',
+                'customer_master_data.customer_code',
+                'customer_master_data.name',
+                'customer_master_data.branch',
+                'customer_master_data.address',
+                'chain.chain_code',
+                'chain.description AS chain_description',
+                'place_municipality.municipality_code',
+                'place_municipality.description AS municipality_description',
+                'customer_master_data.created_at',
+                'customer_master_data.updated_at'
+            ])
+            ->paginate($paginate);
     }
 
     public function save(Request $request){
 
         $request->validate([
             'customer_code' => 'required|unique:customer_master_data',
-            'name' => 'required',
-            'address' => 'required',
+            'customer_name' => 'required',
             'branch' => 'required',
-            'customer_type_code' => 'required',
+            'address' => 'required',
+            'chain' => 'required',
+            'municipality' => 'required',
         ]);
 
         #save customers
         $customer = new Customer();
         $customer->customer_code = $request->customer_code;
-        $customer->name = $request->name;
-        $customer->address = $request->address;
+        $customer->name = $request->customer_name;
         $customer->branch = $request->branch;
-        $customer->chain_code = $request->customer_type_code;
-        $customer->municipality_code = $request->municipality_code;
+        $customer->address = $request->address;
+        $customer->chain_code = $request->chain;
+        $customer->municipality_code = $request->municipality;
         $customer->save();
 
-        alert()->success('New Customer has been added.','');
-        return redirect('/customers');
+        return $customer;
     }
 
     public function update(Request $request){
 
-        $customer_id = $request->customer_id;
         $request->validate([
-            'customer_code' => 'required|unique:customer_master_data,customer_code,' . $customer_id . ',customer_id',
-            'name' => 'required',
-            'address' => 'required',
+            'customer_code' => 'required|unique:customer_master_data,customer_code,' . $request->customer_id . ',customer_id',
+            'customer_name' => 'required',
             'branch' => 'required',
-            'customer_type_code' => 'required',
+            'address' => 'required',
+            'chain' => 'required',
+            'municipality' => 'required',
         ]);
 
         #update customer
-        $customer = Customer::find($customer_id);
+        $customer = Customer::find($request->customer_id);
         $customer->customer_code = $request->customer_code;
-        $customer->name = $request->name;
-        $customer->address = $request->address;
+        $customer->name = $request->customer_name;
         $customer->branch = $request->branch;
-        $customer->chain_code = $request->customer_type_code;
-        $customer->municipality_code = $request->municipality_code;
+        $customer->address = $request->address;
+        $customer->chain_code = $request->chain;
+        $customer->municipality_code = $request->municipality;
         $customer->save();
 
-        alert()->success('Customer info has been updated.','');
-        return redirect('/customers');
+        return $customer;
     }
 }

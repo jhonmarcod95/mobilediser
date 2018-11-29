@@ -9,79 +9,68 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerTypeController extends Controller
 {
-    public function show(){
-        $customerTypes = DB::select('CALL p_chain');
 
-        return view('masterData.customerType',compact(
-            'customerTypes'
+    public function index(){
+        $customerAccounts = CustomerCategory::all()
+            ->pluck('description', 'account_code');
+
+        return view('masterData.chain.index',compact(
+            'customerAccounts'
         ));
     }
 
-    public function info(Request $request){
-        $id = $request->id;
-        $isEdit = false;
-        $actionUrl = "save";
+    public function indexData(Request $request){
+        $paginate = $request->paginate;
+        $search = $request->search;
 
-        if(!empty($id)){
-            $customerType = CustomerType::where('id', $id)->get();
-            #if id exist will edit record
-            if(count($customerType)){
-                $isEdit = true;
-                $actionUrl = "update";
-                $customerType = $customerType->first();
-            }
-        }
-
-        $customerCategories = CustomerCategory::all()
-            ->pluck('description', 'account_code');
-
-
-        return view('masterData.customerTypeInfo',compact(
-            'customerType',
-            'isEdit',
-            'actionUrl',
-            'customerCategories'
-        ));
+        return CustomerType::join('customer_accounts', 'customer_accounts.account_code', 'chain.account_code')
+            ->where('chain.description', 'LIKE', '%' . $search . '%')
+            ->orWhere('chain.chain_code', 'LIKE', '%' . $search . '%')
+            ->orWhere('customer_accounts.description', 'LIKE', '%' . $search . '%')
+            ->select([
+                'chain.id',
+                'chain.chain_code',
+                'chain.description AS chain_description',
+                'chain.account_code',
+                'customer_accounts.description AS account_description',
+            ])
+            ->paginate($paginate);
     }
 
     public function save(Request $request){
 
-        $validation = $request->validate([
+        $request->validate([
             'chain_code' => 'required|unique:chain',
             'description' => 'required',
-            'account_code' => 'required',
+            'account' => 'required',
         ]);
 
         #save customer type
         $customerType = new CustomerType();
         $customerType->chain_code = $request->chain_code;
         $customerType->description = $request->description;
-        $customerType->account_code = $request->account_code;
+        $customerType->account_code = $request->account;
         $customerType->save();
 
-        alert()->success('New Customer Type has been added.','');
-        return redirect('/customers/types');
+        return $customerType;
     }
 
     public function update(Request $request){
 
-        $id = $request->id;
-        $validation = $request->validate([
-            'chain_code' => 'required|unique:chain,chain_code,' . $id,
+        $request->validate([
+            'chain_code' => 'required|unique:chain,chain_code,' . $request->id,
             'description' => 'required',
-            'account_code' => 'required',
+            'account' => 'required',
         ]);
 
 
         #update customer type
-        $customerType = CustomerType::find($id);
+        $customerType = CustomerType::find($request->id);
         $customerType->chain_code = $request->chain_code;
         $customerType->description = $request->description;
-        $customerType->account_code = $request->account_code;
+        $customerType->account_code = $request->account;
         $customerType->save();
 
-
-        alert()->success('Customer Type info has been updated.','');
-        return redirect('/customers/types');
+        return $customerType;
     }
 }

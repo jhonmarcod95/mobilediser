@@ -41,15 +41,16 @@
                     {{-- Content --}}
                     <div class="box-body">
                         <div class="table-responsive">
-                            <div class="table table-responsive" id="tableCustomerCarried">
+                            <div class="table table-responsive" id="tableCustomerCarried"></div>
 
+                        </div>
+                        <div class="row">
+                            <div id="response-details" class="col-md-12">
                             </div>
                         </div>
                     </div>
 
-                    <div class="overlay" hidden>
-                        <i class="fa fa-refresh fa-spin"></i>
-                    </div>
+                    <div id="loading-carried"></div>
                 </div>
             </div>
         </div>
@@ -67,7 +68,7 @@
 @section('script')
     <script>
         function retrieveCustomerCarried(){
-            $('.overlay').show();
+            showLoading('loading-carried', true);
 
             var query = $('#formFilter').serialize();
             $.ajax({
@@ -116,26 +117,27 @@
                     );
 
                     setDataTable(2);
-                    $('.overlay').hide();
+                    showLoading('loading-carried', false);
                 },
                 error: function(data){
-                    $('.overlay').hide();
+                    showLoading('loading-carried', false);
                 }
             });
         }
         
         function setCarried(customer_code, material_code) {
-            $('.overlay').show();
+            showLoading('loading-carried', true);
             $.ajax({
                 type: 'POST',
                 url: '/customer-carried/setCarried/' + customer_code + '/' + material_code,
                 data: '_token={{ csrf_token() }}',
                 success: function(data){
-                    console.log(data);
-                    $('.overlay').hide();
+                    showLoading('loading-carried', false);
+
                 },
                 error: function(data){
-                    $('.overlay').show();
+                    $("#response-details").html(showErrorAlert(data));
+                    showLoading('loading-carried', false);
                 }
             });
         }
