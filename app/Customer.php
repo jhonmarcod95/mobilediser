@@ -17,6 +17,7 @@ class Customer extends Model implements Auditable
     public static function showCodeAndName(){
         $result = Customer::select(DB::raw("CONCAT(name, ' - ', branch) AS name"), 'customer_code')
             ->get()
+            ->sortBy('name')
             ->pluck('name', 'customer_code');
 
         return $result;

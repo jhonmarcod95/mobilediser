@@ -134,8 +134,15 @@ Route::group(['middleware' => ['auth', 'role:admin|manager']], function () {
     Route::get('/locations/geofences', 'LocationController@geofences');
     Route::post('/locations/geofences/save', 'LocationController@save');
 
+    #islands
+    Route::get('/island-all', 'IslandController@all');
 
     /* reports *************************************************/
+
+    #offtake
+    Route::get('/offtake', 'OfftakeController@index');
+    Route::get('/offtake-all', 'OfftakeController@indexData');
+
 
     Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
 

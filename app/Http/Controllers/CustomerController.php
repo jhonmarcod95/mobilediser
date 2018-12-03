@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
-use App\CustomerMunicipality;
+use App\Municipality;
 use App\CustomerType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +12,7 @@ class CustomerController extends Controller
 {
     public function index(){
         $chains = CustomerType::get()->pluck('description', 'chain_code');
-        $municipalities = CustomerMunicipality::get()->pluck('description', 'municipality_code');
+        $municipalities = Municipality::get()->pluck('description', 'municipality_code');
 
         return view('masterData.customer.index',compact(
             'chains',

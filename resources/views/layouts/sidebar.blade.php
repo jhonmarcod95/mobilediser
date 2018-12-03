@@ -84,12 +84,12 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="{{ url('/reports/merchandiserLog') }}"><i class="fa fa-circle-o"></i> Merchandiser Logs</a></li>
-                    <li><a href="{{ url('/reports/merchandiserAttendance') }}"><i class="fa fa-circle-o"></i> Merchandiser Attendance</a></li>
-                    <li><a href="{{ url('/reports/merchandiserPerformance') }}"><i class="fa fa-circle-o"></i> Merchandiser Log Summary</a></li>
-                    <li><a href="{{ url('/reports/inventoryLog') }}"><i class="fa fa-circle-o"></i> Inventory Logs</a></li>
-                    <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle-o"></i> Offtake Per Customer</a></li>
-
+                    <li><a href="{{ url('/reports/merchandiserLog') }}"><i class="fa fa-circle"></i> Merchandiser Logs</a></li>
+                    <li><a href="{{ url('/reports/merchandiserAttendance') }}"><i class="fa fa-circle"></i> Merchandiser Attendance</a></li>
+                    <li><a href="{{ url('/reports/merchandiserPerformance') }}"><i class="fa fa-circle"></i> Merchandiser Log Summary</a></li>
+                    <li><a href="{{ url('/reports/inventoryLog') }}"><i class="fa fa-circle"></i> Inventory Logs</a></li>
+                    <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle"></i> Offtake Per Customer</a></li>
+                    <li><a href="{{ url('/offtake') }}"><i class="fa fa-circle"></i> Offtake</a></li>
                 </ul>
             </li>
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\CustomerMunicipality;
+use App\Municipality;
 use App\Island;
 use App\Province;
 use App\Region;
@@ -25,7 +25,7 @@ class MunicipalityController extends Controller
         $actionUrl = "save";
 
         if(!empty($id)){
-            $municipality = CustomerMunicipality::where('id', $id)
+            $municipality = Municipality::where('id', $id)
                 ->get();
 
             #if id exist will edit record
@@ -57,7 +57,7 @@ class MunicipalityController extends Controller
         ]);
 
         #save
-        $municipality = new CustomerMunicipality();
+        $municipality = new Municipality();
         $municipality->municipality_code = $request->municipality_code;
         $municipality->description = $request->description;
         $municipality->provincial_code = $request->provincial_code;
@@ -77,7 +77,7 @@ class MunicipalityController extends Controller
         ]);
 
         #update
-        $municipality = CustomerMunicipality::find($id);
+        $municipality = Municipality::find($id);
         $municipality->municipality_code = $request->municipality_code;
         $municipality->description = $request->description;
         $municipality->provincial_code = $request->provincial_code;

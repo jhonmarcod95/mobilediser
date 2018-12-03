@@ -213,7 +213,6 @@ class UserController extends Controller
             $user->password = bcrypt($request->password);
         }
 
-        $user->api_token = Hash::make(str_random(8));
         $user->gender = $request->gender;
         $user->birth_date = $request->birthday;
         $user->address = $request->address;
