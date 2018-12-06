@@ -440,11 +440,12 @@ class ScheduleController extends Controller
     }
 
     //dtr (pdf)
-//    public function merchandiserAttendancePdf(Request $request){
-//        $attendances = ['attendances' => json_decode($request->attendances)];
+    public function merchandiserAttendancePdf(Request $request){
+        $attendances = ['attendances' => json_decode($request->attendances)];
+        return view('report.merchandiserAttendancePdf', $attendances);
 //        $pdf = PDF::loadView('report.merchandiserAttendancePdf', $attendances);
 //        return $pdf->stream();
-//    }
+    }
     /* *************************************/
 
 

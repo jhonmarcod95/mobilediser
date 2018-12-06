@@ -85,6 +85,7 @@ function formSubmit(path, params, method) {
     form.setAttribute("method", method);
     form.setAttribute("action", path);
     form.setAttribute("enctype", 'application/json');
+    form.setAttribute("target", "_blank");
 
     for(var key in params) {
         if(params.hasOwnProperty(key)) {

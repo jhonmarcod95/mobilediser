@@ -42,9 +42,6 @@
 
 <script src="{{  asset('artisan/techniques.js') }}"></script>
 
-{{-- jspdf --}}
-<script src="{{  asset('jsPDF/html2canvas.js') }}"></script>
-<script src="{{  asset('jsPDF/jspdf.min.js') }}"></script>
 
 {{-- Datable TO Excel--}}
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>

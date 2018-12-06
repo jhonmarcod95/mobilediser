@@ -157,7 +157,7 @@ Route::group(['middleware' => ['auth', 'role:admin|manager']], function () {
     #diser attendance (dtr)
     Route::get('/reports/merchandiserAttendance', 'ScheduleController@merchandiserAttendance');
     Route::get('/reports/merchandiser-attendance-data', 'ScheduleController@merchandiserAttendanceData');
-//    Route::post('/reports/merchandiser-attendance-pdf', 'ScheduleController@merchandiserAttendancePdf');
+    Route::post('/reports/merchandiser-attendance-pdf', 'ScheduleController@merchandiserAttendancePdf');
 
     #diser logs (raw)
     Route::get('/reports/merchandiserLog', 'ScheduleController@merchandiserLog');
