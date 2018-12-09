@@ -89,7 +89,7 @@
                     <li><a href="{{ url('/reports/merchandiserPerformance') }}"><i class="fa fa-circle"></i> Merchandiser Log Summary</a></li>
                     <li><a href="{{ url('/reports/inventoryLog') }}"><i class="fa fa-circle"></i> Inventory Logs</a></li>
                     <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle"></i> Offtake Per Customer</a></li>
-                    <li><a href="{{ url('/offtake') }}"><i class="fa fa-circle"></i> Offtake</a></li>
+                    {{--<li><a href="{{ url('/offtake') }}"><i class="fa fa-circle"></i> Offtake</a></li>--}}
                 </ul>
             </li>
 
