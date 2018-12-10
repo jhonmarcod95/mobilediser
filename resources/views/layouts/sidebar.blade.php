@@ -16,18 +16,23 @@
         <ul class="sidebar-menu" data-widget="tree">
             <li class="header">MAIN NAVIGATION</li>
 
+            @role('admin|manager|user')
             <li>
                 <a href="{{ url('/') }}">
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                 </a>
             </li>
+            @endrole
 
+            @role('admin|manager|user')
             <li>
                 <a href="{{ url('/announcements') }}">
                     <i class="ion ion-speakerphone"></i> <span>Announcements</span>
                 </a>
             </li>
+            @endrole
 
+            @role('admin|manager|user')
             <li>
                 <a href="{{ url('/messages') }}">
                     <i class="fa fa-envelope"></i> <span>Messages</span>
@@ -38,21 +43,22 @@
                     </span>
                 </a>
             </li>
+            @endrole
 
-
-
-
+            @role('admin|manager|user|third.party')
             <li>
                 <a href="{{ url('/schedules') }}">
                     <i class="fa fa-calendar"></i> <span>Schedules</span>
                     <span class="pull-right-container">
                     {{--<small class="label pull-right bg-yellow">12</small>--}}
-                        {{--<small class="label pull-right bg-green">16</small>--}}
-                        {{--<small class="label pull-right bg-red">5</small>--}}
+                    {{--<small class="label pull-right bg-green">16</small>--}}
+                    {{--<small class="label pull-right bg-red">5</small>--}}
                     </span>
                 </a>
             </li>
+            @endrole
 
+            @role('admin|manager|user')
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-database"></i> <span>Master Data</span>
@@ -71,11 +77,17 @@
                     <li><a href="{{ url('/materials') }}"><i class="fa fa-circle"></i> Material</a></li>
                 </ul>
             </li>
+            @endrole
+
+            @role('admin|manager|user')
             <li>
                 <a href="{{ url('/locations/geofences') }}">
                     <i class="fa fa-map-marker"></i> <span>Locations</span>
                 </a>
             </li>
+            @endrole
+
+            {{-- Reports --}}
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-bar-chart"></i> <span>Reports</span>
@@ -84,14 +96,32 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
+
+                    @role('admin|manager|user|third.party')
                     <li><a href="{{ url('/reports/merchandiserLog') }}"><i class="fa fa-circle"></i> Merchandiser Logs</a></li>
+                    @endrole
+
+                    @role('admin|manager|user|third.party')
                     <li><a href="{{ url('/reports/merchandiserAttendance') }}"><i class="fa fa-circle"></i> Merchandiser Attendance</a></li>
+                    @endrole
+
+                    @role('admin|manager|user|third.party')
                     <li><a href="{{ url('/reports/merchandiserPerformance') }}"><i class="fa fa-circle"></i> Merchandiser Log Summary</a></li>
+                    @endrole
+
+                    @role('admin|manager|user')
                     <li><a href="{{ url('/reports/inventoryLog') }}"><i class="fa fa-circle"></i> Inventory Logs</a></li>
+                    @endrole
+
+                    @role('admin|manager|user')
                     <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle"></i> Offtake Per Customer</a></li>
+                    @endrole
+
                     {{--<li><a href="{{ url('/offtake') }}"><i class="fa fa-circle"></i> Offtake</a></li>--}}
                 </ul>
             </li>
+
+
 
         </ul>
     </section>
