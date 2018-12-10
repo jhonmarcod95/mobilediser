@@ -18,7 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 
-Route::group(['middleware' => ['auth', 'role:admin|manager']], function () {
+Route::group(['middleware' => ['auth', 'role:admin|manager|user']], function () {
 
     #dashboard
     Route::get('/', 'HomeController@index')->name('home');
@@ -47,7 +47,11 @@ Route::group(['middleware' => ['auth', 'role:admin|manager']], function () {
     Route::post('/message/closeMessage', 'MessageController@closeMessage');
 
     #schedule
-    scheduleLinks();
+    Route::get('/schedules', 'ScheduleController@index');
+    Route::get('/schedules-data', 'ScheduleController@indexData');
+    Route::get('/schedules/show/{id}', 'ScheduleController@show');
+    Route::get('/schedules/records/{merchandiser_id}/{date}', 'ScheduleController@records');
+    Route::get('/schedules/edit/{id}', 'ScheduleController@edit');
 
     Route::group(['middleware' => ['role:admin']], function () {
 
@@ -89,6 +93,9 @@ Route::group(['middleware' => ['auth', 'role:admin|manager']], function () {
     #users
     Route::get('/users', 'UserController@index');
     Route::get('/users-all', 'UserController@indexData');
+//    Route::get('/users', 'UserController@show');
+//    Route::get('/users/register', 'UserController@register');
+//    Route::get('/users/edit', 'UserController@register');
 
     #agencies
     Route::get('/agencies', 'AgencyController@index');
@@ -143,28 +150,6 @@ Route::group(['middleware' => ['auth', 'role:admin|manager']], function () {
     Route::get('/reports/inventoryLog', 'ReportsController@inventoryLog');
     Route::get('/reports/inventoryLogTransaction/{transactionNumber}', 'ReportsController@inventoryLogTransaction');
 
-
-    merchandiserReportLinks();
-    /***********************************************************/
-
-});
-
-
-
-// Third Party Routes
-
-Route::group(['middleware' => ['auth', 'role:third.party']], function () {
-
-    #dashboard
-    Route::get('/', 'ScheduleController@index')->name('home');;
-    Route::get('/home', 'ScheduleController@index')->name('home');;
-
-    scheduleLinks();
-    merchandiserReportLinks();
-});
-
-
-function merchandiserReportLinks(){
     #diser performance
     Route::get('/reports/merchandiser-performance-data', 'ScheduleController@merchandiserPerformanceData');
     Route::get('/reports/merchandiserPerformance', 'ScheduleController@merchandiserPerformance');
@@ -177,21 +162,15 @@ function merchandiserReportLinks(){
     #diser logs (raw)
     Route::get('/reports/merchandiserLog', 'ScheduleController@merchandiserLog');
     Route::get('/reports/merchandiser-log-data', 'ScheduleController@merchandiserLogData');
-}
 
-function scheduleLinks(){
-    Route::get('/schedules', 'ScheduleController@index');
-    Route::get('/schedules-data', 'ScheduleController@indexData');
-    Route::get('/schedules/show/{id}', 'ScheduleController@show');
-    Route::get('/schedules/records/{merchandiser_id}/{date}', 'ScheduleController@records');
-    Route::get('/schedules/edit/{id}', 'ScheduleController@edit');
+    /***********************************************************/
 
-}
+});
 
 
-//Route::get('importExport', 'MaatwebsiteController@importExport');
-//Route::get('downloadExcel/{type}', 'MaatwebsiteController@downloadExcel');
-//Route::post('importExcel', 'MaatwebsiteController@importExport');
+Route::get('importExport', 'MaatwebsiteController@importExport');
+Route::get('downloadExcel/{type}', 'MaatwebsiteController@downloadExcel');
+Route::post('importExcel', 'MaatwebsiteController@importExport');
 
 
 
