@@ -17,10 +17,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
-
-Route::group(['middleware' => ['auth', 'role:admin|manager|user']], function () {
-
-    #dashboard
+#dashboard
+Route::group(['middleware' => ['permission:view.dashboard']], function () {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/getInStore/{date}', 'HomeController@getInStore');
@@ -29,127 +27,135 @@ Route::group(['middleware' => ['auth', 'role:admin|manager|user']], function () 
     Route::get('/getSchedule/{date}', 'HomeController@getSchedule');
     Route::get('/getNearExpiry/{date}', 'HomeController@getNearExpiry');
     Route::get('/getRecentlyLogin', 'HomeController@getRecentlyLogin');
+});
 
-    #announcement
+#announcement
+Route::group(['middleware' => ['permission:view.announcements']], function () {
     Route::get('/announcements', 'AnnouncementController@show');
     Route::get('/announcements/edit/{id}', 'AnnouncementController@edit');
+});
 
-    Route::post('/announcement/post', 'AnnouncementController@post');
-    Route::post('/announcement/add', 'AnnouncementController@add');
-    Route::post('/announcements/update/{id}', 'AnnouncementController@update');
+Route::post('/announcement/post', 'AnnouncementController@post')->middleware('permission:create.announcements');
+Route::post('/announcement/add', 'AnnouncementController@add')->middleware('permission:create.announcements');
+Route::post('/announcements/update/{id}', 'AnnouncementController@update')->middleware('permission:edit.announcements');
 
-    #message
+#message
+Route::group(['middleware' => ['permission:view.messages']], function () {
     Route::get('/messages', 'MessageController@index');
     Route::get('/messages-all', 'MessageController@indexData');
     Route::get('/message/chat/{id}', 'MessageController@chat');
+});
 
-    Route::post('/message/addChat', 'MessageController@addChat');
-    Route::post('/message/closeMessage', 'MessageController@closeMessage');
+Route::post('/message/addChat', 'MessageController@addChat')->middleware('permission:chat.messages');
+Route::post('/message/closeMessage', 'MessageController@closeMessage')->middleware('permission:chat.messages');
 
-    #schedule
+#schedule
+Route::group(['middleware' => ['permission:view.schedules']], function () {
     Route::get('/schedules', 'ScheduleController@index');
     Route::get('/schedules-data', 'ScheduleController@indexData');
     Route::get('/schedules/show/{id}', 'ScheduleController@show');
     Route::get('/schedules/records/{merchandiser_id}/{date}', 'ScheduleController@records');
     Route::get('/schedules/edit/{id}', 'ScheduleController@edit');
+});
 
-    Route::group(['middleware' => ['role:admin']], function () {
+#schedule posts
+Route::post('/schedules/save', 'ScheduleController@save')->middleware('permission:create.schedules');
+Route::post('/schedules/update', 'ScheduleController@update')->middleware('permission:edit.schedules');
+Route::post('/schedules/delete', 'ScheduleController@delete')->middleware('permission:delete.schedules');
+Route::post('/schedules/upload', 'ScheduleController@upload')->middleware('permission:upload.schedules');
 
-        #schedule posts
-        Route::post('/schedules/save', 'ScheduleController@save');
-        Route::post('/schedules/update', 'ScheduleController@update');
-        Route::post('/schedules/delete', 'ScheduleController@delete');
-        Route::post('/schedules/upload', 'ScheduleController@upload');
-
-        #users posts
-        Route::post('/users/save', 'UserController@save');
-        Route::post('/users/update', 'UserController@update');
-
-        #agency posts
-        Route::post('/agencies/save', 'AgencyController@save');
-        Route::post('/agencies/update', 'AgencyController@update');
-
-        #customer posts
-        Route::post('/customers/save', 'CustomerController@save');
-        Route::post('/customers/update', 'CustomerController@update');
-
-        #chain posts
-        Route::post('/chains/save', 'CustomerTypeController@save');
-        Route::post('/chains/update', 'CustomerTypeController@update');
-
-        #customer accounts
-        Route::post('/customer-accounts/save', 'CustomerCategoryController@save');
-        Route::post('/customer-accounts/update', 'CustomerCategoryController@update');
-
-        #customer carried materials posts
-        Route::post('/customer-carried/setCarried/{customer}/{material}', 'CustomerMaterialController@setCarried');
-
-        #material posts
-        Route::post('/materials/save', 'MaterialController@save');
-        Route::post('/materials/update', 'MaterialController@update');
-    });
-
-
-    #users
+#users
+Route::group(['middleware' => ['permission:view.users']], function () {
     Route::get('/users', 'UserController@index');
     Route::get('/users-all', 'UserController@indexData');
-//    Route::get('/users', 'UserController@show');
-//    Route::get('/users/register', 'UserController@register');
-//    Route::get('/users/edit', 'UserController@register');
+});
 
-    #agencies
+#users posts
+Route::post('/users/save', 'UserController@save')->middleware('permission:create.users');
+Route::post('/users/update', 'UserController@update')->middleware('permission:edit.users');
+
+#agencies
+Route::group(['middleware' => ['permission:view.agencies']], function () {
     Route::get('/agencies', 'AgencyController@index');
     Route::get('/agency-all', 'AgencyController@indexData');
+});
 
-    #customers
+Route::post('/agencies/save', 'AgencyController@save')->middleware('permission:create.agencies');
+Route::post('/agencies/update', 'AgencyController@update')->middleware('permission:edit.agencies');
+
+#customers
+Route::group(['middleware' => ['permission:view.customers']], function () {
     Route::get('/customers', 'CustomerController@index');
     Route::get('/customer-all', 'CustomerController@indexData');
+});
 
-    #chain
+#customer posts
+Route::post('/customers/save', 'CustomerController@save')->middleware('permission:create.customers');
+Route::post('/customers/update', 'CustomerController@update')->middleware('permission:edit.customers');
+
+#chain
+Route::group(['middleware' => ['permission:view.chains']], function () {
     Route::get('/chains', 'CustomerTypeController@index');
     Route::get('/chain-all', 'CustomerTypeController@indexData');
+});
 
-    #customer account
+Route::post('/chains/save', 'CustomerTypeController@save')->middleware('permission:create.chains');
+Route::post('/chains/update', 'CustomerTypeController@update')->middleware('permission:edit.chains');
+
+#customer account
+Route::group(['middleware' => ['permission:view.customer.accounts']], function () {
     Route::get('/customer-accounts', 'CustomerCategoryController@index');
     Route::get('/customer-account-all', 'CustomerCategoryController@indexData');
+});
 
-    #customer carried materials
+Route::post('/customer-accounts/save', 'CustomerCategoryController@save')->middleware('permission:create.customer.accounts');
+Route::post('/customer-accounts/update', 'CustomerCategoryController@update')->middleware('permission:edit.customer.accounts');
+
+#customer carried materials
+Route::group(['middleware' => ['permission:view.customer.carried']], function () {
     Route::get('/customer-carried', 'CustomerMaterialController@index');
     Route::get('/customer-carried-data', 'CustomerMaterialController@indexData');
+});
 
+Route::post('/customer-carried/setCarried/{customer}/{material}', 'CustomerMaterialController@setCarried')->middleware('permission:set.customer.carried');
 
-    #municipalities
+#municipalities
+Route::group(['middleware' => ['permission:view.municipalities']], function () {
     Route::get('/municipalities', 'MunicipalityController@show');
     Route::get('/municipalities/add', 'MunicipalityController@info');
     Route::get('/municipalities/edit', 'MunicipalityController@info');
+});
 
-    Route::post('/municipalities/save', 'MunicipalityController@save');
-    Route::post('/municipalities/update', 'MunicipalityController@update');
+Route::post('/municipalities/save', 'MunicipalityController@save')->middleware('permission:create.municipalities');
+Route::post('/municipalities/update', 'MunicipalityController@update')->middleware('permission:edit.municipalities');
 
-    #materials
+#materials
+Route::group(['middleware' => ['permission:view.materials']], function () {
     Route::get('/materials', 'MaterialController@index');
     Route::get('/material-all', 'MaterialController@indexData');
+});
 
-    #locations
-    Route::get('/locations/geofences', 'LocationController@geofences');
-    Route::post('/locations/geofences/save', 'LocationController@save');
+Route::post('/materials/save', 'MaterialController@save')->middleware('permission:create.materials');
+Route::post('/materials/update', 'MaterialController@update')->middleware('permission:edit.materials');
 
-    #islands
-    Route::get('/island-all', 'IslandController@all');
 
-    /* reports *************************************************/
 
-    #offtake
+/* reports *************************************************/
+
+#offtake
+Route::group(['middleware' => ['permission:offtake.view']], function () {
     Route::get('/offtake', 'OfftakeController@index');
     Route::get('/offtake-all', 'OfftakeController@indexData');
+});
 
-
-    Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
-
-    #inventory log (raw)
+#inventory log (raw)
+Route::group(['middleware' => ['permission:view.inventory.log']], function () {
     Route::get('/reports/inventoryLog', 'ReportsController@inventoryLog');
     Route::get('/reports/inventoryLogTransaction/{transactionNumber}', 'ReportsController@inventoryLogTransaction');
+});
 
+
+Route::group(['middleware' => ['permission:view.merchandiser.report']], function () {
     #diser performance
     Route::get('/reports/merchandiser-performance-data', 'ScheduleController@merchandiserPerformanceData');
     Route::get('/reports/merchandiserPerformance', 'ScheduleController@merchandiserPerformance');
@@ -162,10 +168,18 @@ Route::group(['middleware' => ['auth', 'role:admin|manager|user']], function () 
     #diser logs (raw)
     Route::get('/reports/merchandiserLog', 'ScheduleController@merchandiserLog');
     Route::get('/reports/merchandiser-log-data', 'ScheduleController@merchandiserLogData');
-
-    /***********************************************************/
-
 });
+
+/***********************************************************/
+
+#islands
+Route::get('/island-all', 'IslandController@all');
+
+Route::get('/reports/offtakePerCustomer', 'ReportsController@offtakePerCustomer');
+
+#locations
+Route::get('/locations/geofences', 'LocationController@geofences');
+Route::post('/locations/geofences/save', 'LocationController@save');
 
 
 Route::get('importExport', 'MaatwebsiteController@importExport');
