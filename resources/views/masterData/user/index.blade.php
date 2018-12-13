@@ -157,6 +157,26 @@
                                 </div>
                             </div>
 
+                            {{-- Coordinator --}}
+                            <div id="div-coordinator" class="row" style="display: none">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="text-muted">Coordinator</label>
+                                        {!! Form::select('coordinator', $coordinators, null, ['class' => 'form-control select2', 'placeholder' => 'Select Coordinator', 'id' => 'coordinator']) !!}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Fma --}}
+                            <div id="div-fma" class="row" style="display: none">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="text-muted">FMA</label>
+                                        {!! Form::select('fma', $fmas, null, ['class' => 'form-control select2', 'placeholder' => 'Select FMA', 'id' => 'fma']) !!}
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -229,6 +249,19 @@
         $('#btn-show-all').click(function () {
             paginate = totalUser;
             getUsers(userUrl);
+        });
+
+        //role selection
+        $('#role').change(function () {
+            let role_id = this.value;
+            if(role_id == '3'){ //merchandiser
+                $('#div-coordinator').show();
+                $('#div-fma').show();
+            }
+            else{
+                $('#div-coordinator').hide();
+                $('#div-fma').hide();
+            }
         });
 
         //fetch users
@@ -402,6 +435,9 @@
             //reset form and image
             $("#img-user-src").attr("src","{{ asset('storage/avatars/avatar.png') }}");
             $('#form-user').trigger("reset");
+            $('#role').trigger("change");
+            $('#fma').trigger("change");
+            $('#coordinator').trigger("change");
         }
 
         function fillDetails(id) {
@@ -409,12 +445,15 @@
             setEvent('update');
 
             let user = alasql("SELECT * FROM ? WHERE merchandiser_id = " + id + "", [users])[0];
+
             selectedId = user.merchandiser_id;
             $('#account-type').val(user.account_id);
             $('#account-status').val(user.account_status);
             $('#last-name').val(user.last_name);
             $('#first-name').val(user.first_name);
             $('#role').val(user.role_id);
+            $('#fma').val(user.fma_id).trigger('change');
+            $('#coordinator').val(user.coordinator_id).trigger('change');
             $('#gender').val(user.gender);
             $('#contact-number').val(user.contact_number);
             $('#address').val(user.address);
@@ -423,6 +462,8 @@
             $('#email').val(user.email);
             $('#username').val(user.username);
             $("#img-user-src").attr("src","../storage/" + user.image_path);
+
+            $('#role').trigger("change");
         }
 
         //show image upon upload

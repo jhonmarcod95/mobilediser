@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\AccountType;
 use App\Agency;
+use App\Coordinator;
+use App\Fma;
 use App\User;
 use App\UserImage;
 use Illuminate\Http\Request;
@@ -19,11 +21,15 @@ class UserController extends Controller
         $accountTypes = AccountType::get()->pluck('type', 'id');
         $agencies = Agency::get()->pluck('name', 'agency_code');
         $roles = Role::get()->pluck('name', 'id');
+        $coordinators = Coordinator::get()->pluck('name', 'id');
+        $fmas = Fma::get()->pluck('name', 'id');
 
         return view('masterData.user.index',compact(
             'accountTypes',
             'agencies',
-            'roles'
+            'roles',
+            'coordinators',
+            'fmas'
         ));
     }
 
@@ -37,6 +43,11 @@ class UserController extends Controller
                 ->leftJoin('agency_master_data', 'agency_master_data.agency_code', 'users.agency_code')
                 ->leftJoin('account_type', 'account_type.id', 'users.account_type')
                 ->leftJoin('role_user', 'role_user.user_merchandiser_id', 'users.merchandiser_id')
+                ->leftJoin('roles', 'roles.id', 'role_user.role_id')
+                ->leftJoin('coordinator_user', 'coordinator_user.user_merchandiser_id', 'users.merchandiser_id')
+                ->leftJoin('coordinators', 'coordinator_user.coordinator_id', 'coordinators.id')
+                ->leftJoin('fma_user', 'fma_user.user_merchandiser_id', 'users.merchandiser_id')
+                ->leftJoin('fmas', 'fma_user.fma_id', 'fmas.id')
                 ->where(function ($query) use ($search) {
                     $query->where('users.last_name', 'LIKE', '%' . $search . '%')
                         ->orWhere('users.first_name', 'LIKE', '%' . $search . '%');
@@ -53,6 +64,11 @@ class UserController extends Controller
                     'users.contact_number AS contact_number',
                     'users.account_status AS account_status',
                     'role_user.role_id AS role_id',
+                    'roles.name AS role',
+                    'fmas.id AS fma_id',
+                    'fmas.name AS fma',
+                    'coordinators.id AS coordinator_id',
+                    'coordinators.name AS coordinator',
                     'merchandiser_picture.image_path AS image_path',
                     'account_type.type AS account_type',
                     'agency_master_data.name AS agency_name',
@@ -69,6 +85,11 @@ class UserController extends Controller
                 ->leftJoin('agency_master_data', 'agency_master_data.agency_code', 'users.agency_code')
                 ->leftJoin('account_type', 'account_type.id', 'users.account_type')
                 ->leftJoin('role_user', 'role_user.user_merchandiser_id', 'users.merchandiser_id')
+                ->leftJoin('roles', 'roles.id', 'role_user.role_id')
+                ->leftJoin('coordinator_user', 'coordinator_user.user_merchandiser_id', 'users.merchandiser_id')
+                ->leftJoin('coordinators', 'coordinator_user.coordinator_id', 'coordinators.id')
+                ->leftJoin('fma_user', 'fma_user.user_merchandiser_id', 'users.merchandiser_id')
+                ->leftJoin('fmas', 'fma_user.fma_id', 'fmas.id')
                 ->where(function ($query) use ($search) {
                     $query->where('users.last_name', 'LIKE', '%' . $search . '%')
                         ->orWhere('users.first_name', 'LIKE', '%' . $search . '%');
@@ -86,6 +107,11 @@ class UserController extends Controller
                     'users.contact_number AS contact_number',
                     'users.account_status AS account_status',
                     'role_user.role_id AS role_id',
+                    'roles.name AS role',
+                    'fmas.id AS fma_id',
+                    'fmas.name AS fma',
+                    'coordinators.id AS coordinator_id',
+                    'coordinators.name AS coordinator',
                     'merchandiser_picture.image_path AS image_path',
                     'account_type.type AS account_type',
                     'agency_master_data.name AS agency_name',
@@ -134,7 +160,6 @@ class UserController extends Controller
             'first_name' => 'required|max:191',
             'role' => 'required',
             'agency' => 'required',
-            'contact_number' => 'required|unique:users|digits:11',
             'password' => 'required|min:6',
             'gender' => 'required',
             'birthday' => 'required',
@@ -145,6 +170,22 @@ class UserController extends Controller
             'email' => 'required|unique:users|email|max:191',
         ]);
 
+        // contact number validation (scenario: this will allow to blank contact number of inactive user then will assigned to new one.
+        if($request->account_status == 'ACTIVE'){
+            $request->validate([
+                'contact_number' => 'required|unique:users|digits:11',
+            ]);
+        }
+
+        // merchandiser role additional validation
+        if($request->role == '3'){
+            $request->validate([
+                'coordinator' => 'required',
+                'fma' => 'required'
+            ]);
+        }
+
+        // store image in folder
         if(empty($request->file('img_user'))){
             $path = "avatars/avatar.png";
         }
@@ -168,9 +209,17 @@ class UserController extends Controller
         $user->account_type = $request->account_type;
         $user->account_status = $request->account_status;
 
+
         if($user->save()){
+
             // Assigning of role
             $user->syncRoles($request->role);
+
+            // Assigning of fma & coordinator if merchandiser role
+            if($request->role == '3'){
+                $user->coordinator()->sync((array) $request->coordinator);
+                $user->fma()->sync((array) $request->fma);
+            }
 
             #image
             $userImage = new UserImage();
@@ -191,7 +240,6 @@ class UserController extends Controller
             'first_name' => 'required|max:191',
             'role' => 'required',
             'agency' => 'required',
-            'contact_number' => 'required|unique:users,contact_number,' . $id . ',merchandiser_id|digits:11',
             'gender' => 'required',
             'birthday' => 'required',
             'address' => 'required|max:191',
@@ -200,6 +248,21 @@ class UserController extends Controller
             'username' => 'required|unique:users,username,' . $id . ',merchandiser_id|max:30',
             'email' => 'required|unique:users,email,' . $id . ',merchandiser_id|max:191',
         ]);
+
+        // contact number validation (scenario: this will allow to blank contact number of inactive user then will assigned to new one.
+        if($request->account_status == 'ACTIVE'){
+            $request->validate([
+                'contact_number' => 'required|unique:users,contact_number,' . $id . ',merchandiser_id|digits:11',
+            ]);
+        }
+
+        // merchandiser role additional validation
+        if($request->role == '3'){
+            $request->validate([
+                'coordinator' => 'required',
+                'fma' => 'required'
+            ]);
+        }
 
         #user
         $user = User::find($id);
@@ -222,8 +285,15 @@ class UserController extends Controller
         $user->account_status = $request->account_status;
 
         if($user->save()){
+
             // Assigning of role
             $user->syncRoles($request->role);
+
+            // Assigning of fma & coordinator if merchandiser role
+            if($request->role == '3'){
+                $user->coordinator()->sync((array) $request->coordinator);
+                $user->fma()->sync((array) $request->fma);
+            }
 
             #image
             if(!empty($request->file('img_user'))){ #will not update image path if no upload

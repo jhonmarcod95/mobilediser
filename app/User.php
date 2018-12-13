@@ -41,6 +41,14 @@ class User extends Authenticatable implements Auditable
         return $this->hasOne(UserImage::class);
     }
 
+    public function fma(){
+        return $this->belongsToMany(Fma::class);
+    }
+
+    public function coordinator(){
+        return $this->belongsToMany(Coordinator::class);
+    }
+
     public static function getName($id){
         $result = User::select(DB::raw("CONCAT(last_name, ' ', first_name) AS fullname"))
             ->where('merchandiser_id', $id)
