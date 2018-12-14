@@ -73,10 +73,6 @@
                                 </div>
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label class="text-muted">Account Type</label>
-                                        {!! Form::select('account_type', $accountTypes, null, ['class' => 'form-control', 'placeholder' => '', 'id' => 'account-type']) !!}
-                                    </div>
-                                    <div class="form-group">
                                         <label class="text-muted">Account Status</label>
                                         {!! Form::select('account_status', ['ACTIVE' => 'ACTIVE', 'INACTIVE' => 'INACTIVE'], null, ['class' => 'form-control', 'placeholder' => '', 'id' => 'account-status']) !!}
                                     </div>
@@ -301,7 +297,7 @@
                             '<td>' + user.address +
                             '<td>' + user.contact_number +
                             '<td>' + user.agency_name +
-                            '<td>' + user.account_type +
+                            '<td>' + user.role +
                             '<td>' + status +
                             '<td>' + user.username +
                             '<td>' + user.email +
@@ -317,7 +313,7 @@
                                 '<th>Address' +
                                 '<th>Contact#' +
                                 '<th>Agency' +
-                                '<th>Type' +
+                                '<th>Role' +
                                 '<th>Status' +
                                 '<th>Username' +
                                 '<th>Email' +
@@ -447,7 +443,6 @@
             let user = alasql("SELECT * FROM ? WHERE merchandiser_id = " + id + "", [users])[0];
 
             selectedId = user.merchandiser_id;
-            $('#account-type').val(user.account_id);
             $('#account-status').val(user.account_status);
             $('#last-name').val(user.last_name);
             $('#first-name').val(user.first_name);

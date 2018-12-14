@@ -41,7 +41,6 @@ class UserController extends Controller
         if(Auth::user()->account_type == '1'){
             $users = User::leftJoin('merchandiser_picture', 'merchandiser_picture.user_merchandiser_id', 'users.merchandiser_id')
                 ->leftJoin('agency_master_data', 'agency_master_data.agency_code', 'users.agency_code')
-                ->leftJoin('account_type', 'account_type.id', 'users.account_type')
                 ->leftJoin('role_user', 'role_user.user_merchandiser_id', 'users.merchandiser_id')
                 ->leftJoin('roles', 'roles.id', 'role_user.role_id')
                 ->leftJoin('coordinator_user', 'coordinator_user.user_merchandiser_id', 'users.merchandiser_id')
@@ -70,7 +69,6 @@ class UserController extends Controller
                     'coordinators.id AS coordinator_id',
                     'coordinators.name AS coordinator',
                     'merchandiser_picture.image_path AS image_path',
-                    'account_type.type AS account_type',
                     'agency_master_data.name AS agency_name',
                     'users.email AS email',
                     'users.account_type AS account_id',
@@ -83,7 +81,6 @@ class UserController extends Controller
         else{
             $users = User::leftJoin('merchandiser_picture', 'merchandiser_picture.user_merchandiser_id', 'users.merchandiser_id')
                 ->leftJoin('agency_master_data', 'agency_master_data.agency_code', 'users.agency_code')
-                ->leftJoin('account_type', 'account_type.id', 'users.account_type')
                 ->leftJoin('role_user', 'role_user.user_merchandiser_id', 'users.merchandiser_id')
                 ->leftJoin('roles', 'roles.id', 'role_user.role_id')
                 ->leftJoin('coordinator_user', 'coordinator_user.user_merchandiser_id', 'users.merchandiser_id')
@@ -113,7 +110,6 @@ class UserController extends Controller
                     'coordinators.id AS coordinator_id',
                     'coordinators.name AS coordinator',
                     'merchandiser_picture.image_path AS image_path',
-                    'account_type.type AS account_type',
                     'agency_master_data.name AS agency_name',
                     'users.email AS email',
                     'users.account_type AS account_id',
@@ -164,7 +160,6 @@ class UserController extends Controller
             'gender' => 'required',
             'birthday' => 'required',
             'address' => 'required|max:191',
-            'account_type' => 'required',
             'account_status' => 'required',
             'username' => 'required|unique:users|max:30',
             'email' => 'required|unique:users|email|max:191',
@@ -206,9 +201,8 @@ class UserController extends Controller
         $user->address = $request->address;
         $user->email = $request->email;
         $user->contact_number = $request->contact_number;
-        $user->account_type = $request->account_type;
+        $user->account_type = $this->getAccountType($request->role);
         $user->account_status = $request->account_status;
-
 
         if($user->save()){
 
@@ -243,7 +237,6 @@ class UserController extends Controller
             'gender' => 'required',
             'birthday' => 'required',
             'address' => 'required|max:191',
-            'account_type' => 'required',
             'account_status' => 'required',
             'username' => 'required|unique:users,username,' . $id . ',merchandiser_id|max:30',
             'email' => 'required|unique:users,email,' . $id . ',merchandiser_id|max:191',
@@ -281,7 +274,7 @@ class UserController extends Controller
         $user->address = $request->address;
         $user->email = $request->email;
         $user->contact_number = $request->contact_number;
-        $user->account_type = $request->account_type;
+        $user->account_type = $this->getAccountType($request->role);
         $user->account_status = $request->account_status;
 
         if($user->save()){
@@ -305,6 +298,19 @@ class UserController extends Controller
         }
 
         return $user;
+    }
+
+    private function getAccountType($role_id){
+        if ($role_id == 1 || $role_id == 2){
+            $result = 2;
+        }
+        else if($role_id == 3){
+            $result = 3;
+        }
+        else{
+            $result = 4;
+        }
+        return $result;
     }
 
 }
