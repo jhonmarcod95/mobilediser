@@ -225,6 +225,7 @@
                                     '<td>' + store +
                                     '<td>' + schedule +
                                     '<td>' + timeInOut +
+                                    '<td>' + toTimeRenderedText(workingHrs) +
                                     '<td>' + timeRenderedText +
                                     '<td>' + overtime +
                                 '</tr>';
@@ -238,6 +239,7 @@
                                 "store": store,
                                 "schedule": schedule,
                                 "timeInOut": timeInOut,
+                                "workingHrs": toTimeRenderedText(workingHrs),
                                 "timeRenderedText": timeRenderedText,
                                 "overtime": overtime
                             });
@@ -258,23 +260,23 @@
 
                         body +=
                         '<tr>' +
-                            '<td colspan="5"><b>MobileDiser Id: </b>' +  mobilediserId +
+                            '<td colspan="6"><b>MobileDiser Id: </b>' +  mobilediserId +
                             '<td><b>Period: </b>' + period +
                         '</tr>' +
                         '<tr>' +
-                            '<td colspan="5"><b>Merchandiser: </b>' +  merchandiserName +
+                            '<td colspan="6"><b>Merchandiser: </b>' +  merchandiserName +
                             '<td><b>Total Rendered: </b>' + totalRendered +
                         '</tr>' +
                         '<tr>' +
-                            '<td colspan="5"><b>Agency: </b>' + agency +
+                            '<td colspan="6"><b>Agency: </b>' + agency +
                             '<td><b>Total Overtime: </b>' + totalOvertime +
                         '</tr>' +
                         '<tr>' +
-                            '<td colspan="5"><b>Working Days: </b>' + workingDays +
+                            '<td colspan="6"><b>Working Days: </b>' + workingDays +
                             '<td><b>Days Present: </b>' + daysPresent +
                         '</tr>' +
                         '<tr>' +
-                            '<td colspan="5"><b>Total Working Hrs: </b>' + totalWorkingHours +
+                            '<td colspan="6"><b>Total Working Hrs: </b>' + totalWorkingHours +
                             '<td><b>Days Absent: </b>' + daysAbsent +
                         '</tr>' +
                         '<tr><td colspan="' + colspan + '">&nbsp;</tr>' +
@@ -283,6 +285,7 @@
                             '<td><b>Store' +
                             '<td><b>Schedule' +
                             '<td><b>In/Out' +
+                            '<td><b>Working Hrs' +
                             '<td><b>Rendered' +
                             '<td><b>OT' +
                         '</tr>' + content;
