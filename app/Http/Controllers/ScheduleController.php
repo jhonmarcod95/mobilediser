@@ -13,29 +13,19 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ScheduleController extends Controller
 {
 
-    private $merchandisers;
     private $customers;
     private $weekDays;
     private $weeks;
-    private $agencies;
 
     public function __construct()
     {
-        $this->merchandisers = User::select(
-            DB::raw("CONCAT(first_name, ' ', last_name) AS fullname"), 'merchandiser_id')
-            ->where('account_type', 3)
-            ->pluck('fullname', 'merchandiser_id')
-            ->put('0', 'All');
-
-        $this->agencies = Agency::all()
-            ->pluck('name', 'agency_code')
-            ->put('0', 'All');
 
         $this->weekDays = [
             '1' => 'Mon',
@@ -61,7 +51,10 @@ class ScheduleController extends Controller
 
     public function index(Request $request)
     {
-        $merchandisers = $this->merchandisers;
+        $merchandisers = User::filterByAgency()
+            ->pluck('fullname', 'merchandiser_id')
+            ->put('0', 'All');;
+
         $customers = $this->customers;
         $weekDays = $this->weekDays;
         $weeks = $this->weeks;
@@ -337,7 +330,11 @@ class ScheduleController extends Controller
     }
 
     public function merchandiserPerformance(){
-        $merchandisers = $this->merchandisers;
+
+        $merchandisers = User::filterByAgency()
+            ->pluck('fullname', 'merchandiser_id')
+            ->put('0', 'All');
+
         return view('report.merchandiserPerformance', compact(
             'merchandisers'
         ));
@@ -378,7 +375,11 @@ class ScheduleController extends Controller
     }
 
     public function merchandiserLog(){
-        $merchandisers = $this->merchandisers;
+
+        $merchandisers = User::filterByAgency()
+            ->pluck('fullname', 'merchandiser_id')
+            ->put('0', 'All');
+
         return view('report.merchandiserLog', compact(
             'merchandisers'
         ));
@@ -431,8 +432,16 @@ class ScheduleController extends Controller
     }
 
     public function merchandiserAttendance(){
-        $agencies = $this->agencies;
-        $merchandisers = $this->merchandisers;
+
+        $agencies = Agency::filterByAgency()
+            ->pluck('name', 'agency_code')
+            ->put('0', 'All');
+
+        $merchandisers = User::filterByAgency()
+            ->pluck('fullname', 'merchandiser_id')
+            ->put('0', 'All');;
+
+
         return view('report.merchandiserAttendance', compact(
             'merchandisers',
             'agencies'
@@ -495,7 +504,7 @@ class ScheduleController extends Controller
         }
         foreach ($merchandiser_ids as $merchandiser_id) {
             if($merchandiser_id == 0){
-                return User::all()->pluck('merchandiser_id');
+                return User::filterByAgency()->pluck('merchandiser_id');
             }
         }
         return $merchandiser_ids;
