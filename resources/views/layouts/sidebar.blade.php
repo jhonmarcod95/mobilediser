@@ -108,7 +108,10 @@
                     <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle"></i> Offtake Per Customer</a></li>
                     @endpermission
 
-                    {{--<li><a href="{{ url('/offtake') }}"><i class="fa fa-circle"></i> Offtake</a></li>--}}
+                    @permission('offtake.view')
+                    <li><a href="{{ url('/offtake') }}"><i class="fa fa-circle"></i> Offtake</a></li>
+                    @endpermission
+
                 </ul>
             </li>
         </ul>

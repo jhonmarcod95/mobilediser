@@ -212,3 +212,31 @@ function showErrorAlert(data) {
     });
     return '<div class="alert bg-danger text-danger"><button type="button" class="close text-red" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p><i class="fa fa-warning"></i><b style="margin-left: 6px">Error</b> ' + errors.message + '</p><ul class="small">' + errList + '</ul></div>';
 }
+
+
+function optionAll(){
+    let $option = $("<option></option>");
+    $option.val('%');
+    $option.text('All');
+    return $option;
+}
+
+function populateSelect(id, objs){
+    for(let obj of objs){
+        let $option = $("<option></option>");
+
+        $option.val(obj[Object.keys(obj)[0]]);
+        $option.text(obj[Object.keys(obj)[1]]);
+
+        $("#" + id).append($option);
+    }
+}
+
+function selectValues(id){
+    let result = [];
+    $('#' + id + " option").each(function()
+    {
+        result.push($(this).val());
+    });
+    return result;
+}

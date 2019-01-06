@@ -88,6 +88,13 @@
     }
     /**************************************************************/
 
+    /* set's select tag into select multiple options **************/
+    function setSelect2Multiple(id) {
+        $('#' + id).select2({multiple:true, placeholder: 'Select value...', width: '100%'});
+        $('#' + id).val(null).trigger('change');
+    }
+    /*************************************************************/
+
     function setDataTable(freezeIndex, height, width){
 
         if(height == null) height = true;

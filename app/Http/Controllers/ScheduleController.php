@@ -459,7 +459,7 @@ class ScheduleController extends Controller
 
 
     /* Function ****************************/
-    private function getDateRange($start, $end){
+    public static function getDateRange($start, $end){
         $periodEnd = new DateTime($end);
 
         $period = new DatePeriod(
