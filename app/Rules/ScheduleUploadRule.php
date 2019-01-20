@@ -102,15 +102,25 @@ class ScheduleUploadRule implements Rule
 
             //check if contains spaces
             if($this->hasWhiteSpaces($id)){
-                $this->setMsgText('Column ID must not contain whitespaces at row ' . $this->rowNumber . '.');
+                $this->setMsgText('Column ID must not contain whitespaces near row ' . $this->rowNumber . '.');
                 return false;
             }
 
             //check if exist
             if(!User::where('merchandiser_id', $id)->exists()){
-                $this->setMsgText('ID ' . $id .  ' not found at row ' . $this->rowNumber . '.');
+                $this->setMsgText('ID ' . $id .  ' not found near row ' . $this->rowNumber . '.');
                 return false;
             }
+
+            //check if inactive (resign)
+            if(User::where('merchandiser_id', $id)
+                ->where('account_status', 'INACTIVE')
+                ->exists()){
+                $this->setMsgText('ID ' . $id .  ' is inactive near row ' . $this->rowNumber . '.');
+                return false;
+            }
+
+
             $this->rowNumber++;
         }
         return true;

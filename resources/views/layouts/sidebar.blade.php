@@ -109,7 +109,7 @@
                     @endpermission
 
                     @permission('offtake.view')
-                    <li><a href="{{ url('/offtake') }}"><i class="fa fa-circle"></i> Offtake</a></li>
+                    {{--<li><a href="{{ url('/offtake') }}"><i class="fa fa-circle"></i> Offtake</a></li>--}}
                     @endpermission
 
                 </ul>
