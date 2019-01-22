@@ -26,9 +26,9 @@ class LoginController extends Controller
         if ($user->hasRole(['admin', 'manager'])) {
             return redirect()->route('home');
         }
-        else if ($user->hasRole('third.party')) {
-            return redirect('/schedules');
-        }
+//        else if ($user->hasRole('third.party')) {
+//            return redirect('/schedules');
+//        }
 
         return redirect('/');
     }

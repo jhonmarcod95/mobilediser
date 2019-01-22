@@ -49,6 +49,7 @@
             </div>
 
             {{-- Offtake --}}
+            @role(['admin', 'manager'])
             <div class="col-lg-3 col-xs-6">
                 <div class="box box-solid small-box bg-green">
                     <div class="inner">
@@ -62,8 +63,10 @@
                     <div id="loading-3"></div>
                 </div>
             </div>
+            @endrole
 
             {{-- Near Expiry --}}
+            @role(['admin', 'manager'])
             <div class="col-lg-3 col-xs-6">
                 <div class="box box-solid small-box bg-red">
                     <div class="inner">
@@ -77,11 +80,14 @@
                     <div id="loading-1"></div>
                 </div>
             </div>
+            @endrole
         </div>
 
         <!-- Main row -->
         <div class="row">
+
             {{-- Announcement --}}
+            @role(['admin', 'manager'])
             <section class="col-lg-7 connectedSortable">
                 <div class="box box-success">
 
@@ -120,8 +126,10 @@
                     @endif
                 </div>
             </section>
+            @endrole
 
             {{-- Messages --}}
+            @role(['admin', 'manager'])
             <section class="col-lg-5 connectedSortable">
                 @if(count($msgHeaders))
                 <div class="box box-warning">
@@ -162,6 +170,7 @@
                 </div>
                 @endif
             </section>
+            @endrole
 
             {{-- Recently Login --}}
             <section class="col-lg-7 connectedSortable">

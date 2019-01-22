@@ -11,6 +11,7 @@ use App\TransactionOfftake;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 
@@ -69,8 +70,15 @@ class HomeController extends Controller
             ->join('users', 'merchandiser_schedule.merchandiser_id', '=', 'users.merchandiser_id')
             ->join('agency_master_data', 'agency_master_data.agency_code', '=', 'users.agency_code')
             ->join('customer_master_data', 'merchandiser_schedule.customer_code', '=', 'customer_master_data.customer_code')
-            ->whereDate('date', $date)
-            ->get([
+            ->whereDate('date', $date);
+
+        /* conditions for third party role *****************/
+        if(Auth::user()->hasRole('third.party')){
+            $inventories->where('agency_master_data.agency_code', Auth::user()->agency_code);
+        }
+        /* *************************************************/
+
+        $inventories = $inventories->get([
                 'inventory_transaction_header.schedule_id',
                 'users.merchandiser_id',
                 'users.last_name',
@@ -96,8 +104,15 @@ class HomeController extends Controller
             ->join('users', 'merchandiser_schedule.merchandiser_id', '=', 'users.merchandiser_id')
             ->join('agency_master_data', 'agency_master_data.agency_code', '=', 'users.agency_code')
             ->join('customer_master_data', 'merchandiser_schedule.customer_code', '=', 'customer_master_data.customer_code')
-            ->whereDate('date', $date)
-            ->get([
+            ->whereDate('date', $date);
+
+        /* conditions for third party role *****************/
+        if(Auth::user()->hasRole('third.party')){
+            $schedules->where('agency_master_data.agency_code', Auth::user()->agency_code);
+        }
+        /* *************************************************/
+
+        $schedules = $schedules->get([
                 'merchandiser_schedule.id',
                 'merchandiser_schedule.time_in AS start_time',
                 'merchandiser_schedule.time_out AS end_time',
@@ -165,10 +180,18 @@ class HomeController extends Controller
     }
 
     public function getRecentlyLogin(){
-        return Attendance::join('merchandiser_schedule', 'merchandiser_attendance.schedule_id', 'merchandiser_schedule.id')
+
+        $recentLogin = Attendance::join('merchandiser_schedule', 'merchandiser_attendance.schedule_id', 'merchandiser_schedule.id')
             ->join('users', 'merchandiser_schedule.merchandiser_id', 'users.merchandiser_id')
-            ->join('customer_master_data', 'merchandiser_schedule.customer_code', 'customer_master_data.customer_code')
-            ->orderByDesc('merchandiser_attendance.id')
+            ->join('customer_master_data', 'merchandiser_schedule.customer_code', 'customer_master_data.customer_code');
+
+        /* conditions for third party role *****************/
+        if(Auth::user()->hasRole('third.party')){
+            $recentLogin->where('users.agency_code', Auth::user()->agency_code);
+        }
+        /* *************************************************/
+
+        $recentLogin = $recentLogin->orderByDesc('merchandiser_attendance.id')
             ->get([
                 'merchandiser_attendance.id',
                 'merchandiser_attendance.created_at',
@@ -179,5 +202,7 @@ class HomeController extends Controller
                 'customer_master_data.branch',
             ])
             ->take(5);
+
+        return $recentLogin;
     }
 }
