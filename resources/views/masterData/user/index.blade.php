@@ -301,6 +301,8 @@
                             '<td>' + status +
                             '<td>' + user.username +
                             '<td>' + user.email +
+                            '<td>' + user.fma +
+                            '<td>' + user.coordinator +
                         '</tr>';
                     }
 
@@ -317,6 +319,8 @@
                                 '<th>Status' +
                                 '<th>Username' +
                                 '<th>Email' +
+                                '<th>FMA' +
+                                '<th>Coordinator' +
                             '</thead>' +
                             '<tbody>' + tbody +
                             '</tbody>' +
