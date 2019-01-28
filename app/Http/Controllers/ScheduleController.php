@@ -241,7 +241,7 @@ class ScheduleController extends Controller
 
         $request->validate([
             'monthYear' => 'required',
-            'import_file' => ['required', 'mimes:xlsx,xls', new ScheduleUploadRule($monthYear)],
+            'import_file' => ['required', 'max:1024', 'mimes:xlsx,xls', new ScheduleUploadRule($monthYear)],
         ]);
 
         if($request->hasFile('import_file')){
