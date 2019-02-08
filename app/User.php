@@ -43,7 +43,7 @@ class User extends Authenticatable implements Auditable
     }
 
     public function fma(){
-        return $this->belongsToMany(Fma::class);
+        return $this->belongsToMany(User::class);
     }
 
     public function coordinator(){

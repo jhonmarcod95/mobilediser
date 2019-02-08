@@ -163,12 +163,12 @@
                                 </div>
                             </div>
 
-                            {{-- Fma --}}
-                            <div id="div-fma" class="row" style="display: none">
+                            {{-- Managers --}}
+                            <div id="div-managers" class="row" style="display: none">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="text-muted">FMA</label>
-                                        {!! Form::select('fma', $fmas, null, ['class' => 'form-control select2', 'placeholder' => 'Select FMA', 'id' => 'fma']) !!}
+                                        <label class="text-muted">Managers</label>
+                                        {!! Form::select('managers[]', $managers, null, ['class' => 'form-control select2', 'multiple', 'id' => 'managers']) !!}
                                     </div>
                                 </div>
                             </div>
@@ -252,11 +252,11 @@
             let role_id = this.value;
             if(role_id == '3'){ //merchandiser
                 $('#div-coordinator').show();
-                $('#div-fma').show();
+                $('#div-managers').show();
             }
             else{
                 $('#div-coordinator').hide();
-                $('#div-fma').hide();
+                $('#div-managers').hide();
             }
         });
 
@@ -301,7 +301,6 @@
                             '<td>' + status +
                             '<td>' + user.username +
                             '<td>' + user.email +
-                            '<td>' + user.fma +
                             '<td>' + user.coordinator +
                         '</tr>';
                     }
@@ -319,7 +318,6 @@
                                 '<th>Status' +
                                 '<th>Username' +
                                 '<th>Email' +
-                                '<th>FMA' +
                                 '<th>Coordinator' +
                             '</thead>' +
                             '<tbody>' + tbody +
@@ -436,7 +434,7 @@
             $("#img-user-src").attr("src","{{ asset('storage/avatars/avatar.png') }}");
             $('#form-user').trigger("reset");
             $('#role').trigger("change");
-            $('#fma').trigger("change");
+            $('#managers').trigger("change");
             $('#coordinator').trigger("change");
         }
 
@@ -451,7 +449,7 @@
             $('#last-name').val(user.last_name);
             $('#first-name').val(user.first_name);
             $('#role').val(user.role_id);
-            $('#fma').val(user.fma_id).trigger('change');
+            $('#managers').val(user.fma_id).trigger('change');
             $('#coordinator').val(user.coordinator_id).trigger('change');
             $('#gender').val(user.gender);
             $('#contact-number').val(user.contact_number);

@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\AccountType;
 use App\Agency;
 use App\Coordinator;
-use App\Fma;
 use App\User;
 use App\UserImage;
+use App\UserManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use jeremykenedy\LaravelRoles\Models\Role;
 
@@ -22,14 +23,21 @@ class UserController extends Controller
         $agencies = Agency::get()->pluck('name', 'agency_code');
         $roles = Role::get()->pluck('name', 'id');
         $coordinators = Coordinator::get()->pluck('name', 'id');
-        $fmas = Fma::get()->pluck('name', 'id');
+
+        $managers = User::whereHas('roles', function($q){
+            $q->where('name', 'fma')
+              ->orWhere('name', 'fms');
+        })
+        ->select(DB::raw("CONCAT(first_name,' ',last_name) AS name"), 'merchandiser_id')
+        ->pluck('name', 'merchandiser_id');
+
 
         return view('masterData.user.index',compact(
             'accountTypes',
             'agencies',
             'roles',
             'coordinators',
-            'fmas'
+            'managers'
         ));
     }
 
@@ -45,8 +53,6 @@ class UserController extends Controller
                 ->leftJoin('roles', 'roles.id', 'role_user.role_id')
                 ->leftJoin('coordinator_user', 'coordinator_user.user_merchandiser_id', 'users.merchandiser_id')
                 ->leftJoin('coordinators', 'coordinator_user.coordinator_id', 'coordinators.id')
-                ->leftJoin('fma_user', 'fma_user.user_merchandiser_id', 'users.merchandiser_id')
-                ->leftJoin('fmas', 'fma_user.fma_id', 'fmas.id')
                 ->where(function ($query) use ($search) {
                     $query->where('users.last_name', 'LIKE', '%' . $search . '%')
                         ->orWhere('users.first_name', 'LIKE', '%' . $search . '%');
@@ -64,8 +70,6 @@ class UserController extends Controller
                     'users.account_status AS account_status',
                     'role_user.role_id AS role_id',
                     'roles.name AS role',
-                    'fmas.id AS fma_id',
-                    'fmas.name AS fma',
                     'coordinators.id AS coordinator_id',
                     'coordinators.name AS coordinator',
                     'merchandiser_picture.image_path AS image_path',
@@ -85,8 +89,6 @@ class UserController extends Controller
                 ->leftJoin('roles', 'roles.id', 'role_user.role_id')
                 ->leftJoin('coordinator_user', 'coordinator_user.user_merchandiser_id', 'users.merchandiser_id')
                 ->leftJoin('coordinators', 'coordinator_user.coordinator_id', 'coordinators.id')
-                ->leftJoin('fma_user', 'fma_user.user_merchandiser_id', 'users.merchandiser_id')
-                ->leftJoin('fmas', 'fma_user.fma_id', 'fmas.id')
                 ->where(function ($query) use ($search) {
                     $query->where('users.last_name', 'LIKE', '%' . $search . '%')
                         ->orWhere('users.first_name', 'LIKE', '%' . $search . '%');
@@ -105,8 +107,6 @@ class UserController extends Controller
                     'users.account_status AS account_status',
                     'role_user.role_id AS role_id',
                     'roles.name AS role',
-                    'fmas.id AS fma_id',
-                    'fmas.name AS fma',
                     'coordinators.id AS coordinator_id',
                     'coordinators.name AS coordinator',
                     'merchandiser_picture.image_path AS image_path',
@@ -176,7 +176,7 @@ class UserController extends Controller
         if($request->role == '3'){
             $request->validate([
                 'coordinator' => 'required',
-                'fma' => 'required'
+                'managers' => 'required'
             ]);
         }
 
@@ -211,8 +211,9 @@ class UserController extends Controller
 
             // Assigning of fma & coordinator if merchandiser role
             if($request->role == '3'){
-                $user->coordinator()->sync((array) $request->coordinator);
-                $user->fma()->sync((array) $request->fma);
+//                $user->coordinator()->sync((array) $request->coordinator);
+//                $user->fma()->sync((array) $request->fma);
+                $this->storeUserManagers($user->merchandiser_id,$request->managers);
             }
 
             #image
@@ -253,7 +254,7 @@ class UserController extends Controller
         if($request->role == '3'){
             $request->validate([
                 'coordinator' => 'required',
-                'fma' => 'required'
+                'managers' => 'required'
             ]);
         }
 
@@ -284,8 +285,7 @@ class UserController extends Controller
 
             // Assigning of fma & coordinator if merchandiser role
             if($request->role == '3'){
-                $user->coordinator()->sync((array) $request->coordinator);
-                $user->fma()->sync((array) $request->fma);
+                $this->storeUserManagers($id,$request->managers);
             }
 
             #image
@@ -311,6 +311,23 @@ class UserController extends Controller
             $result = 4;
         }
         return $result;
+    }
+
+    private function storeUserManagers($user_id, $manager_ids){
+
+        DB::beginTransaction();
+
+        $user_manager = UserManager::where('user_id', $user_id);
+        $user_manager->delete();
+
+        foreach ($manager_ids as $manager_id){
+            $user_manager = new UserManager();
+            $user_manager->manager_id = $manager_id;
+            $user_manager->user_id = $user_id;
+            $user_manager->save();
+        }
+
+        DB::commit();
     }
 
 }
