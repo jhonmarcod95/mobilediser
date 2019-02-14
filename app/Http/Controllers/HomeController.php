@@ -8,6 +8,7 @@ use App\Customer;
 use App\InventoryTransactionHeader;
 use App\MerchandiserSchedule;
 use App\TransactionOfftake;
+use App\UserManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -76,25 +77,33 @@ class HomeController extends Controller
         if(Auth::user()->hasRole('third.party')){
             $inventories->where('agency_master_data.agency_code', Auth::user()->agency_code);
         }
+        /* conditions for fma / fms (manager) role *********/
+        else if(Auth::user()->hasRole('fms|fma')){
+            $manager_users = UserManager::where('manager_id', Auth::user()->merchandiser_id)
+                ->get()
+                ->pluck('user_id');
+
+            $inventories->whereIn('users.merchandiser_id', $manager_users);
+        }
         /* *************************************************/
 
         $inventories = $inventories->get([
-                'inventory_transaction_header.schedule_id',
-                'users.merchandiser_id',
-                'users.last_name',
-                'users.first_name',
-                'agency_master_data.agency_code',
-                'agency_master_data.name AS agency',
-                'customer_master_data.customer_code',
-                'customer_master_data.name AS store',
-                'customer_master_data.branch',
-                'merchandiser_schedule.date',
-                'merchandiser_schedule.time_in',
-                'merchandiser_schedule.time_out',
-                'merchandiser_schedule.remarks',
-                'inventory_transaction_header.transaction_number',
-                'inventory_transaction_header.created_at'
-            ]);
+            'inventory_transaction_header.schedule_id',
+            'users.merchandiser_id',
+            'users.last_name',
+            'users.first_name',
+            'agency_master_data.agency_code',
+            'agency_master_data.name AS agency',
+            'customer_master_data.customer_code',
+            'customer_master_data.name AS store',
+            'customer_master_data.branch',
+            'merchandiser_schedule.date',
+            'merchandiser_schedule.time_in',
+            'merchandiser_schedule.time_out',
+            'merchandiser_schedule.remarks',
+            'inventory_transaction_header.transaction_number',
+            'inventory_transaction_header.created_at'
+        ]);
 
         return $inventories;
     }
@@ -109,6 +118,14 @@ class HomeController extends Controller
         /* conditions for third party role *****************/
         if(Auth::user()->hasRole('third.party')){
             $schedules->where('agency_master_data.agency_code', Auth::user()->agency_code);
+        }
+        /* conditions for fma / fms (manager) role *********/
+        else if(Auth::user()->hasRole('fms|fma')){
+            $manager_users = UserManager::where('manager_id', Auth::user()->merchandiser_id)
+                ->get()
+                ->pluck('user_id');
+
+            $schedules->whereIn('users.merchandiser_id', $manager_users);
         }
         /* *************************************************/
 

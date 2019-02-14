@@ -2,7 +2,6 @@
 
 @section('content')
 
-
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
@@ -226,6 +225,7 @@
         let searchText;
         let paginate = '20';
         let users;
+        let user_managers;
         let totalUser = 0;
         let userUrl = '/users-all';
         let userSaveUrl = '/users/save';
@@ -273,11 +273,13 @@
                     paginate: paginate
                 },
                 success: function(data){
+
                     /*--------------------------- table content ---------------------------------*/
-                    users = data.data;
+                    users = data.users.data;
+                    user_managers = data.user_managers;
                     let tbody = '';
 
-                    totalUser = data.total;
+                    totalUser = data.users.total;
 
                     //body
                     for (let user of users){
@@ -329,9 +331,9 @@
                     /*--------------------------------------------------------------------------*/
 
                     /*------------------------------ paging ------------------------------------*/
-                    let prevButton = '<button class="btn btn-default btn-sm" onclick="getUsers(\'' + data.prev_page_url + '\')"><i class="fa fa-arrow-left"></i></button>';
-                    let nextButton = '<button class="btn btn-default btn-sm" onclick="getUsers(\'' + data.next_page_url + '\')"><i class="fa fa-arrow-right"></i></button>';
-                    $('#page-nav').html(showPageNavigation(data, prevButton, nextButton));
+                    let prevButton = '<button class="btn btn-default btn-sm" onclick="getUsers(\'' + data.users.prev_page_url + '\')"><i class="fa fa-arrow-left"></i></button>';
+                    let nextButton = '<button class="btn btn-default btn-sm" onclick="getUsers(\'' + data.users.next_page_url + '\')"><i class="fa fa-arrow-right"></i></button>';
+                    $('#page-nav').html(showPageNavigation(data.users, prevButton, nextButton));
                     /*--------------------------------------------------------------------------*/
                     showLoading('loading-users', false);
                 }
@@ -443,13 +445,15 @@
             setEvent('update');
 
             let user = alasql("SELECT * FROM ? WHERE merchandiser_id = " + id + "", [users])[0];
+            let user_manager = alasql("SELECT manager_id FROM ? WHERE user_id = " + id + "", [user_managers]);
+            user_manager = objectPluck(user_manager, 'manager_id');
 
             selectedId = user.merchandiser_id;
             $('#account-status').val(user.account_status);
             $('#last-name').val(user.last_name);
             $('#first-name').val(user.first_name);
             $('#role').val(user.role_id);
-            $('#managers').val(user.fma_id).trigger('change');
+            $('#managers').val(user_manager).trigger('change');
             $('#coordinator').val(user.coordinator_id).trigger('change');
             $('#gender').val(user.gender);
             $('#contact-number').val(user.contact_number);

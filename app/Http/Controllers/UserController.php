@@ -119,7 +119,12 @@ class UserController extends Controller
                 ->paginate($paginate);
         }
 
-        return $users;
+        $user_managers = UserManager::all();
+
+        return [
+            'users' => $users,
+            'user_managers' => $user_managers,
+        ];
     }
 
     public function register(Request $request){
