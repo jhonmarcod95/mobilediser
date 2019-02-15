@@ -206,6 +206,13 @@ class HomeController extends Controller
         if(Auth::user()->hasRole('third.party')){
             $recentLogin->where('users.agency_code', Auth::user()->agency_code);
         }
+        else if(Auth::user()->hasRole('fms|fma')){
+            $manager_users = UserManager::where('manager_id', Auth::user()->merchandiser_id)
+                ->get()
+                ->pluck('user_id');
+
+            $recentLogin->whereIn('users.merchandiser_id', $manager_users);
+        }
         /* *************************************************/
 
         $recentLogin = $recentLogin->orderByDesc('merchandiser_attendance.id')
