@@ -49,7 +49,7 @@
             </div>
 
             {{-- Offtake --}}
-            @role(['admin', 'manager'])
+            {{--@role(['admin', 'manager'])--}}
             <div class="col-lg-3 col-xs-6">
                 <div class="box box-solid small-box bg-green">
                     <div class="inner">
@@ -63,10 +63,10 @@
                     <div id="loading-3"></div>
                 </div>
             </div>
-            @endrole
+            {{--@endrole--}}
 
             {{-- Near Expiry --}}
-            @role(['admin', 'manager'])
+            {{--@role(['admin', 'manager'])--}}
             <div class="col-lg-3 col-xs-6">
                 <div class="box box-solid small-box bg-red">
                     <div class="inner">
@@ -80,7 +80,7 @@
                     <div id="loading-1"></div>
                 </div>
             </div>
-            @endrole
+            {{--@endrole--}}
         </div>
 
         <!-- Main row -->
