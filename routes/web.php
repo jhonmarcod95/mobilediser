@@ -146,7 +146,7 @@ Route::group(['middleware' => ['auth']], function () {
     #offtake
     Route::group(['middleware' => ['permission:offtake.view']], function () {
         Route::get('/offtake', 'OfftakeController@index');
-        Route::get('/offtake-all', 'OfftakeController@indexData');
+        Route::get('/offtake-data', 'OfftakeController@indexData');
         Route::get('/offtake-filter', 'OfftakeController@filter');
 
         Route::post('/offtake-customer-data', 'OfftakeController@customerData');

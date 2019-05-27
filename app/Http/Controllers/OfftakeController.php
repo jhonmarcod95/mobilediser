@@ -121,12 +121,22 @@ class OfftakeController extends Controller
 
     }
 
+    public function indexData(Request $request){
+        $dateFrom = $request->date_from;
+        $dateTo = $request->date_to;
+
+        $transactions = TransactionOfftake::whereDate('created_at', '>=', $dateFrom)
+            ->whereDate('created_at', '<=', $dateTo)
+            ->get();
+
+        return $transactions;
+    }
+
     public function customerData(Request $request){
 
         $request->validate([
             'date_from' => 'required',
             'date_to' => 'required',
-            'material_codes' => 'required'
         ]);
 
 
@@ -139,7 +149,7 @@ class OfftakeController extends Controller
         $transactions = TransactionOfftake::whereDate('created_at', '>=', $dateFrom)
             ->whereDate('created_at', '<=', $dateTo)
             ->whereIn('customer_code', $customerCodes)
-            ->whereIn('material_code', $materialCodes)
+//            ->whereIn('material_code', $materialCodes)
             ->get();
 
         return [

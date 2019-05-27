@@ -59,6 +59,10 @@ class User extends Authenticatable implements Auditable
         return $result;
     }
 
+    public function customers(){
+        return $this->hasMany(Customer::class);
+    }
+
     /*
     * returns an array to be used in select tags
     * if third party user : filter only with same agency code

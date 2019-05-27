@@ -236,7 +236,10 @@ function selectValues(id){
     let result = [];
     $('#' + id + " option").each(function()
     {
-        result.push($(this).val());
+        if ($(this).val() !== '%'){
+            result.push($(this).val());
+        }
+
     });
     return result;
 }
