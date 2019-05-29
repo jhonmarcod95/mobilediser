@@ -369,6 +369,7 @@
                         "JOIN ? AS island ON island.island_group_code = region.island_group_code"
                         , [transactions, customerData, chainData, accountData, municipalityData, provinceData, regionData, islandData]);
 
+                    console.log(offtakeData);
                     showLoading('loading-customer', false);
                 },
                 error: function (data) {
@@ -421,47 +422,47 @@
 
                 let column_inventory = '';
 
-                // display inventory count
-                for (let date of date_ranges) {
-
-                    // date format to alasql
-                    alasql.fn.toDate = function (dateStr) {
-                        let date = new Date(dateStr);
-                        return moment(date).format('YYYY-MM-DD');
-                    };
-
-                    let inventories = alasql("SELECT * FROM ? " +
-                        "WHERE " +
-                        "customer_code = '" + customer_code + "' AND " +
-                        "material_code = '" + material_code + "' AND " +
-                        "toDate(created_at) = '" + date + "'", [offtakeData]);
-
-
-                    if (inventories.length > 0) {
-                        for (let inventory of inventories) {
-                            column_inventory +=
-                                '<td>' + inventory.beginning_balance +
-                                '<td>' + inventory.delivery +
-                                '<td>' + inventory.warehouse_area +
-                                '<td>' + inventory.shelves_area +
-                                '<td>' + inventory.bo_area +
-                                '<td>' + inventory.rtv +
-                                '<td>' + inventory.ending_balance +
-                                '<td>' + inventory.offtake;
-                        }
-                    }
-                    else {
-                        column_inventory +=
-                            '<td></td>' +
-                            '<td></td>' +
-                            '<td></td>' +
-                            '<td></td>' +
-                            '<td></td>' +
-                            '<td></td>' +
-                            '<td></td>' +
-                            '<td></td>';
-                    }
-                }
+                // // display inventory count
+                // for (let date of date_ranges) {
+                //
+                //     // date format to alasql
+                //     alasql.fn.toDate = function (dateStr) {
+                //         let date = new Date(dateStr);
+                //         return moment(date).format('YYYY-MM-DD');
+                //     };
+                //
+                //     let inventories = alasql("SELECT * FROM ? " +
+                //         "WHERE " +
+                //         "customer_code = '" + customer_code + "' AND " +
+                //         "material_code = '" + material_code + "' AND " +
+                //         "toDate(created_at) = '" + date + "'", [offtakeData]);
+                //
+                //
+                //     if (inventories.length > 0) {
+                //         for (let inventory of inventories) {
+                //             column_inventory +=
+                //                 '<td>' + inventory.beginning_balance +
+                //                 '<td>' + inventory.delivery +
+                //                 '<td>' + inventory.warehouse_area +
+                //                 '<td>' + inventory.shelves_area +
+                //                 '<td>' + inventory.bo_area +
+                //                 '<td>' + inventory.rtv +
+                //                 '<td>' + inventory.ending_balance +
+                //                 '<td>' + inventory.offtake;
+                //         }
+                //     }
+                //     else {
+                //         column_inventory +=
+                //             '<td></td>' +
+                //             '<td></td>' +
+                //             '<td></td>' +
+                //             '<td></td>' +
+                //             '<td></td>' +
+                //             '<td></td>' +
+                //             '<td></td>' +
+                //             '<td></td>';
+                //     }
+                // }
 
                 //generate row
                 let material_details = alasql("SELECT * FROM ? WHERE material_code = '" + material_code + "'", [materialData])[0];
