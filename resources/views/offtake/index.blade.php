@@ -357,6 +357,8 @@
                         "transaction.offtake," +
                         "transaction.customer_code," +
                         "transaction.material_code," +
+                        "material.material_description," +
+                        "material.base_unit," +
                         "transaction.created_at" +
                         " " +
                         "FROM ? AS transaction " +
@@ -367,10 +369,11 @@
                         "JOIN ? AS province ON province.provincial_code = municipality.provincial_code " +
                         "JOIN ? AS region ON region.region_code = province.region_code " +
                         "JOIN ? AS island ON island.island_group_code = region.island_group_code " +
+                        "JOIN ? AS material ON material.material_code = transaction.material_code " +
                         "ORDER BY " +
                         "transaction.material_code, " +
                         "transaction.created_at"
-                        , [transactions, customerData, chainData, accountData, municipalityData, provinceData, regionData, islandData]);
+                        , [transactions, customerData, chainData, accountData, municipalityData, provinceData, regionData, islandData, materialData]);
 
                     showLoading('loading-customer', false);
                 },
@@ -391,7 +394,6 @@
 
                 // generate tab headers
                 customerTabHtml += "<li class=\"\"><a href=\"#" + customer_code + "\" data-toggle=\"tab\" aria-expanded=\"false\" onclick=\"fetchOfftakeCustomerContent('" + customer_code + "')\">" + customer_name + "</a></li>";
-
             }
 
             $("#customer-tab").html(customerTabHtml);
@@ -417,89 +419,95 @@
             /* ***************************************/
 
             /* generate inventory content ************/
+
+            // generate json
             let inventory_content = '';
             let inventories = alasql("SELECT * FROM ? WHERE customer_code = '" + customer_code + "'", [offtakeData]);
-            let inventory_dates = date_ranges;
+            let materials = alasql("SELECT DISTINCT material_code, material_description, base_unit FROM ? ", [inventories]);
 
-            let inventory_column = '';
-            console.log(date_ranges);
-            loop1:
-            for (let inventory of inventories){
+            let offtakeDatas = JSON.parse('[]');
+            for (let material of materials){
 
+                let inventory = alasql("SELECT * FROM ? WHERE material_code = '" + material.material_code + "'", [inventories]);
 
-                let created_at = moment(inventory.created_at).format('YYYY-MM-DD');
+                offtakeDatas.push({
+                    "material": material.material_code,
+                    "material_description": material.material_description,
+                    "base_unit": material.base_unit,
+                    "inventories": inventory
+                });
+            }
 
-                loop2:
-                for (let inventory_date of inventory_dates){
+            // fetch json into table rows
+            for (let offtakeData of offtakeDatas){
 
-                    if(inventory_date === created_at){
-                        inventory_column +=
-                            '<td>' + inventory.material_code +
-                            '<td>' + inventory.material_code +
-                            '<td>' + inventory.material_code +
-                            '<td>' + inventory.beginning_balance +
-                            '<td>' + inventory.delivery +
-                            '<td>' + inventory.warehouse_area +
-                            '<td>' + inventory.shelves_area +
-                            '<td>' + inventory.bo_area +
-                            '<td>' + inventory.rtv +
-                            '<td>' + inventory.ending_balance +
-                            '<td>' + inventory.offtake +
-                            '';
+                let inventory_column = '';
 
-                        removeA(inventory_dates, inventory_date);
-                        break loop2;
+                let prev_beginning_balance = '';
+                let prev_delivery = '';
+                let prev_warehouse = '';
+                let prev_shelves = '';
+                let prev_bo_area = '';
+                let prev_rtv = '';
+                let prev_ending_balance = '';
+                let prev_offtake = '';
+
+                for(let date of date_ranges){
+
+                    alasql.fn.toDate = function (dateStr) {  // date format to alasql
+                        let date = new Date(dateStr);
+                        return moment(date).format('YYYY-MM-DD');
+                    };
+
+                    let inventories = alasql("SELECT * FROM ? WHERE toDate(created_at) = '" + date + "'", [offtakeData.inventories]);
+
+                    if (inventories.length > 0){
+                        for (let inventory of inventories){
+                            inventory_column +=
+                                '<td style="color: #0d6aad">' + inventory.beginning_balance +
+                                '<td style="color: #0d6aad">' + inventory.delivery +
+                                '<td style="color: #0d6aad">' + inventory.warehouse_area +
+                                '<td style="color: #0d6aad">' + inventory.shelves_area +
+                                '<td style="color: #0d6aad">' + inventory.bo_area +
+                                '<td style="color: #0d6aad">' + inventory.rtv +
+                                '<td style="color: #0d6aad">' + inventory.ending_balance +
+                                '<td style="color: #0d6aad">' + inventory.offtake;
+
+                            // prev_beginning_balance = inventory.beginning_balance;
+                            // prev_delivery = inventory.delivery;
+                            // prev_warehouse = inventory.warehouse_area;
+                            // prev_shelves = inventory.shelves_area;
+                            // prev_bo_area = inventory.bo_area;
+                            // prev_rtv = inventory.rtv;
+                            // prev_ending_balance = inventory.ending_balance;
+                            // prev_offtake = inventory.offtake;
+                        }
                     }
                     else{
                         inventory_column +=
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '<td>' +
-                            '';
+                            '<td>' + prev_beginning_balance +
+                            '<td>' + prev_delivery +
+                            '<td>' + prev_warehouse +
+                            '<td>' + prev_shelves +
+                            '<td>' + prev_bo_area +
+                            '<td>' + prev_rtv +
+                            '<td>' + prev_ending_balance +
+                            '<td>' + prev_offtake;
+
                     }
 
 
-
-
-                }
-                // console.log(inventory_dates);
-
-
-
-                if(created_at === '2019-05-15'){
-
-                    inventory_content += '<tr>' + inventory_column + '</tr>';
-                    inventory_column = '';
-                    inventory_dates = [
-                        '2019-05-01',
-                        '2019-05-02',
-                        '2019-05-03',
-                        '2019-05-04',
-                        '2019-05-05',
-                        '2019-05-06',
-                        '2019-05-07',
-                        '2019-05-08',
-                        '2019-05-09',
-                        '2019-05-10',
-                        '2019-05-11',
-                        '2019-05-12',
-                        '2019-05-13',
-                        '2019-05-14',
-                        '2019-05-15',
-                    ];
-
-                    console.log(inventory_dates);
                 }
 
+                inventory_content +=
+                    '<tr>' +
+                        '<td>' + offtakeData.material +
+                        '<td>' + offtakeData.material_description +
+                        '<td>' + offtakeData.base_unit +
+                        inventory_column +
+                    '</tr>';
             }
+            /* ***************************************/
 
             /* generate table ************************/
             let tableOfftakeHtml =
@@ -518,7 +526,7 @@
                         '</tr>' +
                     '</thead>' +
                     '<tbody>' +
-                '<tr>' +
+                    '<tr>' +
                         inventory_content +
                     '</tr>' +
                 '</tbody>' +
@@ -530,16 +538,6 @@
 
         }
 
-        function removeA(arr) {
-            var what, a = arguments, L = a.length, ax;
-            while (L > 1 && arr.length) {
-                what = a[--L];
-                while ((ax= arr.indexOf(what)) !== -1) {
-                    arr.splice(ax, 1);
-                }
-            }
-            return arr;
-        }
 
     </script>
 @endsection
