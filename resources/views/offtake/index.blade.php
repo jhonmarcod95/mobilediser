@@ -58,20 +58,7 @@
 
                         {{-- Second Filter --}}
                         <div class="row">
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label class="text-muted">Category : </label>
-                                    <select id="category" name="category" class="form-control"></select>
-                                </div>
-                            </div>
 
-                            {{-- SKU --}}
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="text-muted">SKU : </label>
-                                    <select id="materials" name="materials" class="form-control"></select>
-                                </div>
-                            </div>
 
                             <div class="col-md-2">
                                 <div class="form-group">
@@ -107,6 +94,42 @@
             </div>
         </div>
 
+        {{-- Offtake Per Chain --}}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-default">
+                    <div class="box-header ">
+                        <label>Offtake Per Chain </label>
+                    </div>
+                    <div class="box-body">
+                        <!-- Custom Tabs -->
+                        <div class="nav-tabs-custom">
+                            <ul id="chain-tab" class="nav nav-tabs">
+                            </ul>
+                        </div>
+
+                        {{-- Chain Offtake Table --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="chain-tab-content">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        {{-- Chain Offtake Table (By Item Category) --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="chain-tab-content-item-category">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="loading-chain"></div>
+                </div>
+            </div>
+        </div>
 
         {{-- Offtake Per Customer Box --}}
         <div class="row">
@@ -145,8 +168,6 @@
             </div>
         </div>
 
-        {{-- --}}
-
     </section>
 
 @endsection
@@ -171,6 +192,7 @@
 
         let customer_codes;
         let material_codes;
+        let chain_codes;
         let date_from;
         let date_to;
         let date_ranges;
@@ -323,9 +345,10 @@
                 customer_codes = selectValues('customers');
             }
 
-            material_codes = $('#materials').val();
-            if (material_codes.includes('%')){ // selected `all`
-                material_codes = selectValues('materials');
+            // set parameters from input
+            chain_codes = $('#chain').val();
+            if (chain_codes.includes('%')){ // selected `all`
+                chain_codes = selectValues('chain');
             }
 
             date_from = $('#date-from').val();
@@ -335,6 +358,8 @@
             $('#response-details').html('');
 
             fetchOfftake();
+
+            fetchOfftakeChainTab();
             fetchOfftakeCustomerTab();
         });
 
@@ -401,6 +426,7 @@
             });
         }
 
+        /*  Customer Offtake Filter *******************/
         function fetchOfftakeCustomerTab() {
             let customerTabHtml = '';
 
@@ -417,6 +443,67 @@
 
         function fetchOfftakeCustomerContent(customer_code) {
 
+            let inventories = alasql("SELECT * FROM ? WHERE customer_code = '" + customer_code + "'", [offtakeData]);
+
+            generateOfftakeTable(inventories, 'customer-tab-content');
+            generateOfftakeCategoryTable(inventories, 'customer-tab-content-item-category');
+        }
+        /* *******************************************/
+
+        /*  Chain Offtake Filter *********************/
+        function fetchOfftakeChainTab() {
+            let chainHtmlTab = '';
+
+            for(let chain_code of chain_codes){
+
+                let chain_description = alasql("SELECT description FROM ? WHERE chain_code = '" + chain_code + "'", [chainData])[0].description;
+
+                // generate tab headers
+                chainHtmlTab += "<li class=\"\"><a href=\"#" + chain_code + "\" data-toggle=\"tab\" aria-expanded=\"false\" onclick=\"fetchOfftakeChainContent('" + chain_code + "')\">" + chain_description + "</a></li>";
+            }
+
+            $("#chain-tab").html(chainHtmlTab);
+        }
+
+        function fetchOfftakeChainContent(chain_code) {
+
+            let inventories = alasql("" +
+                "SELECT " +
+                "SUM(beginning_balance) AS `beginning_balance`," +
+                "SUM(delivery) AS `delivery`," +
+                "SUM(warehouse_area) AS `warehouse_area`," +
+                "SUM(shelves_area) AS `shelves_area`," +
+                "SUM(bo_area) AS `bo_area`," +
+                "SUM(rtv) AS `rtv`," +
+                "SUM(ending_balance) AS `ending_balance`," +
+                "SUM(offtake) AS `offtake`," +
+                "chain_code," +
+                "material_code," +
+                "material_description," +
+                "main_group," +
+                "sub_group," +
+                "base_unit," +
+                "toDate(created_at) AS `created_at`" +
+                " " +
+                "FROM ? " +
+                "WHERE chain_code = '" + chain_code + "' " +
+                "GROUP BY " +
+                "chain_code," +
+                "material_code," +
+                "material_description," +
+                "main_group," +
+                "sub_group," +
+                "base_unit," +
+                "toDate(created_at)" +
+                "", [offtakeData]);
+
+            generateOfftakeTable(inventories, 'chain-tab-content');
+            generateOfftakeCategoryTable(inventories, 'chain-tab-content-item-category');
+        }
+        /* *******************************************/
+
+
+        function generateOfftakeTable(data, table_id) {
             /* generate column headers **************/
             let column_header_date = '';
             let column_header_inventory = '';
@@ -434,20 +521,13 @@
             }
             /* ***************************************/
 
-            /* generate inventory content ************/
-
-            // generate json
             let inventory_content = '';
-            let inventories = alasql("SELECT * FROM ? WHERE customer_code = '" + customer_code + "'", [offtakeData]);
-
-            fetchOfftakeCategory(inventories);
-
-            // generate materials as table row
-            let materials = alasql("SELECT DISTINCT material_code, material_description, base_unit FROM ? ", [inventories]);
+            /* generate inventory content ************/
+            let materials = alasql("SELECT DISTINCT material_code, material_description, base_unit FROM ? ", [data]); // generate materials as table row
             let offtakeDatas = JSON.parse('[]');
             for (let material of materials){
 
-                let inventory = alasql("SELECT * FROM ? WHERE material_code = '" + material.material_code + "'", [inventories]);
+                let inventory = alasql("SELECT * FROM ? WHERE material_code = '" + material.material_code + "'", [data]);
 
                 offtakeDatas.push({
                     "material": material.material_code,
@@ -461,7 +541,6 @@
             for (let offtakeData of offtakeDatas){
 
                 let inventory_column = '';
-
                 let prev_beginning_balance = '';
                 let prev_delivery = '';
                 let prev_warehouse = '';
@@ -473,54 +552,49 @@
 
                 for(let date of date_ranges){
 
-                    alasql.fn.toDate = function (dateStr) {  // date format to alasql
-                        let date = new Date(dateStr);
-                        return moment(date).format('YYYY-MM-DD');
-                    };
-
                     let inventories = alasql("SELECT * FROM ? WHERE toDate(created_at) = '" + date + "'", [offtakeData.inventories]);
 
                     if (inventories.length > 0){
                         for (let inventory of inventories){
                             inventory_column +=
-                                '<td style="color: #0d6aad">' + inventory.beginning_balance +
-                                '<td style="color: #0d6aad">' + inventory.delivery +
-                                '<td style="color: #0d6aad">' + inventory.warehouse_area +
-                                '<td style="color: #0d6aad">' + inventory.shelves_area +
-                                '<td style="color: #0d6aad">' + inventory.bo_area +
-                                '<td style="color: #0d6aad">' + inventory.rtv +
-                                '<td style="color: #0d6aad">' + inventory.ending_balance +
-                                '<td style="color: #0d6aad">' + inventory.offtake;
+                                '<td>' + inventory.beginning_balance +
+                                '<td>' + inventory.delivery +
+                                '<td>' + inventory.warehouse_area +
+                                '<td>' + inventory.shelves_area +
+                                '<td>' + inventory.bo_area +
+                                '<td>' + inventory.rtv +
+                                '<td>' + inventory.ending_balance +
+                                '<td>' + inventory.offtake;
 
-                            // prev_beginning_balance = inventory.beginning_balance;
-                            // prev_delivery = inventory.delivery;
-                            // prev_warehouse = inventory.warehouse_area;
-                            // prev_shelves = inventory.shelves_area;
-                            // prev_bo_area = inventory.bo_area;
-                            // prev_rtv = inventory.rtv;
-                            // prev_ending_balance = inventory.ending_balance;
-                            // prev_offtake = inventory.offtake;
+                            prev_beginning_balance = inventory.ending_balance;
+                            prev_delivery = '0';
+                            prev_warehouse = inventory.warehouse_area;
+                            prev_shelves = inventory.shelves_area;
+                            prev_bo_area = inventory.bo_area;
+                            prev_rtv = '0';
+                            prev_ending_balance = inventory.ending_balance;
+                            prev_offtake = '0';
                         }
                     }
                     else{
                         inventory_column +=
-                            '<td>' + prev_beginning_balance +
-                            '<td>' + prev_delivery +
-                            '<td>' + prev_warehouse +
-                            '<td>' + prev_shelves +
-                            '<td>' + prev_bo_area +
-                            '<td>' + prev_rtv +
-                            '<td>' + prev_ending_balance +
-                            '<td>' + prev_offtake;
+                            '<td style="color: red;">' + prev_beginning_balance +
+                            '<td style="color: red;">' + prev_delivery +
+                            '<td style="color: red;">' + prev_warehouse +
+                            '<td style="color: red;">' + prev_shelves +
+                            '<td style="color: red;">' + prev_bo_area +
+                            '<td style="color: red;">' + prev_rtv +
+                            '<td style="color: red;">' + prev_ending_balance +
+                            '<td style="color: red;">' + prev_offtake;
                     }
                 }
 
                 inventory_content +=
                     '<tr>' +
-                        '<td>' + offtakeData.material +
-                        '<td>' + offtakeData.material_description +
-                        '<td>' + offtakeData.base_unit +
-                        inventory_column +
+                    '<td>' + offtakeData.material +
+                    '<td>' + offtakeData.material_description +
+                    '<td>' + offtakeData.base_unit +
+                    inventory_column +
                     '</tr>';
             }
             /* ***************************************/
@@ -528,33 +602,32 @@
             /* generate table ************************/
             let tableOfftakeHtml =
                 '<div class="table-responsive">' +
-                    '<table class="table table-bordered" style="white-space: nowrap; width: 100%">' +
-                    '<thead>' +
-                        '<tr>' +
-                            '<th colspan="3" style="text-align: center">Production Information' +
-                                column_header_date +
-                        '</tr>' +
-                        '<tr>' +
-                            '<th>Material Code' +
-                            '<th>Material Description' +
-                            '<th>Base UOM' +
-                            column_header_inventory +
-                        '</tr>' +
-                    '</thead>' +
-                    '<tbody>' +
-                    '<tr>' +
-                        inventory_content +
-                    '</tr>' +
+                '<table class="table table-bordered" style="white-space: nowrap; width: 100%">' +
+                '<thead>' +
+                '<tr>' +
+                '<th colspan="3" style="text-align: center">Production Information' +
+                column_header_date +
+                '</tr>' +
+                '<tr>' +
+                '<th>Material Code' +
+                '<th>Material Description' +
+                '<th>Base UOM' +
+                column_header_inventory +
+                '</tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr>' +
+                inventory_content +
+                '</tr>' +
                 '</tbody>' +
-                    '</table>' +
+                '</table>' +
                 '</div>';
 
-            $("#customer-tab-content").html(tableOfftakeHtml);
+            $("#" + table_id).html(tableOfftakeHtml);
             /* **************************************/
-
         }
-        
-        function fetchOfftakeCategory(data) {
+
+        function generateOfftakeCategoryTable(data, table_id) {
 
             /* generate column headers **************/
             let column_header_date = '';
@@ -575,11 +648,6 @@
 
             /* generate inventory content ************/
             let inventory_content = '';
-
-            alasql.fn.toDate = function (dateStr) {  // date format to alasql
-                let date = new Date(dateStr);
-                return moment(date).format('YYYY-MM-DD');
-            };
 
             let offtakeCategories = alasql("" +
                 "SELECT " +
@@ -609,13 +677,16 @@
 
                 let inventory = alasql("SELECT * FROM ? WHERE main_group = '" + category.group_main_code + "' AND sub_group = '" + category.group_sub_code + "'", [offtakeCategories]);
 
-                offtakeDatas.push({
-                    "group_main_code": category.group_main_code,
-                    "group_main_description": category.group_main_description,
-                    "group_sub_code": category.group_sub_code,
-                    "group_sub_description": category.group_sub_description,
-                    "inventories": inventory
-                });
+                if (inventory.length > 0){ // only those categories with inventory will display
+                    offtakeDatas.push({
+                        "group_main_code": category.group_main_code,
+                        "group_main_description": category.group_main_description,
+                        "group_sub_code": category.group_sub_code,
+                        "group_sub_description": category.group_sub_description,
+                        "inventories": inventory
+                    });
+                }
+
             }
 
             // fetch json into table rows
@@ -639,26 +710,35 @@
                     if (inventories.length > 0){
                         for (let inventory of inventories){
                             inventory_column +=
-                                '<td style="color: #0d6aad">' + inventory.beginning_balance +
-                                '<td style="color: #0d6aad">' + inventory.delivery +
-                                '<td style="color: #0d6aad">' + inventory.warehouse_area +
-                                '<td style="color: #0d6aad">' + inventory.shelves_area +
-                                '<td style="color: #0d6aad">' + inventory.bo_area +
-                                '<td style="color: #0d6aad">' + inventory.rtv +
-                                '<td style="color: #0d6aad">' + inventory.ending_balance +
-                                '<td style="color: #0d6aad">' + inventory.offtake;
+                                '<td>' + inventory.beginning_balance +
+                                '<td>' + inventory.delivery +
+                                '<td>' + inventory.warehouse_area +
+                                '<td>' + inventory.shelves_area +
+                                '<td>' + inventory.bo_area +
+                                '<td>' + inventory.rtv +
+                                '<td>' + inventory.ending_balance +
+                                '<td>' + inventory.offtake;
+
+                            prev_beginning_balance = inventory.ending_balance;
+                            prev_delivery = '0';
+                            prev_warehouse = inventory.warehouse_area;
+                            prev_shelves = inventory.shelves_area;
+                            prev_bo_area = inventory.bo_area;
+                            prev_rtv = '0';
+                            prev_ending_balance = inventory.ending_balance;
+                            prev_offtake = '0';
                         }
                     }
                     else{
                         inventory_column +=
-                            '<td>' + prev_beginning_balance +
-                            '<td>' + prev_delivery +
-                            '<td>' + prev_warehouse +
-                            '<td>' + prev_shelves +
-                            '<td>' + prev_bo_area +
-                            '<td>' + prev_rtv +
-                            '<td>' + prev_ending_balance +
-                            '<td>' + prev_offtake;
+                            '<td style="color: red;">' + prev_beginning_balance +
+                            '<td style="color: red;">' + prev_delivery +
+                            '<td style="color: red;">' + prev_warehouse +
+                            '<td style="color: red;">' + prev_shelves +
+                            '<td style="color: red;">' + prev_bo_area +
+                            '<td style="color: red;">' + prev_rtv +
+                            '<td style="color: red;">' + prev_ending_balance +
+                            '<td style="color: red;">' + prev_offtake;
                     }
                 }
 
@@ -692,41 +772,16 @@
                     '</table>' +
                 '</div>';
 
-            $("#customer-tab-content-item-category").html(tableOfftakeHtml);
+            $("#" + table_id).html(tableOfftakeHtml);
             /* **************************************/
 
         }
 
-        function fetchOfftakeChain() {
-            console.log(alasql("select * from ? where chain_code = '004'", [offtakeData]));
-            // let chainInventories = alasql("" +
-            //     "SELECT " +
-            //     "SUM(beginning_balance) AS `beginning_balance`," +
-            //     "SUM(delivery) AS `delivery`," +
-            //     "SUM(warehouse_area) AS `warehouse_area`," +
-            //     "SUM(shelves_area) AS `shelves_area`," +
-            //     "SUM(bo_area) AS `bo_area`," +
-            //     "SUM(rtv) AS `rtv`," +
-            //     "SUM(ending_balance) AS `ending_balance`," +
-            //     "SUM(offtake) AS `offtake`," +
-            //     "chain_code," +
-            //     "material_code," +
-            //     "material_description," +
-            //     "base_unit," +
-            //     "created_at" +
-            //     " " +
-            //     "FROM ? " +
-            //     "GROUP BY " +
-            //     "chain_code," +
-            //     "material_code," +
-            //     "material_description," +
-            //     "base_unit," +
-            //     "created_at" +
-            //     "", [offtakeData]);
-            //
-            // console.log(chainInventories);
-        }
-
+        // date format to alasql
+        alasql.fn.toDate = function (dateStr) {
+            let date = new Date(dateStr);
+            return moment(date).format('YYYY-MM-DD');
+        };
 
     </script>
 @endsection
