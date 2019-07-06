@@ -59,7 +59,6 @@
                         {{-- Second Filter --}}
                         <div class="row">
 
-
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="text-muted">Date From</label>
@@ -74,13 +73,22 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label class="text-muted">&nbsp;</label><br>
-                                    <button id="btn-filter" class="btn btn-default"><i class="fa fa-filter"></i>Filter</button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-inline">
+                                    <div class="form-group mx-sm-3 mb-2">
+                                        <button id="btn-filter-accounts" class="btn btn-default">Offtake Per Accounts</button>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <button id="btn-filter-chain" class="btn btn-default">Offtake Per Chain</button>
+                                    </div>
+                                    <div class="form-group mx-sm-3 mb-2">
+                                        <button id="btn-filter-customer" class="btn btn-default">Offtake Per Customer</button>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
 
                         {{-- JSON Response --}}
@@ -90,6 +98,43 @@
                         </div>
 
                     </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Offtake Per Accounts --}}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-default">
+                    <div class="box-header ">
+                        <label>Offtake Per Account </label>
+                    </div>
+                    <div class="box-body">
+                        <!-- Accounts Tabs -->
+                        <div class="nav-tabs-custom">
+                            <ul id="accounts-tab" class="nav nav-tabs">
+                            </ul>
+                        </div>
+
+                        {{-- Accounts Offtake Table --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="accounts-tab-content">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        {{-- Accounts Offtake Table (By Item Category) --}}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="accounts-tab-content-item-category">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="loading-accounts"></div>
                 </div>
             </div>
         </div>
@@ -175,7 +220,6 @@
 @section('script')
     <script>
 
-        // $('#customer').val('%').trigger('change');
         $('#customer-account').val(null).trigger('change');
         // $('#chain').val('%').trigger('change');
 
@@ -191,7 +235,6 @@
         let accountData;
 
         let customer_codes;
-        let material_codes;
         let chain_codes;
         let date_from;
         let date_to;
@@ -250,16 +293,13 @@
             let chains = $("#chain").val();
 
             /* populate customer in select2 *************************/
-            let customerLength = 0; // use to hide & show option `all`
             $("#customers").html(""); // clear items
             for(let chain of chains){ // add items
 
                 let customers = alasql("SELECT customer_code, (`name` + ' ' + `branch`) FROM ? WHERE chain_code LIKE '" + chain + "'", [customerData]);
                 populateSelect('customers', customers);
-                customerLength += customers.length;
             }
-            if (customerLength > 0) $("#customers").append(optionAll()); // add `all` option
-            setSelect2Multiple('customers');
+            setSelect2Multiple('customers', 5);
             /* *****************************************************/
         });
 
@@ -337,15 +377,31 @@
         });
 
         // filter event
-        $('#btn-filter').click(function () {
+        $('#btn-filter-chain').click(function () {
+            setParameters();
+            fetchOfftake(1, 'loading-chain');
+            fetchOfftakeChainTab();
+        });
+
+        // filter event
+        $('#btn-filter-customer').click(function () {
+            setParameters();
+            fetchOfftake(2, 'loading-customer');
+            fetchOfftakeCustomerTab();
+        });
+
+        // filter event
+        $('#btn-filter-accounts').click(function () {
+            setParameters();
+            fetchOfftake(1, 'loading-accounts');
+            fetchOfftakeAccountsTab();
+        });
+
+
+        function setParameters() {
 
             // set parameters from input
             customer_codes = $('#customers').val();
-            if (customer_codes.includes('%')){ // selected `all`
-                customer_codes = selectValues('customers');
-            }
-
-            // set parameters from input
             chain_codes = $('#chain').val();
             if (chain_codes.includes('%')){ // selected `all`
                 chain_codes = selectValues('chain');
@@ -356,16 +412,55 @@
 
             // clear response for every request
             $('#response-details').html('');
+        }
 
-            fetchOfftake();
+        function locationFilter(){
+            let result = '';
 
-            fetchOfftakeChainTab();
-            fetchOfftakeCustomerTab();
-        });
+            let places = $('#place').val();
+            if (places === '%'){
+                result = '';
+            }
+            else{
+                result = "WHERE ";
 
+                let islands = $('#island').val();
+                result += "island.island_group_code LIKE '" + islands + "'";
 
-        function fetchOfftake(){
-            showLoading('loading-customer', true);
+                let region = $('#region').val();
+                let province = $('#province').val();
+                let municipality = $('#municipality').val();
+
+                if(region){
+                    if (region.includes('%')){ // selected `all`
+                        region = selectValues('region');
+                        region = arrayToSingleQuotes(region);
+                    }
+                }
+
+                if(province){
+                    if (province.includes('%')){ // selected `all`
+                        province = selectValues('province');
+                        province = arrayToSingleQuotes(province);
+                    }
+                }
+
+                if(municipality){
+                    if (municipality.includes('%')){ // selected `all`
+                        municipality = selectValues('municipality');
+                        municipality = arrayToSingleQuotes(municipality);
+                    }
+                }
+
+            }
+
+            return result;
+        }
+
+        function fetchOfftake(type, loading_id){
+            let filters = locationFilter();
+
+            showLoading(loading_id, true);
 
             $.ajax({
                 type: 'POST',
@@ -373,6 +468,7 @@
                 data: {
                     customer_codes: customer_codes,
                     // material_codes: material_codes,
+                    type: type,
                     date_from: date_from,
                     date_to: date_to,
                     _token: '{{ csrf_token() }}'
@@ -393,7 +489,12 @@
                         "transaction.rtv," +
                         "transaction.ending_balance," +
                         "transaction.offtake," +
+                        "municipality.municipality_code," +
+                        "province.provincial_code," +
+                        "region.region_code," +
+                        "island.island_group_code," +
                         "transaction.customer_code," +
+                        "account.account_code," +
                         "chain.chain_code," +
                         "transaction.material_code," +
                         "material.material_description," +
@@ -411,16 +512,17 @@
                         "JOIN ? AS region ON region.region_code = province.region_code " +
                         "JOIN ? AS island ON island.island_group_code = region.island_group_code " +
                         "JOIN ? AS material ON material.material_code = transaction.material_code " +
+                        filters +
                         "ORDER BY " +
                         "transaction.material_code, " +
                         "transaction.created_at"
                         , [transactions, customerData, chainData, accountData, municipalityData, provinceData, regionData, islandData, materialData]);
 
-                    showLoading('loading-customer', false);
+                    showLoading(loading_id, false);
                 },
                 error: function (data) {
                     $('#response-details').html(showErrorAlert(data));
-                    showLoading('loading-customer', false);
+                    showLoading(loading_id, false);
                 }
 
             });
@@ -502,6 +604,57 @@
         }
         /* *******************************************/
 
+        /*  Accounts Offtake Filter ******************/
+        function fetchOfftakeAccountsTab() {
+            let accountsHtmlTab = '';
+
+            let customer_account = $('#customer-account').val();
+            let accounts = alasql("SELECT * FROM ? WHERE account_code LIKE '" + customer_account + "'", [accountData]);
+
+            for(let account of accounts){
+                // generate tab headers
+                accountsHtmlTab += "<li class=\"\"><a href=\"#" + account.account_code + "\" data-toggle=\"tab\" aria-expanded=\"false\" onclick=\"fetchOfftakeAccountsContent('" + account.account_code + "')\">" + account.description + "</a></li>";
+            }
+
+            $("#accounts-tab").html(accountsHtmlTab);
+        }
+
+        function fetchOfftakeAccountsContent(account_code) {
+
+            let inventories = alasql("" +
+                "SELECT " +
+                "SUM(beginning_balance) AS `beginning_balance`," +
+                "SUM(delivery) AS `delivery`," +
+                "SUM(warehouse_area) AS `warehouse_area`," +
+                "SUM(shelves_area) AS `shelves_area`," +
+                "SUM(bo_area) AS `bo_area`," +
+                "SUM(rtv) AS `rtv`," +
+                "SUM(ending_balance) AS `ending_balance`," +
+                "SUM(offtake) AS `offtake`," +
+                "account_code," +
+                "material_code," +
+                "material_description," +
+                "main_group," +
+                "sub_group," +
+                "base_unit," +
+                "toDate(created_at) AS `created_at`" +
+                " " +
+                "FROM ? " +
+                "WHERE chain_code = '" + account_code + "' " +
+                "GROUP BY " +
+                "account_code," +
+                "material_code," +
+                "material_description," +
+                "main_group," +
+                "sub_group," +
+                "base_unit," +
+                "toDate(created_at)" +
+                "", [offtakeData]);
+
+            generateOfftakeTable(inventories, 'accounts-tab-content');
+            generateOfftakeCategoryTable(inventories, 'accounts-tab-content-item-category');
+        }
+        /* *******************************************/
 
         function generateOfftakeTable(data, table_id) {
             /* generate column headers **************/

@@ -135,21 +135,23 @@ class OfftakeController extends Controller
     public function customerData(Request $request){
 
         $request->validate([
-            'date_from' => 'required',
-            'date_to' => 'required',
+            'date_from' => 'required|date',
+            'date_to' => 'required|date|after_or_equal:date_from',
+
         ]);
 
 
         $dateFrom = $request->date_from;
         $dateTo = $request->date_to;
         $customerCodes = $request->customer_codes;
-        $materialCodes = $request->material_codes;
+        $type = $request->type; // for performance purpose (ex: 1 = all filter, 2 = specific filter)
 
         $dates = ScheduleController::getDateRange($dateFrom, $dateTo);
         $transactions = TransactionOfftake::whereDate('created_at', '>=', $dateFrom)
             ->whereDate('created_at', '<=', $dateTo)
-            ->whereIn('customer_code', $customerCodes)
-//            ->whereIn('material_code', $materialCodes)
+            ->when($type == 2, function ($query, $type) use ($customerCodes) {
+                return $query->whereIn('customer_code', $customerCodes);
+            })
             ->get();
 
         return [

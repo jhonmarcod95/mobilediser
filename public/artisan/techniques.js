@@ -243,3 +243,7 @@ function selectValues(id){
     });
     return result;
 }
+
+function arrayToSingleQuotes(array){ //ex: ['a', 'b', 'c'] => 'a','b','c'
+    return array.map(arr => `'${arr}'`).join(',');
+}

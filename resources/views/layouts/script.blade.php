@@ -89,8 +89,8 @@
     /**************************************************************/
 
     /* set's select tag into select multiple options **************/
-    function setSelect2Multiple(id) {
-        $('#' + id).select2({multiple:true, placeholder: 'Select value...', width: '100%'});
+    function setSelect2Multiple(id, max) {
+        $('#' + id).select2({multiple:true, placeholder: 'Select value...', maximumSelectionLength: max, width: '100%'});
         $('#' + id).val(null).trigger('change');
     }
     /*************************************************************/
@@ -140,7 +140,6 @@
         return checked;
     }
 
-
     function getDaysOfMonth(monthYear, pDay){
         var days = [];
         var day = moment(monthYear).day(pDay);
@@ -174,7 +173,6 @@
         }
         return result
     }
-
 
     /* export to excel function **********************************/
     var tableToExcel = (function() {
