@@ -425,33 +425,37 @@
                 result = "WHERE ";
 
                 let islands = $('#island').val();
-                result += "island.island_group_code LIKE '" + islands + "'";
-
                 let region = $('#region').val();
                 let province = $('#province').val();
                 let municipality = $('#municipality').val();
 
+                if(islands){
+                    result += "island.island_group_code LIKE '" + islands + "'";
+                }
+
                 if(region){
                     if (region.includes('%')){ // selected `all`
                         region = selectValues('region');
-                        region = arrayToSingleQuotes(region);
                     }
+                    region = arrayToSingleQuotes(region);
+                    result += "region.region_code IN (" + region + ")";
                 }
 
                 if(province){
                     if (province.includes('%')){ // selected `all`
                         province = selectValues('province');
-                        province = arrayToSingleQuotes(province);
                     }
+                    province = arrayToSingleQuotes(province);
+                    result += "province.provincial_code IN (" + province + ")";
                 }
 
                 if(municipality){
                     if (municipality.includes('%')){ // selected `all`
                         municipality = selectValues('municipality');
-                        municipality = arrayToSingleQuotes(municipality);
                     }
+                    municipality = arrayToSingleQuotes(municipality);
+                    result += "municipality.municipality_code IN (" + municipality + ")";
                 }
-
             }
 
             return result;
@@ -524,7 +528,6 @@
                     $('#response-details').html(showErrorAlert(data));
                     showLoading(loading_id, false);
                 }
-
             });
         }
 
