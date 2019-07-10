@@ -58,7 +58,6 @@
 
                         {{-- Second Filter --}}
                         <div class="row">
-
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="text-muted">Date From</label>
@@ -72,7 +71,6 @@
                                     <input id="date-to" name="date_to" type="date" class="form-control">
                                 </div>
                             </div>
-
                         </div>
 
                         <div class="row">
@@ -93,7 +91,7 @@
 
                         {{-- JSON Response --}}
                         <div class="row">
-                            <div id="response-details" class="col-md-12">
+                            <div id="response-details" class="col-md-12" style="margin-top: 12px">
                             </div>
                         </div>
 
@@ -102,12 +100,19 @@
             </div>
         </div>
 
+
         {{-- Offtake Per Accounts --}}
-        <div class="row">
+        <div id="div-offtake-account" hidden class="row">
             <div class="col-md-12">
                 <div class="box box-default">
                     <div class="box-header ">
                         <label>Offtake Per Account </label>
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                <button onclick="tableToExcel('table-offtake')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Material</button>
+                                <button onclick="tableToExcel('table-offtake-category')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Category</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="box-body">
                         <!-- Accounts Tabs -->
@@ -140,11 +145,16 @@
         </div>
 
         {{-- Offtake Per Chain --}}
-        <div class="row">
+        <div id="div-offtake-chain" hidden class="row">
             <div class="col-md-12">
                 <div class="box box-default">
                     <div class="box-header ">
                         <label>Offtake Per Chain </label>
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                <button class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="box-body">
                         <!-- Custom Tabs -->
@@ -177,11 +187,16 @@
         </div>
 
         {{-- Offtake Per Customer Box --}}
-        <div class="row">
+        <div id="div-offtake-customer" hidden class="row">
             <div class="col-md-12">
                 <div class="box box-default">
                     <div class="box-header ">
                         <label>Offtake Per Customer </label>
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                <button class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="box-body">
                         <!-- Custom Tabs -->
@@ -222,7 +237,6 @@
 
         $('#customer-account').val(null).trigger('change');
         // $('#chain').val('%').trigger('change');
-
 
         let chainData;
         let customerData;
@@ -373,29 +387,39 @@
             $('#div-place').html(place);
 
             if(place != null) setSelect2(this.value, '%');
-
         });
 
-        // filter event
-        $('#btn-filter-chain').click(function () {
-            setParameters();
-            fetchOfftake(1, 'loading-chain');
-            fetchOfftakeChainTab();
-        });
-
-        // filter event
-        $('#btn-filter-customer').click(function () {
-            setParameters();
-            fetchOfftake(2, 'loading-customer');
-            fetchOfftakeCustomerTab();
-        });
-
-        // filter event
+        // filter account
         $('#btn-filter-accounts').click(function () {
             setParameters();
-            fetchOfftake(1, 'loading-accounts');
+            fetchOfftake(1, 'loading-accounts', 'accounts-tab');
             fetchOfftakeAccountsTab();
+            showOfftakeCards('#div-offtake-account');
         });
+
+        // filter chain
+        $('#btn-filter-chain').click(function () {
+            setParameters();
+            fetchOfftake(2, 'loading-chain', 'chain-tab');
+            fetchOfftakeChainTab();
+            showOfftakeCards('#div-offtake-chain');
+        });
+
+        // filter customer
+        $('#btn-filter-customer').click(function () {
+            setParameters();
+            fetchOfftake(3, 'loading-customer', 'customer-tab');
+            fetchOfftakeCustomerTab();
+            showOfftakeCards('#div-offtake-customer');
+        });
+
+
+        function showOfftakeCards(id) {
+            $('#div-offtake-account').hide();
+            $('#div-offtake-chain').hide();
+            $('#div-offtake-customer').hide();
+            $(id).show();
+        }
 
 
         function setParameters() {
@@ -403,8 +427,11 @@
             // set parameters from input
             customer_codes = $('#customers').val();
             chain_codes = $('#chain').val();
-            if (chain_codes.includes('%')){ // selected `all`
-                chain_codes = selectValues('chain');
+
+            if (chain_codes){
+                if (chain_codes.includes('%')){ // selected `all`
+                    chain_codes = selectValues('chain');
+                }
             }
 
             date_from = $('#date-from').val();
@@ -461,7 +488,7 @@
             return result;
         }
 
-        function fetchOfftake(type, loading_id){
+        function fetchOfftake(report_type, loading_id, tab_header){
             let filters = locationFilter();
 
             showLoading(loading_id, true);
@@ -470,9 +497,10 @@
                 type: 'POST',
                 url: '/offtake-customer-data',
                 data: {
+                    customer_account: $('#customer-account').val(),
+                    chain_codes: chain_codes,
                     customer_codes: customer_codes,
-                    // material_codes: material_codes,
-                    type: type,
+                    report_type: report_type,
                     date_from: date_from,
                     date_to: date_to,
                     _token: '{{ csrf_token() }}'
@@ -521,6 +549,8 @@
                         "transaction.material_code, " +
                         "transaction.created_at"
                         , [transactions, customerData, chainData, accountData, municipalityData, provinceData, regionData, islandData, materialData]);
+
+                    $('#' + tab_header + ' a:first-child').tab('show').trigger('click');
 
                     showLoading(loading_id, false);
                 },
@@ -660,6 +690,9 @@
         /* *******************************************/
 
         function generateOfftakeTable(data, table_id) {
+
+            data = data.filter(x => x.material_code !== undefined); //avoid to display undefined
+
             /* generate column headers **************/
             let column_header_date = '';
             let column_header_inventory = '';
@@ -758,7 +791,7 @@
             /* generate table ************************/
             let tableOfftakeHtml =
                 '<div class="table-responsive">' +
-                '<table class="table table-bordered" style="white-space: nowrap; width: 100%">' +
+                '<table id="table-offtake" class="table table-bordered" style="white-space: nowrap; width: 100%">' +
                 '<thead>' +
                 '<tr>' +
                 '<th colspan="3" style="text-align: center">Production Information' +
@@ -779,11 +812,14 @@
                 '</table>' +
                 '</div>';
 
+            tableOfftakeHtml = tablePlaceHolder(tableOfftakeHtml, data);
             $("#" + table_id).html(tableOfftakeHtml);
             /* **************************************/
         }
 
         function generateOfftakeCategoryTable(data, table_id) {
+
+            data = data.filter(x => x.material_code !== undefined); //avoid to display undefined
 
             /* generate column headers **************/
             let column_header_date = '';
@@ -909,7 +945,7 @@
             /* generate table ************************/
             let tableOfftakeHtml =
                 '<div class="table-responsive">' +
-                    '<table class="table table-bordered" style="white-space: nowrap; width: 100%">' +
+                    '<table id="table-offtake-category" class="table table-bordered" style="white-space: nowrap; width: 100%">' +
                     '<thead>' +
                         '<tr>' +
                             '<th style="text-align: center">Category Information' +
@@ -928,6 +964,7 @@
                     '</table>' +
                 '</div>';
 
+            tableOfftakeHtml = tablePlaceHolder(tableOfftakeHtml, data);
             $("#" + table_id).html(tableOfftakeHtml);
             /* **************************************/
 

@@ -154,6 +154,15 @@
         return days;
     }
 
+    function tablePlaceHolder(table, data){
+        if (data.length === 0){
+            return '<table><tr><td class="text-red"> -- No Data Available -- </tr></table>';
+        }
+        else{
+            return table;
+        }
+    }
+
     //for selection with `all` options using multiple select2
     function getSelectMultipleValue(id, allString) {
         var result = [];

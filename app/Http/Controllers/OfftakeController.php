@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Chain;
 use App\Customer;
 use App\CustomerCategory;
+use App\Http\Requests\FilterOfftake;
 use App\Island;
 use App\Material;
 use App\Municipality;
 use App\Province;
 use App\Region;
 use App\TransactionOfftake;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class OfftakeController extends Controller
@@ -132,24 +134,19 @@ class OfftakeController extends Controller
         return $transactions;
     }
 
-    public function customerData(Request $request){
+    public function customerData(FilterOfftake $request){
 
-        $request->validate([
-            'date_from' => 'required|date',
-            'date_to' => 'required|date|after_or_equal:date_from',
-
-        ]);
-
+        $request->validated();
 
         $dateFrom = $request->date_from;
         $dateTo = $request->date_to;
         $customerCodes = $request->customer_codes;
-        $type = $request->type; // for performance purpose (ex: 1 = all filter, 2 = specific filter)
+        $report_type = $request->report_type;
 
         $dates = ScheduleController::getDateRange($dateFrom, $dateTo);
         $transactions = TransactionOfftake::whereDate('created_at', '>=', $dateFrom)
             ->whereDate('created_at', '<=', $dateTo)
-            ->when($type == 2, function ($query, $type) use ($customerCodes) {
+            ->when($report_type == 3, function ($query, $type) use ($customerCodes) {
                 return $query->whereIn('customer_code', $customerCodes);
             })
             ->get();
