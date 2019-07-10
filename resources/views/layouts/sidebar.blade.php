@@ -105,7 +105,7 @@
 
                     @permission('view.inventory.log')
                     <li><a href="{{ url('/reports/inventoryLog') }}"><i class="fa fa-circle"></i> Inventory Logs</a></li>
-                    <li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle"></i> Offtake Per Customer</a></li>
+                    {{--<li><a href="{{ url('/reports/offtakePerCustomer') }}"><i class="fa fa-circle"></i> Offtake Per Customer</a></li>--}}
                     @endpermission
 
                     @permission('offtake.view')
