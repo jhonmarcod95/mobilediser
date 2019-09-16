@@ -14,6 +14,7 @@ use App\Region;
 use App\TransactionOfftake;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OfftakeController extends Controller
 {
@@ -156,6 +157,27 @@ class OfftakeController extends Controller
             'customers' => $customerCodes,
             'transactions' => $transactions,
         ];
+    }
+
+    public function offtakeSummaryData(Request $request){
+
+        return DB::table(DB::raw('transaction_offtake USE INDEX()'))
+            ->whereDate('created_at', '>=', $request->date_from)
+            ->whereDate('created_at', '<=', $request->date_to)
+            ->whereIn('customer_code', $request->customer_codes)
+            ->groupBy('material_code')
+            ->select(DB::raw(
+                'material_code,
+                 SUM(beginning_balance) AS beginning_balance,
+                 SUM(delivery) AS delivery,
+                 SUM(rtv) AS rtv,
+                 SUM(physical_count) AS physical_count,
+                 SUM(warehouse_area) AS warehouse_area,
+                 SUM(bo_area) AS bo_area,
+                 SUM(ending_balance) AS ending_balance,
+                 SUM(offtake) AS offtake
+             '))
+            ->get();
     }
 
 

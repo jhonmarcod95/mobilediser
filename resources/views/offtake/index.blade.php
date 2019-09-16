@@ -71,6 +71,7 @@
                                     <input id="date-to" name="date_to" type="date" class="form-control">
                                 </div>
                             </div>
+
                         </div>
 
                         <div class="row">
@@ -85,6 +86,9 @@
                                     <div class="form-group mx-sm-3 mb-2">
                                         <button id="btn-filter-customer" class="btn btn-default">Offtake Per Customer</button>
                                     </div>
+{{--                                    <div class="form-group mx-sm-3 mb-2">--}}
+{{--                                        <button id="btn-offtake-summary" class="btn btn-default">Offtake Summary</button>--}}
+{{--                                    </div>--}}
                                 </div>
                             </div>
                         </div>
@@ -109,8 +113,8 @@
                         <label>Offtake Per Account </label>
                         <div class="row pull-right">
                             <div class="col-md-12">
-                                <button onclick="tableToExcel('table-offtake')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Material</button>
-                                <button onclick="tableToExcel('table-offtake-category')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Category</button>
+                                <button onclick="tableToExcel('table-offtake-account')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Product</button>
+                                <button onclick="tableToExcel('table-offtake-category-account')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Category</button>
                             </div>
                         </div>
                     </div>
@@ -152,7 +156,8 @@
                         <label>Offtake Per Chain </label>
                         <div class="row pull-right">
                             <div class="col-md-12">
-                                <button class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export</button>
+                                <button onclick="tableToExcel('table-offtake-chain')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Product</button>
+                                <button onclick="tableToExcel('table-offtake-category-chain')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Category</button>
                             </div>
                         </div>
                     </div>
@@ -194,7 +199,8 @@
                         <label>Offtake Per Customer </label>
                         <div class="row pull-right">
                             <div class="col-md-12">
-                                <button class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export</button>
+                                <button onclick="tableToExcel('table-offtake-customer')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Product</button>
+                                <button onclick="tableToExcel('table-offtake-category-customer')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Category</button>
                             </div>
                         </div>
                     </div>
@@ -413,6 +419,10 @@
             showOfftakeCards('#div-offtake-customer');
         });
 
+        $('#btn-offtake-summary').click(function () {
+            setParameters();
+            fetchOfftakeSummary();
+        });
 
         function showOfftakeCards(id) {
             $('#div-offtake-account').hide();
@@ -561,6 +571,24 @@
             });
         }
 
+        function fetchOfftakeSummary(){
+            $.ajax({
+                type: 'GET',
+                url: '/offtake-summary-data',
+                data: {
+                    customer_codes: customer_codes,
+                    date_from: date_from,
+                    date_to: date_to,
+                },
+                success: function(data) {
+
+                },
+                error: function (data) {
+                    $('#response-details').html(showErrorAlert(data));
+                }
+            });
+        }
+
         /*  Customer Offtake Filter *******************/
         function fetchOfftakeCustomerTab() {
             let customerTabHtml = '';
@@ -580,8 +608,8 @@
 
             let inventories = alasql("SELECT * FROM ? WHERE customer_code = '" + customer_code + "'", [offtakeData]);
 
-            generateOfftakeTable(inventories, 'customer-tab-content');
-            generateOfftakeCategoryTable(inventories, 'customer-tab-content-item-category');
+            generateOfftakeTable(inventories, 'customer-tab-content', 'table-offtake-customer');
+            generateOfftakeCategoryTable(inventories, 'customer-tab-content-item-category', 'table-offtake-category-customer');
         }
         /* *******************************************/
 
@@ -632,8 +660,8 @@
                 "toDate(created_at)" +
                 "", [offtakeData]);
 
-            generateOfftakeTable(inventories, 'chain-tab-content');
-            generateOfftakeCategoryTable(inventories, 'chain-tab-content-item-category');
+            generateOfftakeTable(inventories, 'chain-tab-content', 'table-offtake-chain');
+            generateOfftakeCategoryTable(inventories, 'chain-tab-content-item-category', 'table-offtake-category-chain');
         }
         /* *******************************************/
 
@@ -684,12 +712,12 @@
                 "toDate(created_at)" +
                 "", [offtakeData]);
 
-            generateOfftakeTable(inventories, 'accounts-tab-content');
-            generateOfftakeCategoryTable(inventories, 'accounts-tab-content-item-category');
+            generateOfftakeTable(inventories, 'accounts-tab-content', 'table-offtake-account');
+            generateOfftakeCategoryTable(inventories, 'accounts-tab-content-item-category', 'table-offtake-category-account');
         }
         /* *******************************************/
 
-        function generateOfftakeTable(data, table_id) {
+        function generateOfftakeTable(data, tab_id, table_id) {
 
             data = data.filter(x => x.material_code !== undefined); //avoid to display undefined
 
@@ -791,7 +819,7 @@
             /* generate table ************************/
             let tableOfftakeHtml =
                 '<div class="table-responsive">' +
-                '<table id="table-offtake" class="table table-bordered" style="white-space: nowrap; width: 100%">' +
+                '<table id="' + table_id + '" class="table table-bordered" style="white-space: nowrap; width: 100%">' +
                 '<thead>' +
                 '<tr>' +
                 '<th colspan="3" style="text-align: center">Production Information' +
@@ -813,11 +841,11 @@
                 '</div>';
 
             tableOfftakeHtml = tablePlaceHolder(tableOfftakeHtml, data);
-            $("#" + table_id).html(tableOfftakeHtml);
+            $("#" + tab_id).html(tableOfftakeHtml);
             /* **************************************/
         }
 
-        function generateOfftakeCategoryTable(data, table_id) {
+        function generateOfftakeCategoryTable(data, tab_id, table_id) {
 
             data = data.filter(x => x.material_code !== undefined); //avoid to display undefined
 
@@ -945,7 +973,7 @@
             /* generate table ************************/
             let tableOfftakeHtml =
                 '<div class="table-responsive">' +
-                    '<table id="table-offtake-category" class="table table-bordered" style="white-space: nowrap; width: 100%">' +
+                    '<table id="' + table_id + '" class="table table-bordered" style="white-space: nowrap; width: 100%">' +
                     '<thead>' +
                         '<tr>' +
                             '<th style="text-align: center">Category Information' +
@@ -965,7 +993,7 @@
                 '</div>';
 
             tableOfftakeHtml = tablePlaceHolder(tableOfftakeHtml, data);
-            $("#" + table_id).html(tableOfftakeHtml);
+            $("#" + tab_id).html(tableOfftakeHtml);
             /* **************************************/
 
         }

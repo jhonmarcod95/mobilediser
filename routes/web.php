@@ -148,8 +148,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/offtake', 'OfftakeController@index');
         Route::get('/offtake-data', 'OfftakeController@indexData');
         Route::get('/offtake-filter', 'OfftakeController@filter');
+        Route::get('/offtake-summary-data', 'OfftakeController@offtakeSummaryData');
 
         Route::post('/offtake-customer-data', 'OfftakeController@customerData');
+
     });
 
     #inventory log (raw)
