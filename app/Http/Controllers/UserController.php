@@ -255,13 +255,13 @@ class UserController extends Controller
             ]);
         }
 
-        // merchandiser role additional validation
-        if($request->role == '3'){
-            $request->validate([
-                'coordinator' => 'required',
-                'managers' => 'required'
-            ]);
-        }
+//        // merchandiser role additional validation
+//        if($request->role == '3'){
+//            $request->validate([
+//                'coordinator' => 'required',
+//                'managers' => 'required'
+//            ]);
+//        }
 
         #user
         $user = User::find($id);
