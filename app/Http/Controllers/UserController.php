@@ -288,10 +288,10 @@ class UserController extends Controller
             // Assigning of role
             $user->syncRoles($request->role);
 
-            // Assigning of fma & coordinator if merchandiser role
-            if($request->role == '3'){
-                $this->storeUserManagers($id,$request->managers);
-            }
+//            // Assigning of fma & coordinator if merchandiser role
+//            if($request->role == '3'){
+//                $this->storeUserManagers($id,$request->managers);
+//            }
 
             #image
             if(!empty($request->file('img_user'))){ #will not update image path if no upload
