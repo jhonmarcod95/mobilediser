@@ -354,7 +354,6 @@
             var end_time = $("#end-time").val();
             var weeks = getSelectMultipleValue('sel-week', '%');
             var day = $("#sel-weekday").val();
-            var weekdays = getWeekDays(weeks, day);
 
             $.ajax({
                 url: '/schedules/save',
@@ -364,7 +363,9 @@
                 data: JSON.stringify({
                     merchandiser_id: merchandiser_id,
                     store: customer,
-                    weekdays: weekdays,
+                    weeks: weeks,
+                    day: day,
+                    month_year: monthYear,
                     start_time: start_time,
                     end_time: end_time,
                     _token: '{{ csrf_token() }}'

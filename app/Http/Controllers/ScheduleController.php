@@ -28,21 +28,21 @@ class ScheduleController extends Controller
     {
 
         $this->weekDays = [
-            '1' => 'Mon',
-            '2' => 'Tue',
-            '3' => 'Wed',
-            '4' => 'Thu',
-            '5' => 'Fri',
-            '6' => 'Sat',
-            '7' => 'Sun'
+            'Mon' => 'Mon',
+            'Tue' => 'Tue',
+            'Wed' => 'Wed',
+            'Thu' => 'Thu',
+            'Fri' => 'Fri',
+            'Sat' => 'Sat',
+            'Sun' => 'Sun'
         ];
 
         $this->weeks = [
-            '1' => '1st',
-            '2' => '2nd',
-            '3' => '3rd',
-            '4' => '4th',
-            '5' => '5th',
+            'first' => '1st',
+            'second' => '2nd',
+            'third' => '3rd',
+            'fourth' => '4th',
+            'fifth' => '5th',
             '%' => 'All'
         ];
 
@@ -151,19 +151,29 @@ class ScheduleController extends Controller
 
     public function save(Request $request)
     {
+
+        // generate list of weekdays based on selected week number and week day
+        $weekdays = [];
+        foreach ($request->weeks as $week){
+            $my = $request->month_year;
+            $dt = new DateTime("$week $request->day of $my");
+            if ($dt->format('Y-m') == $my){
+                $weekdays[] = $dt->format('Y-m-d');
+            }
+        }
+
         $request->validate([
             'merchandiser_id' => 'required',
             'store' => ['required', new ScheduleConflictRule(
                 null,
                 $request->merchandiser_id,
-                $request->weekdays
+                $weekdays
             )],
-            'weekdays' => 'required',
+            'weeks' => 'required',
+            'day' => 'required',
             'start_time' => 'required',
             'end_time' => 'required|after:start_time',
         ]);
-
-        $weekdays = $request->weekdays;
 
         DB::beginTransaction();
         foreach ($weekdays as $weekday) {
