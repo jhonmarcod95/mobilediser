@@ -99,7 +99,9 @@
                     "id, " +
                     "LAST(first_name) AS first_name, " +
                     "LAST(last_name) AS last_name, " +
+                    "LAST(customer_code) AS customer_code, " +
                     "LAST(`store`) AS `store`, " +
+                    "LAST(branch) AS branch, " +
                     "LAST(date) AS date, " +
                     "LAST(time_in) AS time_in, " +
                     "LAST(time_out) AS time_out, " +
@@ -126,7 +128,8 @@
                                 'document.getElementById(\'title\').innerText = \'' + merchandiser + ' - ' + log.store + ' ' + log.date + ' - ' + toTimeString(log.time_in) + '\';">' + log.id +
                             '</a>' +
                         '<td>' + merchandiser +
-                        '<td>' + log.store +
+                        '<td>' + log.customer_code +
+                        '<td>' + log.store + ' - ' + log.branch +
                         '<td>' + log.date +
                         '<td>' + toTimeString(log.time_in) +
                         '<td>' + toTimeString(log.time_out) +
@@ -140,6 +143,7 @@
                         '<thead>' +
                             '<th>Schedule Id' +
                             '<th>Merchandiser' +
+                            '<th>Code' +
                             '<th>Store' +
                             '<th>Date' +
                             '<th>Time In' +

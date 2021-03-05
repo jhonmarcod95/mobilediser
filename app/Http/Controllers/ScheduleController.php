@@ -377,6 +377,7 @@ class ScheduleController extends Controller
                 'users.merchandiser_id',
                 'users.first_name',
                 'users.last_name',
+                'customer_master_data.customer_code AS customer_code',
                 'customer_master_data.name AS store',
                 'customer_master_data.branch',
             ]);
