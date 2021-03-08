@@ -72,11 +72,13 @@ class User extends Authenticatable implements Auditable
             $result = User::select(
                 DB::raw("CONCAT(first_name, ' ', last_name) AS fullname"), 'merchandiser_id')
                 ->where('account_type', 3)
+                ->where('account_status', 'ACTIVE')
                 ->where('agency_code', Auth::user()->agency_code);
         }
         else{
             $result = User::select(
                 DB::raw("CONCAT(first_name, ' ', last_name) AS fullname"), 'merchandiser_id')
+                ->where('account_status', 'ACTIVE')
                 ->where('account_type', 3);
         }
         return $result;
