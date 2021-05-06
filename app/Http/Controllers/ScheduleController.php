@@ -239,7 +239,7 @@ class ScheduleController extends Controller
         DB::beginTransaction();
         foreach ($schedule_ids as $schedule_id) {
             $schedule = MerchandiserSchedule::find($schedule_id);
-            $schedule->delete();
+            if ($schedule) $schedule->delete();
         }
         DB::commit();
 
