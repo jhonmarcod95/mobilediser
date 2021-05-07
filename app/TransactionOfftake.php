@@ -8,6 +8,10 @@ class TransactionOfftake extends Model
 {
     protected $table = 'transaction_offtake';
 
+    public function customer(){
+        return $this->belongsTo(Customer::class, 'customer_code', 'customer_code');
+    }
+
     public static function getMaterialOfftake(){
 //        $date = Carbon::now()->format('Y-m-d');
         $date = '2018-07-18';

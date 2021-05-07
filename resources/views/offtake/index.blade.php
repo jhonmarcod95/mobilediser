@@ -504,7 +504,7 @@
             showLoading(loading_id, true);
 
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: '/offtake-customer-data',
                 data: {
                     customer_account: $('#customer-account').val(),
@@ -516,6 +516,8 @@
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(data) {
+
+                    console.log(data);
 
                     // return variables
                     date_ranges = data.dates;
@@ -565,6 +567,8 @@
                     showLoading(loading_id, false);
                 },
                 error: function (data) {
+                    console.log(data);
+
                     $('#response-details').html(showErrorAlert(data));
                     showLoading(loading_id, false);
                 }

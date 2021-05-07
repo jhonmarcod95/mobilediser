@@ -15,4 +15,8 @@ class Chain extends Model
 
         return $result;
     }
+
+    public function account(){
+        return $this->belongsTo(CustomerAccount::class, 'account_code', 'account_code');
+    }
 }

@@ -65,5 +65,12 @@
 {{-- Laravel SweetAlert --}}
 <script src="{{  asset('adminLTE/sweetalert2.all.js') }}"></script>
 
+{{-- Vuejs --}}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+{{--<script src="{{  asset('adminLTE/vue.js') }}"></script>--}}
+
+{{-- Vuesax --}}
+<link href="https://unpkg.com/vuesax@4.0.1-alpha.16/dist/vuesax.min.css" rel="stylesheet">
+
 @yield('headScript')
 

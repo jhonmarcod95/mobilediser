@@ -135,7 +135,19 @@ class OfftakeController extends Controller
         return $transactions;
     }
 
-    public function customerData(FilterOfftake $request){
+    public function customerData(){
+
+
+        return TransactionOfftake::with('customer.chain.account')
+            ->whereDate('created_at', '>=', '2021-05-01')
+            ->whereHas('customer.chain', function($q){
+                $q->where('chain_code', '004');
+            })
+            ->get()
+            ->groupBy(['customer_code', function($item) {
+                return $item->created_at->format('Y-m-d');
+            }])
+            ;
 
         $request->validated();
 

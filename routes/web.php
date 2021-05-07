@@ -150,7 +150,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/offtake-filter', 'OfftakeController@filter');
         Route::get('/offtake-summary-data', 'OfftakeController@offtakeSummaryData');
 
-        Route::post('/offtake-customer-data', 'OfftakeController@customerData');
+        Route::get('/offtake-customer-data', 'OfftakeController@customerData');
 
     });
 
