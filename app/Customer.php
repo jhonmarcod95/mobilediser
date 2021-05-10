@@ -30,4 +30,8 @@ class Customer extends Model implements Auditable
     public function chain(){
         return $this->belongsTo(Chain::class, 'chain_code', 'chain_code');
     }
+
+    public function materials(){
+        return $this->hasMany(CustomerMaterial::class, 'customer_code','customer_code');
+    }
 }

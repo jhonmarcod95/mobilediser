@@ -17,4 +17,12 @@ class Material extends Model implements Auditable
 
         return $result;
     }
+
+    public function mainGroup(){
+        return $this->belongsTo(MaterialGroupMain::class, 'main_group', 'code');
+    }
+
+    public function subGroup(){
+        return $this->belongsTo(MaterialGroupSub::class, 'sub_group', 'code');
+    }
 }

@@ -12,6 +12,10 @@ class TransactionOfftake extends Model
         return $this->belongsTo(Customer::class, 'customer_code', 'customer_code');
     }
 
+    public function material(){
+        return $this->belongsTo(Material::class, 'material_code', 'material_code');
+    }
+
     public static function getMaterialOfftake(){
 //        $date = Carbon::now()->format('Y-m-d');
         $date = '2018-07-18';

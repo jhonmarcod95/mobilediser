@@ -136,39 +136,65 @@ class OfftakeController extends Controller
     }
 
     public function customerData(){
+        ini_set('memory_limit', '2048M'); // revise this
 
-
-        return TransactionOfftake::with('customer.chain.account')
-            ->whereDate('created_at', '>=', '2021-05-01')
-            ->whereHas('customer.chain', function($q){
-                $q->where('chain_code', '004');
-            })
-            ->get()
-            ->groupBy(['customer_code', function($item) {
-                return $item->created_at->format('Y-m-d');
-            }])
-            ;
-
-        $request->validated();
-
-        $dateFrom = $request->date_from;
-        $dateTo = $request->date_to;
-        $customerCodes = $request->customer_codes;
-        $report_type = $request->report_type;
-
-        $dates = ScheduleController::getDateRange($dateFrom, $dateTo);
-        $transactions = TransactionOfftake::whereDate('created_at', '>=', $dateFrom)
-            ->whereDate('created_at', '<=', $dateTo)
-            ->when($report_type == 3, function ($query, $type) use ($customerCodes) {
-                return $query->whereIn('customer_code', $customerCodes);
-            })
+        $customers = Customer::with('chain.account', 'materials.material')
+//            ->whereIn('customer_code', ['1202000401', '1202000369'])
             ->get();
 
-        return [
-            'dates' => $dates,
-            'customers' => $customerCodes,
-            'transactions' => $transactions,
-        ];
+
+        $offtakes = TransactionOfftake::whereDate('created_at', '>=', '2021-04-01')
+//            ->whereIn('customer_code', ['1202000401', '1202000369'])
+//            ->whereIn('customer_code', ['1202000401', '1202000369'])
+//            ->whereHas('customer.chain', function($q){
+//                $q->where('chain_code', '004');
+//            })
+            ->get()
+//            ->groupBy(['customer_code', function($item) {
+//                return $item->created_at->format('Y-m-d');
+//            }])
+            ;
+
+        $customers = collect($customers);
+        $offtakes = collect($offtakes);
+
+
+        $transaction = $customers->map(function ($customer, $c) use ($offtakes) {
+
+            $customer->materials = $customer->materials->map(function ($material, $m) use ($customer, $offtakes){
+
+                $offtakes = $offtakes->where('customer_code', $customer->customer_code)
+                                    ->where('material_code', $material->material_code)
+                                    ->toArray();
+
+                $material->offtakes = $offtakes;
+            });
+
+
+            return collect($customer);
+        });
+
+        return $transaction;
+//        $request->validated();
+
+//        $dateFrom = $request->date_from;
+//        $dateTo = $request->date_to;
+//        $customerCodes = $request->customer_codes;
+//        $report_type = $request->report_type;
+//
+//        $dates = ScheduleController::getDateRange($dateFrom, $dateTo);
+//        $transactions = TransactionOfftake::whereDate('created_at', '>=', $dateFrom)
+//            ->whereDate('created_at', '<=', $dateTo)
+//            ->when($report_type == 3, function ($query, $type) use ($customerCodes) {
+//                return $query->whereIn('customer_code', $customerCodes);
+//            })
+//            ->get();
+//
+//        return [
+//            'dates' => $dates,
+//            'customers' => $customerCodes,
+//            'transactions' => $transactions,
+//        ];
     }
 
     public function offtakeSummaryData(Request $request){

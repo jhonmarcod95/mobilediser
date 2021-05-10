@@ -52,8 +52,11 @@
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
 
-{{-- Vuesax --}}
-<script src="https://unpkg.com/vuesax@4.0.1-alpha.16/dist/vuesax.min.js"></script>
+
+{{-- Vuejs --}}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+{{--<script src="{{  asset('adminLTE/vue.js') }}"></script>--}}
+<script src="{{  asset('adminLTE/axios.min.js') }}"></script>
 
 <script>
     $(function () {

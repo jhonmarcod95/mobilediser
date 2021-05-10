@@ -20,5 +20,6 @@
     @include('layouts.footer')
 </div>
 @include('layouts.script')
+@stack('js')
 </body>
 </html>
