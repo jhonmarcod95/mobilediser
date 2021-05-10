@@ -58,6 +58,10 @@
 {{--<script src="{{  asset('adminLTE/vue.js') }}"></script>--}}
 <script src="{{  asset('adminLTE/axios.min.js') }}"></script>
 
+{{-- moment --}}
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://momentjs.com/downloads/moment-with-locales.min.js"></script>
+
 <script>
     $(function () {
         $('#dataTable').DataTable({

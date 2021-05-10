@@ -138,22 +138,88 @@ class OfftakeController extends Controller
     public function customerData(){
         ini_set('memory_limit', '2048M'); // revise this
 
-        $customers = Customer::with('chain.account', 'materials.material')
+        $dates = ScheduleController::getDateRange('2021-04-01', '2021-04-30');
+
+        $offtakes = TransactionOfftake::with('customer.chain.account', 'material')
+            ->whereBetween('created_at', ['2021-04-01 00:00:00', '2021-04-30 23:59:59'])
 //            ->whereIn('customer_code', ['1202000401', '1202000369'])
+            ->whereHas('customer.chain', function($q){
+                $q->where('chain_code', '004');
+            })
             ->get();
 
 
-        $offtakes = TransactionOfftake::whereDate('created_at', '>=', '2021-04-01')
-//            ->whereIn('customer_code', ['1202000401', '1202000369'])
-//            ->whereIn('customer_code', ['1202000401', '1202000369'])
-//            ->whereHas('customer.chain', function($q){
-//                $q->where('chain_code', '004');
-//            })
-            ->get()
-//            ->groupBy(['customer_code', function($item) {
-//                return $item->created_at->format('Y-m-d');
-//            }])
-            ;
+
+        $offtakeCustomers = $offtakes->groupBy(['customer_code', 'material_code', function($item) {
+             return $item->created_at->format('Y-m-d');
+        }]);
+
+        $transaction = [];
+        $offtake_customers = [];
+
+
+        foreach ($offtakeCustomers as $c => $offtakeCustomer){
+
+            $customer_details = [];
+            $offtake_materials = [];
+
+
+
+            foreach ($offtakeCustomer as $m => $material){
+
+
+                foreach ($material as $ds => $offtake_dates){
+
+
+                    // insert dates
+                    foreach ($dates as $date){
+                        if (isset($offtakeCustomer[$m][$date]) == false){ // date not exist
+                            $offtakeCustomer[$m][$date] = [];
+                        }
+                    }
+
+                    // init offtake per material
+                    $offtake_material = [
+                        'material' => $offtakeCustomer[$m][$ds][0]->material,
+                        'dates' => $offtakeCustomer[$m]
+                    ];
+
+
+                    // sort
+                    $offtakeCustomer[$m] = collect($material)->sortBy(function ($key, $value){
+                        return $value;
+                    });
+
+                    // get customer details
+                    foreach ($offtake_dates as $o => $offtake){
+
+                        $customer_details = $offtake->customer;
+
+                        // todo:: logic here to remove customer keys, reduce memory
+                    }
+
+
+                }
+
+                // append offtake per material
+                $offtake_materials[] = $offtake_material;
+
+            }
+
+
+
+            $offtake_customers[] = [
+                'customer' => $customer_details,
+                'offtake' => $offtake_materials
+            ];
+        }
+
+
+        return $offtake_customers;
+
+
+        return collect($offtakes)->pluck('customer_code')->unique();
+
 
         $customers = collect($customers);
         $offtakes = collect($offtakes);

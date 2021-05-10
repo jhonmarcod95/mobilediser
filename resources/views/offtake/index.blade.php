@@ -103,89 +103,100 @@
             </div>
         </div>
 
-
-        {{-- Offtake Per Accounts --}}
-        <div id="div-offtake-account" hidden class="row">
+        {{-- Offtake --}}
+        <div class="row">
             <div class="col-md-12">
                 <div class="box box-default">
                     <div class="box-header ">
-                        <label>Offtake Per Account </label>
+                        <label>Offtake Result </label>
                         <div class="row pull-right">
                             <div class="col-md-12">
-                                <button onclick="tableToExcel('table-offtake-account')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Product</button>
-                                <button onclick="tableToExcel('table-offtake-category-account')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Category</button>
+                                <button onclick="tableToExcel('table-offtake-customer')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Product</button>
                             </div>
                         </div>
                     </div>
                     <div class="box-body">
-                        <!-- Accounts Tabs -->
-                        <div class="nav-tabs-custom">
-                            <ul id="accounts-tab" class="nav nav-tabs">
-                            </ul>
-                        </div>
 
-                        {{-- Accounts Offtake Table --}}
+                        {{-- Customer Offtake Table --}}
                         <div class="row">
                             <div class="col-md-12">
-                                <div id="accounts-tab-content">
+                                <div class="table-responsive">
+                                    <table id="" class="table table-bordered" style="white-space: nowrap; width: 100%">
+                                        <thead>
+                                        <tr>
+                                            <th colspan="2">SKU Description</th>
+                                            <th v-for="(filtered_date, fd) in filtered_dates" :v-bind="fd" colspan="8">
+                                                @{{ moment(filtered_date).format('MMM DD, YYYY (ddd)') }}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>Branch</th>
+                                            <th>SKU</th>
+                                            <template v-for="(filtered_date, fd) in filtered_dates" :v-bind="fd">
+                                                <th>Beginning Balance</th>
+                                                <th>Delivery</th>
+                                                <th>Warehouse</th>
+                                                <th>Shelves</th>
+                                                <th>BO Area</th>
+                                                <th>Return</th>
+                                                <th>Ending Balance</th>
+                                                <th>Offtake</th>
+                                            </template>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <template v-for="(offtakeCustomer, c) in offtakeCustomers" :v-bind="c">
+                                            <tr>
+
+                                                <td :rowspan="Object.keys(offtakeCustomer.offtake).length + 1">@{{ offtakeCustomer.customer.name + ' - ' + offtakeCustomer.customer.branch }}</td>
+                                            </tr>
+
+                                            <template v-for="(offtake, o) in offtakeCustomer.offtake" :v-bind="o">
+                                                <tr>
+                                                    <td>@{{ offtake.material.material_description }}</td>
+
+
+
+                                                    <template v-for="(date, d) in offtake.dates" :v-bind="d">
+                                                        <template v-if="date.length">
+                                                            <td>@{{ date[0].beginning_balance }}</td>
+                                                            <td>@{{ date[0].delivery }}</td>
+                                                            <td>@{{ date[0].warehouse_area }}</td>
+                                                            <td>@{{ date[0].shelves_area }}</td>
+                                                            <td>@{{ date[0].bo_area }}</td>
+                                                            <td>@{{ date[0].rtv }}</td>
+                                                            <td>@{{ date[0].ending_balance }}</td>
+                                                            <td>@{{ date[0].offtake }}</td>
+                                                        </template>
+
+                                                        <template v-else>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </template>
+                                                    </template>
+
+
+
+                                                </tr>
+                                            </template>
+
+                                        </template>
+
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
 
-                        <hr>
-                        {{-- Accounts Offtake Table (By Item Category) --}}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="accounts-tab-content-item-category">
-                                </div>
-                            </div>
-                        </div>
 
                     </div>
-                    <div id="loading-accounts"></div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Offtake Per Chain --}}
-        <div id="div-offtake-chain" hidden class="row">
-            <div class="col-md-12">
-                <div class="box box-default">
-                    <div class="box-header ">
-                        <label>Offtake Per Chain </label>
-                        <div class="row pull-right">
-                            <div class="col-md-12">
-                                <button onclick="tableToExcel('table-offtake-chain')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Product</button>
-                                <button onclick="tableToExcel('table-offtake-category-chain')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Category</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <!-- Custom Tabs -->
-                        <div class="nav-tabs-custom">
-                            <ul id="chain-tab" class="nav nav-tabs">
-                            </ul>
-                        </div>
-
-                        {{-- Chain Offtake Table --}}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="chain-tab-content">
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr>
-                        {{-- Chain Offtake Table (By Item Category) --}}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="chain-tab-content-item-category">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div id="loading-chain"></div>
+                    <div id="loading-customer"></div>
                 </div>
             </div>
         </div>
@@ -243,16 +254,39 @@
             el: '#app',
             data: {
 
-                offtakes: [],
+                offtakeCustomers: [],
+                filtered_dates: [],
                 isProcessing: false
             },
             methods: {
                 getOfftake(){
+                    this.filtered_dates = this.getDates(new Date('2021-04-01'), new Date('2021-04-30'));
+
+
                     axios.get('/offtake-customer-data')
                         .then(response => {
-                            this.offtakes = response.data;
+                            this.offtakeCustomers = response.data;
                         });
                 },
+                getDates : function(startDate, endDate) {
+                    var dates = [],
+                        currentDate = startDate,
+                        addDays = function(days) {
+                            var date = new Date(this.valueOf());
+                            date.setDate(date.getDate() + days);
+                            return date;
+                        };
+                    while (currentDate <= endDate) {
+                        dates.push(currentDate);
+                        currentDate = addDays.call(currentDate, 1);
+                    }
+                    return dates;
+                },
+                moment: function (val) { // todo:: convert this to mixin
+                    return moment(val);
+                }
+
+
             },
             mounted() {
 
@@ -385,7 +419,7 @@
 {{--                    place = '<div class="col-md-2">' +--}}
 {{--                        '<div class="form-group">' +--}}
 {{--                        '<label class="text-muted">Island : </label>' +--}}
-{{--                        '{!! Form::select('island', $islands, null, ['class' => 'form-control select2', 'id' => 'island']) !!}' +--}}
+{{--                        '{!! Form::select('island', $islands, null, ['class' => 'fo<tarm-control select2', 'id' => 'island']) !!}' +--}}
 {{--                        '</div>' +--}}
 {{--                        '</div>';--}}
 {{--                    break;--}}
