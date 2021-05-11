@@ -193,56 +193,12 @@
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
-                    <div id="loading-customer"></div>
+                    <div id="loading-offtake"></div>
                 </div>
             </div>
         </div>
 
-        {{-- Offtake Per Customer Box --}}
-        <div id="div-offtake-customer" hidden class="row">
-            <div class="col-md-12">
-                <div class="box box-default">
-                    <div class="box-header ">
-                        <label>Offtake Per Customer </label>
-                        <div class="row pull-right">
-                            <div class="col-md-12">
-                                <button onclick="tableToExcel('table-offtake-customer')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Product</button>
-                                <button onclick="tableToExcel('table-offtake-category-customer')" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i>&nbsp;Export Per Category</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <!-- Custom Tabs -->
-                        <div class="nav-tabs-custom">
-                            <ul id="customer-tab" class="nav nav-tabs">
-                            </ul>
-                        </div>
-
-                        {{-- Customer Offtake Table --}}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="customer-tab-content">
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr>
-                        {{-- Customer Offtake Table (By Item Category) --}}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="customer-tab-content-item-category">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div id="loading-customer"></div>
-                </div>
-            </div>
-        </div>
 
     </section>
 
@@ -260,12 +216,15 @@
             },
             methods: {
                 getOfftake(){
+                    showLoading('loading-offtake', true);
+
                     this.filtered_dates = this.getDates(new Date('2021-04-01'), new Date('2021-04-30'));
 
 
                     axios.get('/offtake-customer-data')
                         .then(response => {
                             this.offtakeCustomers = response.data;
+                            showLoading('loading-offtake', false);
                         });
                 },
                 getDates : function(startDate, endDate) {

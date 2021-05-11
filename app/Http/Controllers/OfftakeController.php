@@ -136,37 +136,28 @@ class OfftakeController extends Controller
     }
 
     public function customerData(){
-        ini_set('memory_limit', '2048M'); // revise this
-
         $dates = ScheduleController::getDateRange('2021-04-01', '2021-04-30');
 
         $offtakes = TransactionOfftake::with('customer.chain.account', 'material')
             ->whereBetween('created_at', ['2021-04-01 00:00:00', '2021-04-30 23:59:59'])
-//            ->whereIn('customer_code', ['1202000401', '1202000369'])
+            ->whereIn('customer_code', ['1202000401', '1202000369'])
             ->whereHas('customer.chain', function($q){
                 $q->where('chain_code', '004');
             })
             ->get();
 
-
-
         $offtakeCustomers = $offtakes->groupBy(['customer_code', 'material_code', function($item) {
              return $item->created_at->format('Y-m-d');
         }]);
 
-        $transaction = [];
         $offtake_customers = [];
-
 
         foreach ($offtakeCustomers as $c => $offtakeCustomer){
 
             $customer_details = [];
             $offtake_materials = [];
 
-
-
             foreach ($offtakeCustomer as $m => $material){
-
 
                 foreach ($material as $ds => $offtake_dates){
 
@@ -184,83 +175,43 @@ class OfftakeController extends Controller
                         'dates' => $offtakeCustomer[$m]
                     ];
 
-
-                    // sort
-                    $offtakeCustomer[$m] = collect($material)->sortBy(function ($key, $value){
-                        return $value;
-                    });
-
                     // get customer details
                     foreach ($offtake_dates as $o => $offtake){
 
                         $customer_details = $offtake->customer;
 
-                        // todo:: logic here to remove customer keys, reduce memory
+                        // remove not needed keys, to reduce memory
+                        unset($offtakeCustomer[$m][$ds][$o]['customer']);
+                        unset($offtakeCustomer[$m][$ds][$o]['material']);
+                        unset($offtakeCustomer[$m][$ds][$o]['created_at']);
+                        unset($offtakeCustomer[$m][$ds][$o]['updated_at']);
+                        unset($offtakeCustomer[$m][$ds][$o]['id']);
+                        unset($offtakeCustomer[$m][$ds][$o]['transaction_number']);
+                        unset($offtakeCustomer[$m][$ds][$o]['customer_code']);
+                        unset($offtakeCustomer[$m][$ds][$o]['material_code']);
+                        unset($offtakeCustomer[$m][$ds][$o]['base_uom']);
                     }
 
 
+                    // sort
+                    $offtakeCustomer[$m] = collect($material)->sortBy(function ($key, $value){
+                        return $value;
+                    });
                 }
 
                 // append offtake per material
                 $offtake_materials[] = $offtake_material;
-
             }
 
-
-
+            // append offtake per customer
             $offtake_customers[] = [
                 'customer' => $customer_details,
                 'offtake' => $offtake_materials
             ];
         }
 
-
         return $offtake_customers;
 
-
-        return collect($offtakes)->pluck('customer_code')->unique();
-
-
-        $customers = collect($customers);
-        $offtakes = collect($offtakes);
-
-
-        $transaction = $customers->map(function ($customer, $c) use ($offtakes) {
-
-            $customer->materials = $customer->materials->map(function ($material, $m) use ($customer, $offtakes){
-
-                $offtakes = $offtakes->where('customer_code', $customer->customer_code)
-                                    ->where('material_code', $material->material_code)
-                                    ->toArray();
-
-                $material->offtakes = $offtakes;
-            });
-
-
-            return collect($customer);
-        });
-
-        return $transaction;
-//        $request->validated();
-
-//        $dateFrom = $request->date_from;
-//        $dateTo = $request->date_to;
-//        $customerCodes = $request->customer_codes;
-//        $report_type = $request->report_type;
-//
-//        $dates = ScheduleController::getDateRange($dateFrom, $dateTo);
-//        $transactions = TransactionOfftake::whereDate('created_at', '>=', $dateFrom)
-//            ->whereDate('created_at', '<=', $dateTo)
-//            ->when($report_type == 3, function ($query, $type) use ($customerCodes) {
-//                return $query->whereIn('customer_code', $customerCodes);
-//            })
-//            ->get();
-//
-//        return [
-//            'dates' => $dates,
-//            'customers' => $customerCodes,
-//            'transactions' => $transactions,
-//        ];
     }
 
     public function offtakeSummaryData(Request $request){
