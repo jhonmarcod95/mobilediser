@@ -49,6 +49,7 @@
 <link rel="stylesheet" href="{{  asset('bstree/bootstrap-treeview.css') }}">
 
 
+
 {{-- modal custom size --}}
 <style>
     .modal-xl {
@@ -65,7 +66,8 @@
 {{-- Laravel SweetAlert --}}
 <script src="{{  asset('adminLTE/sweetalert2.all.js') }}"></script>
 
-
+{{-- multi select --}}
+<link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 
 
 @yield('headScript')

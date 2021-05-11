@@ -46,9 +46,9 @@ class OfftakeController extends Controller
 
 
         $places = [
-            '%' => 'All',
-            'island' => 'Island',
-            'region' => 'Region',
+            '' => 'All',
+//            'island' => 'Island',
+            'region' => 'Sales Region',
             'province' => 'Province',
             'municipality' => 'Municipality',
         ];
@@ -140,10 +140,10 @@ class OfftakeController extends Controller
 
         $offtakes = TransactionOfftake::with('customer.chain.account', 'material')
             ->whereBetween('created_at', ['2021-04-01 00:00:00', '2021-04-30 23:59:59'])
-            ->whereIn('customer_code', ['1202000401', '1202000369'])
-            ->whereHas('customer.chain', function($q){
-                $q->where('chain_code', '004');
-            })
+//            ->whereIn('customer_code', ['1202000401', '1202000369'])
+//            ->whereHas('customer.chain', function($q){
+//                $q->where('chain_code', '004');
+//            })
             ->get();
 
         $offtakeCustomers = $offtakes->groupBy(['customer_code', 'material_code', function($item) {
