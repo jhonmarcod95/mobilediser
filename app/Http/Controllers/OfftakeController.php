@@ -136,14 +136,16 @@ class OfftakeController extends Controller
     }
 
     public function customerData(){
+        ini_set('memory_limit', '2048M'); // revise this
         $dates = ScheduleController::getDateRange('2021-04-01', '2021-04-30');
 
         $offtakes = TransactionOfftake::with('customer.chain.account', 'material')
             ->whereBetween('created_at', ['2021-04-01 00:00:00', '2021-04-30 23:59:59'])
 //            ->whereIn('customer_code', ['1202000401', '1202000369'])
-//            ->whereHas('customer.chain', function($q){
-//                $q->where('chain_code', '004');
-//            })
+            ->whereHas('customer.chain', function($q){
+                $q->where('chain_code', '004');
+            })
+
             ->get();
 
         $offtakeCustomers = $offtakes->groupBy(['customer_code', 'material_code', function($item) {
@@ -161,7 +163,6 @@ class OfftakeController extends Controller
 
                 foreach ($material as $ds => $offtake_dates){
 
-
                     // insert dates
                     foreach ($dates as $date){
                         if (isset($offtakeCustomer[$m][$date]) == false){ // date not exist
@@ -170,10 +171,12 @@ class OfftakeController extends Controller
                     }
 
                     // init offtake per material
-                    $offtake_material = [
-                        'material' => $offtakeCustomer[$m][$ds][0]->material,
-                        'dates' => $offtakeCustomer[$m]
-                    ];
+                    if ($offtakeCustomer[$m][$ds][0]->material){ // only includes material that are existing in db or material not null (replacement for whereHas query, since whereHas can effect performance)
+                        $offtake_material = [
+                            'material' => $offtakeCustomer[$m][$ds][0]->material,
+                            'dates' => $offtakeCustomer[$m]
+                        ];
+                    }
 
                     // get customer details
                     foreach ($offtake_dates as $o => $offtake){

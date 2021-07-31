@@ -57,7 +57,7 @@ class ReportsController extends Controller
             ->pluck('image_path')
             ->first();
 
-        $inventory_items = collect(DB::select("CALL p_inventory_item_logs ('" . $transactionNumber .  "')"));
+        $inventory_items = collect(DB::select("CALL p_inventory_item_logs ('" . $transactionNumber .  "')l"));
         $physicalCountItems = $inventory_items->whereIn('inventory_type', ['1','2','3']);
         $deliveryCountItems = $inventory_items->whereIn('inventory_type', ['4']);
         $returnCountItems = $inventory_items->whereIn('inventory_type', ['5']);
