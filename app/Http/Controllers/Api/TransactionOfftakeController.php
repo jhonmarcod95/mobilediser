@@ -15,6 +15,12 @@ class TransactionOfftakeController extends Controller
 
     public function getBeginningBalance(Request $request){
         $customer_code = $request->customer_code;
+
+        // todo:: use eloquent here
+        // returns carried material of a specific customer with the last ending balance and base UOM and expiry dates
+        // if no ending balance result, there must be an identifier to determine if first time inventory
+        // based uom = entered qty * (numerator / denom)
+
         $beginningBalance = DB::select("CALL p_beginning_balance('$customer_code')");
         $beginningBalance = collect($beginningBalance);
         return [
@@ -23,7 +29,58 @@ class TransactionOfftakeController extends Controller
         ];
     }
 
-    public function addTransactionOfftake($transaction_number){
+    public function addTransactionOfftake($transaction_number){ // change to storeInventory
+
+        /* params :
+        inventories : [
+            {
+                Type : Inbound
+                Inbound Type : Delivery, Transfer
+                Material : Item 1
+                Qty : 1
+                UOM : CV
+                Date Delivered : 2021-01-01
+                Remarks :
+            },
+            {
+                Type : Return
+                Material :
+                Qty : 1
+                UOM : CV
+                Date Returnd : 2021-01-01
+                Expry Date : 2021-01-01
+                Remarks :
+            },
+            {
+                Type : Phyisical
+                Material : Item 1
+                Location : Shelves, warehouse
+                Qty : 1
+                UOM : CV
+                Expry Date : 2021-01-01
+                Remarks :
+            },
+            {
+                Type : Phyisical
+                Material : Item 1
+                Location : Shelves, warehouse
+                Qty : 10
+                UOM : CV
+                Expry Date : 2021-01-01
+                Remarks :
+            },
+        ],
+        Image :
+         */
+
+        // step 1 generate transaction #
+        // step 2 loop each material to get base UOM conversion
+        // step 3 compute physical, offtake, endingbalance *note: group by type, material code and sum qty
+        // step 4 save to inventory header and items, images table
+        // step 4 save to offtake table and return status
+
+
+
 
         $result = 'false';
 
